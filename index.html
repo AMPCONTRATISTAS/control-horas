@@ -1,1889 +1,3086 @@
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Control de Horas AMP</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Control de Horas</title>
 
-<style>
-*{
-    box-sizing:border-box;
-}
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-body{
-    margin:0;
-    font-family:Arial,Helvetica,sans-serif;
-    background:#f3f4f6;
-    color:#1f2937;
-}
-
-.hidden{
-    display:none !important;
-}
-
-.container{
-    max-width:1200px;
-    margin:0 auto;
-    padding:20px;
-}
-
-.card{
-    background:white;
-    border-radius:12px;
-    padding:20px;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
-    margin-bottom:20px;
-}
-
-h1,h2,h3{
-    margin-top:0;
-}
-
-.login-container{
-    max-width:420px;
-    margin:70px auto;
-}
-
-.logo-title{
-    text-align:center;
-    margin-bottom:20px;
-}
-
-label{
-    display:block;
-    font-weight:bold;
-    margin-bottom:6px;
-}
-
-input,select,textarea,button{
-    width:100%;
-    padding:10px 12px;
-    border-radius:8px;
-    border:1px solid #d1d5db;
-    font-size:14px;
-}
-
-input:focus,select:focus,textarea:focus{
-    outline:none;
-    border-color:#2563eb;
-}
-
-textarea{
-    min-height:80px;
-    resize:vertical;
-}
-
-button{
-    cursor:pointer;
-    border:none;
-    background:#2563eb;
-    color:white;
-    font-weight:bold;
-}
-
-button:hover{
-    opacity:.9;
-}
-
-button.secondary{
-    background:#6b7280;
-}
-
-button.danger{
-    background:#dc2626;
-}
-
-button.success{
-    background:#16a34a;
-}
-
-button.small{
-    width:auto;
-    padding:7px 10px;
-    font-size:12px;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:15px;
-}
-
-.grid-3{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:15px;
-}
-
-.form-group{
-    margin-bottom:15px;
-}
-
-.full{
-    grid-column:1/-1;
-}
-
-.header{
-    background:#111827;
-    color:white;
-    padding:15px 20px;
-}
-
-.header-content{
-    max-width:1200px;
-    margin:auto;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-}
-
-.header button{
-    width:auto;
-}
-
-.summary-title{
-    margin-bottom:12px;
-}
-
-.summary-card{
-    text-align:center;
-    padding:18px;
-    border:1px solid #e5e7eb;
-    border-radius:10px;
-    background:#f9fafb;
-}
-
-.summary-label{
-    font-size:14px;
-    color:#6b7280;
-    margin-bottom:8px;
-}
-
-.summary-value{
-    font-size:28px;
-    font-weight:bold;
-}
-
-.filters{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:10px;
-}
-
-.table-container{
-    overflow-x:auto;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    min-width:1100px;
-}
-
-th,td{
-    border-bottom:1px solid #e5e7eb;
-    padding:10px 8px;
-    text-align:left;
-    font-size:13px;
-    vertical-align:top;
-}
-
-th{
-    background:#f9fafb;
-}
-
-.badge{
-    display:inline-block;
-    padding:4px 8px;
-    border-radius:999px;
-    font-size:11px;
-    font-weight:bold;
-}
-
-.badge-green{
-    background:#dcfce7;
-    color:#166534;
-}
-
-.badge-red{
-    background:#fee2e2;
-    color:#991b1b;
-}
-
-.badge-yellow{
-    background:#fef3c7;
-    color:#92400e;
-}
-
-.badge-gray{
-    background:#e5e7eb;
-    color:#374151;
-}
-
-.message{
-    padding:10px;
-    border-radius:8px;
-    margin-bottom:15px;
-    font-size:14px;
-}
-
-.message.error{
-    background:#fee2e2;
-    color:#991b1b;
-}
-
-.message.success{
-    background:#dcfce7;
-    color:#166534;
-}
-
-.modal{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.55);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
-    z-index:1000;
-}
-
-.modal-content{
-    background:white;
-    width:100%;
-    max-width:450px;
-    border-radius:12px;
-    padding:25px;
-}
-
-.actions{
-    display:flex;
-    gap:10px;
-}
-
-.actions button{
-    flex:1;
-}
-
-@media(max-width:800px){
-    .grid,
-    .grid-3,
-    .filters{
-        grid-template-columns:1fr;
+  <style>
+    * {
+      box-sizing: border-box;
     }
 
-    .header-content{
-        flex-direction:column;
-        align-items:stretch;
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f6f8;
+      color: #1f2937;
     }
 
-    .header button{
-        width:100%;
+    .container {
+      width: min(1400px, 96%);
+      margin: 0 auto;
     }
-}
-</style>
 
+    header {
+      background: #111827;
+      color: white;
+      padding: 16px 0;
+      margin-bottom: 20px;
+    }
+
+    header .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      font-size: 20px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .summary-card {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .summary-card .label {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .summary-card .value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #111827;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 7px;
+      font-size: 14px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    button {
+      border: none;
+      border-radius: 7px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-secondary {
+      background: #6b7280;
+      color: white;
+    }
+
+    .btn-danger {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-warning {
+      background: #d97706;
+      color: white;
+    }
+
+    .btn-small {
+      padding: 6px 9px;
+      font-size: 12px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.5fr 1.5fr 1.3fr auto;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      width: 100%;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1200px;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      padding: 9px 8px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background: #f3f4f6;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    tr:hover td {
+      background: #fafafa;
+    }
+
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: white;
+      width: min(420px, 100%);
+      border-radius: 14px;
+      padding: 30px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    }
+
+    .login-card h1 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .login-card .form-group {
+      margin-bottom: 15px;
+    }
+
+    .login-links {
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .login-links a {
+      color: #2563eb;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .message {
+      padding: 10px 12px;
+      border-radius: 7px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .message.success {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .message.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .message.info {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .status-no-iniciado {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .status-en-curso {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .status-aplazado {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-terminado {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .cumple {
+      color: #166534;
+      font-weight: bold;
+    }
+
+    .no-cumple {
+      color: #991b1b;
+      font-weight: bold;
+    }
+
+    .pendiente {
+      color: #92400e;
+      font-weight: bold;
+    }
+
+    .actions {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 30px;
+      color: #6b7280;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      width: min(450px, 100%);
+      padding: 25px;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+    }
+
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    @media (max-width: 1000px) {
+      .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .filters {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 650px) {
+      .summary-grid,
+      .form-grid,
+      .filters {
+        grid-template-columns: 1fr;
+      }
+
+      header .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
+  <!-- =========================
+       LOGIN
+  ========================== -->
+  <div id="loginScreen" class="login-container">
 
-<div id="loginScreen">
-    <div class="login-container">
-        <div class="card">
+    <div class="login-card">
 
-```
-        <div class="logo-title">
-            <h1>Control de Horas</h1>
-            <p>AMP Contratistas Eléctricos</p>
-        </div>
+      <h1>Control de Horas</h1>
 
-        <div id="loginMessage"></div>
+      <div id="loginMessage"></div>
 
-        <div class="form-group">
-            <label>Correo</label>
-            <input type="email" id="loginEmail" placeholder="correo@empresa.com">
-        </div>
+      <div class="form-group">
+        <label for="loginEmail">Correo electrónico</label>
+        <input
+          type="email"
+          id="loginEmail"
+          placeholder="correo@empresa.com"
+          autocomplete="email"
+        />
+      </div>
 
-        <div class="form-group">
-            <label>Contraseña</label>
-            <input type="password" id="loginPassword" placeholder="Contraseña">
-        </div>
+      <div class="form-group">
+        <label for="loginPassword">Contraseña</label>
+        <input
+          type="password"
+          id="loginPassword"
+          placeholder="Contraseña"
+          autocomplete="current-password"
+        />
+      </div>
 
-        <button onclick="iniciarSesion()">Iniciar sesión</button>
+      <button
+        class="btn-primary"
+        style="width:100%;"
+        onclick="iniciarSesion()"
+      >
+        Iniciar sesión
+      </button>
 
-        <br><br>
-
-        <button class="secondary" onclick="abrirRecuperacion()">
-            ¿Olvidaste tu contraseña?
-        </button>
+      <div class="login-links">
+        <a onclick="mostrarRecuperacion()">
+          ¿Olvidaste tu contraseña?
+        </a>
+      </div>
 
     </div>
-</div>
-```
 
-</div>
+  </div>
 
-<!-- APP -->
 
-<div id="appScreen" class="hidden">
+  <!-- =========================
+       APP
+  ========================== -->
+  <div id="appScreen" class="hidden">
 
-```
-<div class="header">
-    <div class="header-content">
-        <div>
-            <strong>Control de Horas AMP</strong>
-            <div id="usuarioActual"></div>
+    <header>
+      <div class="container header-content">
+
+        <h1>Control de Horas</h1>
+
+        <div class="user-info">
+          <span id="usuarioEmail"></span>
+
+          <button
+            class="btn-secondary btn-small"
+            onclick="cambiarPassword()"
+          >
+            Cambiar contraseña
+          </button>
+
+          <button
+            class="btn-danger btn-small"
+            onclick="cerrarSesion()"
+          >
+            Cerrar sesión
+          </button>
         </div>
 
-        <div class="actions">
-            <button class="secondary small" onclick="enviarCorreoCambioPassword()">
-                Cambiar contraseña
-            </button>
+      </div>
+    </header>
 
-            <button class="danger small" onclick="cerrarSesion()">
-                Cerrar sesión
-            </button>
+
+    <main class="container">
+
+
+      <!-- =========================
+           RESUMEN
+      ========================== -->
+
+      <section class="card">
+
+        <h2>Resumen de horas</h2>
+
+        <div class="summary-grid">
+
+          <div class="summary-card">
+            <div class="label">Hoy</div>
+            <div class="value" id="horasHoy">0 h</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="label">Esta semana</div>
+            <div class="value" id="horasSemana">0 h</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="label">Este mes</div>
+            <div class="value" id="horasMes">0 h</div>
+          </div>
+
         </div>
-    </div>
-</div>
 
-<div class="container">
+      </section>
 
-    <!-- CAPTURA -->
-    <div class="card">
+
+      <!-- =========================
+           REGISTRAR HORAS
+      ========================== -->
+
+      <section class="card">
 
         <h2 id="formTitle">Registrar horas</h2>
 
-        <div id="appMessage"></div>
+        <div id="formMessage"></div>
 
-        <div class="grid">
+        <div class="form-grid">
 
-            <div class="form-group">
-                <label>Fecha</label>
-                <input type="date" id="fecha">
-            </div>
+          <div class="form-group">
+            <label for="fecha">Fecha de trabajo</label>
+            <input type="date" id="fecha" />
+          </div>
 
-            <div class="form-group">
-                <label>Proyecto</label>
-                <select id="proyecto" onchange="cargarEntregables()">
-                    <option value="">Seleccionar proyecto</option>
-                </select>
-            </div>
+          <div class="form-group">
+            <label for="proyecto">Proyecto</label>
+            <select id="proyecto">
+              <option value="">Seleccionar proyecto</option>
+            </select>
+          </div>
 
-            <div class="form-group">
-                <label>Actividad</label>
-                <select id="actividad">
-                    <option value="">Seleccionar actividad</option>
-                </select>
-            </div>
+          <div class="form-group">
+            <label for="actividad">Actividad</label>
+            <select id="actividad">
+              <option value="">Seleccionar actividad</option>
+            </select>
+          </div>
 
-            <div class="form-group">
-                <label>Entregable</label>
-                <select id="entregable">
-                    <option value="">Sin entregable</option>
-                </select>
-            </div>
+          <div class="form-group">
+            <label for="entregable">Entregable</label>
+            <select id="entregable">
+              <option value="">Sin entregable</option>
+            </select>
+          </div>
 
-            <div class="form-group">
-                <label>Fecha de inicio</label>
-                <input type="date" id="fechaInicio">
-            </div>
+          <div class="form-group">
+            <label for="fechaInicio">Fecha de inicio</label>
+            <input type="date" id="fechaInicio" />
+          </div>
 
-            <div class="form-group">
-                <label>Fecha de vencimiento</label>
-                <input type="date" id="fechaVencimiento">
-            </div>
+          <div class="form-group">
+            <label for="fechaVencimiento">Fecha de vencimiento</label>
+            <input type="date" id="fechaVencimiento" />
+          </div>
 
-            <div class="form-group">
-                <label>Horas</label>
-                <input type="number" id="horas" min="0" step="0.25" placeholder="Ej. 2.5">
-            </div>
+          <div class="form-group">
+            <label for="horas">Horas</label>
+            <input
+              type="number"
+              id="horas"
+              min="0"
+              step="0.25"
+              placeholder="Ej. 1.5"
+            />
+          </div>
 
-            <div class="form-group">
-                <label>% completado</label>
-                <input type="number" id="porcentaje" min="0" max="100" step="1" value="0">
-            </div>
+          <div class="form-group">
+            <label for="porcentaje">Porcentaje completado</label>
+            <input
+              type="number"
+              id="porcentaje"
+              min="0"
+              max="100"
+              step="1"
+              value="0"
+            />
+          </div>
 
-            <div class="form-group">
-                <label>Estado</label>
-                <select id="estado">
-                    <option value="NO INICIADO">NO INICIADO</option>
-                    <option value="EN CURSO">EN CURSO</option>
-                    <option value="APLAZADO">APLAZADO</option>
-                    <option value="TERMINADO">TERMINADO</option>
-                </select>
-            </div>
+          <div class="form-group">
+            <label for="estado">Estado</label>
+            <select id="estado">
+              <option value="NO INICIADO">NO INICIADO</option>
+              <option value="EN CURSO">EN CURSO</option>
+              <option value="APLAZADO">APLAZADO</option>
+              <option value="TERMINADO">TERMINADO</option>
+            </select>
+          </div>
 
-            <div class="form-group full">
-                <label>Notas</label>
-                <textarea id="notas" placeholder="Comentarios, avances, problemas, etc."></textarea>
-            </div>
-
-        </div>
-
-        <div class="actions">
-            <button id="btnGuardar" onclick="guardarHoras()">
-                Guardar horas
-            </button>
-
-            <button id="btnCancelar" class="secondary hidden" onclick="cancelarEdicion()">
-                Cancelar edición
-            </button>
-        </div>
-
-    </div>
-
-
-    <!-- RESUMEN -->
-    <div class="card">
-
-        <h2 class="summary-title">Resumen de horas</h2>
-
-        <div class="grid-3">
-
-            <div class="summary-card">
-                <div class="summary-label">Hoy</div>
-                <div class="summary-value" id="resumenHoy">0 h</div>
-            </div>
-
-            <div class="summary-card">
-                <div class="summary-label">Esta semana</div>
-                <div class="summary-value" id="resumenSemana">0 h</div>
-            </div>
-
-            <div class="summary-card">
-                <div class="summary-label">Este mes</div>
-                <div class="summary-value" id="resumenMes">0 h</div>
-            </div>
+          <div class="form-group full">
+            <label for="notas">Notas</label>
+            <textarea
+              id="notas"
+              placeholder="Notas adicionales..."
+            ></textarea>
+          </div>
 
         </div>
 
-    </div>
+        <div class="buttons">
+
+          <button
+            class="btn-primary"
+            id="btnGuardar"
+            onclick="guardarHoras()"
+          >
+            Guardar horas
+          </button>
+
+          <button
+            class="btn-secondary hidden"
+            id="btnCancelarEdicion"
+            onclick="cancelarEdicion()"
+          >
+            Cancelar edición
+          </button>
+
+        </div>
+
+      </section>
 
 
-    <!-- HISTORIAL -->
-    <div class="card">
+      <!-- =========================
+           HISTORIAL
+      ========================== -->
+
+      <section class="card">
 
         <h2>Historial de horas</h2>
 
+        <!--
+          IMPORTANTE:
+          Desde y Hasta son FILTROS.
+          NO son columnas de la tabla.
+        -->
+
         <div class="filters">
 
-            <input type="date" id="filtroFecha" onchange="mostrarHoras()">
+          <div class="form-group">
+            <label for="filtroDesde">Desde</label>
+            <input
+              type="date"
+              id="filtroDesde"
+              onchange="mostrarHoras()"
+            />
+          </div>
 
-            <select id="filtroProyecto" onchange="mostrarHoras()">
-                <option value="">Todos los proyectos</option>
-            </select>
+          <div class="form-group">
+            <label for="filtroHasta">Hasta</label>
+            <input
+              type="date"
+              id="filtroHasta"
+              onchange="mostrarHoras()"
+            />
+          </div>
 
-            <select id="filtroActividad" onchange="mostrarHoras()">
-                <option value="">Todas las actividades</option>
+          <div class="form-group">
+            <label for="filtroProyecto">Proyecto</label>
+            <select
+              id="filtroProyecto"
+              onchange="mostrarHoras()"
+            >
+              <option value="">Todos los proyectos</option>
             </select>
+          </div>
 
-            <select id="filtroEstado" onchange="mostrarHoras()">
-                <option value="">Todos los estados</option>
-                <option value="NO INICIADO">NO INICIADO</option>
-                <option value="EN CURSO">EN CURSO</option>
-                <option value="APLAZADO">APLAZADO</option>
-                <option value="TERMINADO">TERMINADO</option>
+          <div class="form-group">
+            <label for="filtroActividad">Actividad</label>
+            <select
+              id="filtroActividad"
+              onchange="mostrarHoras()"
+            >
+              <option value="">Todas las actividades</option>
             </select>
+          </div>
+
+          <div class="form-group">
+            <label for="filtroEstado">Estado</label>
+            <select
+              id="filtroEstado"
+              onchange="mostrarHoras()"
+            >
+              <option value="">Todos los estados</option>
+              <option value="NO INICIADO">NO INICIADO</option>
+              <option value="EN CURSO">EN CURSO</option>
+              <option value="APLAZADO">APLAZADO</option>
+              <option value="TERMINADO">TERMINADO</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+
+            <button
+              class="btn-secondary"
+              onclick="limpiarFiltros()"
+            >
+              Limpiar filtros
+            </button>
+
+          </div>
 
         </div>
 
-        <br>
 
         <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Semana</th>
-                        <th>Fecha</th>
-                        <th>Proyecto</th>
-                        <th>Actividad</th>
-                        <th>Entregable</th>
-                        <th>Inicio</th>
-                        <th>Vencimiento</th>
-                        <th>Estado</th>
-                        <th>Cumple objetivo</th>
-                        <th>Horas</th>
-                        <th>%</th>
-                        <th>Notas</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
 
-                <tbody id="tablaHoras">
-                </tbody>
-            </table>
+          <table>
+
+            <thead>
+              <tr>
+                <th>Semana</th>
+                <th>Fecha</th>
+                <th>Proyecto</th>
+                <th>Actividad</th>
+                <th>Entregable</th>
+                <th>Inicio</th>
+                <th>Vencimiento</th>
+                <th>Estado</th>
+                <th>Cumple objetivo</th>
+                <th>Horas</th>
+                <th>%</th>
+                <th>Notas</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody id="tablaHoras"></tbody>
+
+          </table>
+
         </div>
 
-    </div>
+      </section>
 
-</div>
-```
+    </main>
 
-</div>
-
-<!-- MODAL RECUPERACIÓN -->
-
-<div id="passwordModal" class="modal hidden">
-
-```
-<div class="modal-content">
-
-    <h2 id="passwordModalTitle">Recuperar contraseña</h2>
-
-    <div id="passwordMessage"></div>
-
-    <div id="recoveryForm">
-
-        <div class="form-group">
-            <label>Correo electrónico</label>
-            <input type="email" id="recoveryEmail" placeholder="correo@empresa.com">
-        </div>
-
-        <div class="actions">
-            <button onclick="enviarRecuperacion()">
-                Enviar correo
-            </button>
-
-            <button class="secondary" onclick="cerrarPasswordModal()">
-                Cancelar
-            </button>
-        </div>
-
-    </div>
+  </div>
 
 
-    <div id="newPasswordForm" class="hidden">
+  <!-- =========================
+       MODAL RECUPERAR CONTRASEÑA
+  ========================== -->
 
-        <div class="form-group">
-            <label>Nueva contraseña</label>
-            <input type="password" id="newPassword" placeholder="Nueva contraseña">
-        </div>
+  <div
+    id="recoveryModal"
+    class="modal hidden"
+  >
 
-        <div class="form-group">
-            <label>Confirmar contraseña</label>
-            <input type="password" id="newPasswordConfirm" placeholder="Repite la contraseña">
-        </div>
+    <div class="modal-content">
 
-        <button onclick="guardarNuevaPassword()">
-            Guardar nueva contraseña
+      <h2>Recuperar contraseña</h2>
+
+      <div id="recoveryMessage"></div>
+
+      <div class="form-group">
+        <label for="recoveryEmail">
+          Correo electrónico
+        </label>
+
+        <input
+          type="email"
+          id="recoveryEmail"
+          placeholder="correo@empresa.com"
+        />
+      </div>
+
+      <div class="buttons">
+
+        <button
+          class="btn-primary"
+          onclick="enviarRecuperacion()"
+        >
+          Enviar enlace
         </button>
 
+        <button
+          class="btn-secondary"
+          onclick="cerrarRecuperacion()"
+        >
+          Cancelar
+        </button>
+
+      </div>
+
     </div>
 
-</div>
-```
-
-</div>
-
-<script type="module">
-
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+  </div>
 
 
-/* ============================================================
-   SUPABASE
-   ============================================================ */
+  <!-- =========================
+       MODAL NUEVA CONTRASEÑA
+  ========================== -->
 
-const SUPABASE_URL = "https://sdgnadhsbihrayxlmcua.supabase.co";
+  <div
+    id="newPasswordModal"
+    class="modal hidden"
+  >
 
-/*
-   IMPORTANTE:
-   Aquí debe ir solamente tu PUBLISHABLE KEY.
-   Nunca coloques una sb_secret_... aquí.
-*/
-const SUPABASE_KEY = "sb_publishable_Sc-EO6L9CCMEc_YhUnr-3g_V2Drx2Dh";
+    <div class="modal-content">
 
-const supabase = createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+      <h2>Nueva contraseña</h2>
 
+      <div id="newPasswordMessage"></div>
 
-/* ============================================================
-   VARIABLES
-   ============================================================ */
+      <div class="form-group">
+        <label for="newPassword">
+          Nueva contraseña
+        </label>
 
-let usuario = null;
-let registroEditando = null;
-let registros = [];
+        <input
+          type="password"
+          id="newPassword"
+          placeholder="Nueva contraseña"
+        />
+      </div>
 
+      <div class="form-group">
+        <label for="newPasswordConfirm">
+          Confirmar contraseña
+        </label>
 
-/* ============================================================
-   ELEMENTOS
-   ============================================================ */
+        <input
+          type="password"
+          id="newPasswordConfirm"
+          placeholder="Confirmar contraseña"
+        />
+      </div>
 
-const loginScreen = document.getElementById("loginScreen");
-const appScreen = document.getElementById("appScreen");
+      <div class="buttons">
 
-const loginMessage = document.getElementById("loginMessage");
-const appMessage = document.getElementById("appMessage");
-const passwordMessage = document.getElementById("passwordMessage");
+        <button
+          class="btn-primary"
+          onclick="guardarNuevaPassword()"
+        >
+          Guardar contraseña
+        </button>
 
-const fecha = document.getElementById("fecha");
-const proyecto = document.getElementById("proyecto");
-const actividad = document.getElementById("actividad");
-const entregable = document.getElementById("entregable");
-const fechaInicio = document.getElementById("fechaInicio");
-const fechaVencimiento = document.getElementById("fechaVencimiento");
-const horas = document.getElementById("horas");
-const porcentaje = document.getElementById("porcentaje");
-const estado = document.getElementById("estado");
-const notas = document.getElementById("notas");
+      </div>
 
-const tablaHoras = document.getElementById("tablaHoras");
+    </div>
 
-const filtroFecha = document.getElementById("filtroFecha");
-const filtroProyecto = document.getElementById("filtroProyecto");
-const filtroActividad = document.getElementById("filtroActividad");
-const filtroEstado = document.getElementById("filtroEstado");
+  </div>
 
 
-/* ============================================================
-   INICIO
-   ============================================================ */
+  <script>
 
-document.addEventListener("DOMContentLoaded", async () => {
+    /* ==========================================
+       SUPABASE
+    ========================================== */
 
-    fecha.value = fechaLocal();
+    const SUPABASE_URL =
+      "https://sdgnadhsbihrayxlmcua.supabase.co";
 
-    const { data } = await supabase.auth.getSession();
+    const SUPABASE_KEY =
+      "sb_publishable_Sc-EO6L9CCMEc_YhUnr-3g_V2Drx2Dh";
 
-    if(data.session){
-        usuario = data.session.user;
-        await entrarAplicacion();
-    }
+    const APP_URL =
+      "https://ampcontratistas.github.io/control-horas/";
 
-});
-
-
-/* ============================================================
-   CAMBIO DE SESIÓN / RECUPERACIÓN
-   ============================================================ */
-
-supabase.auth.onAuthStateChange(async (event, session) => {
-
-    if(event === "PASSWORD_RECOVERY"){
-
-        document.getElementById("passwordModalTitle").textContent =
-            "Nueva contraseña";
-
-        document.getElementById("recoveryForm").classList.add("hidden");
-
-        document.getElementById("newPasswordForm").classList.remove("hidden");
-
-        document.getElementById("passwordModal").classList.remove("hidden");
-
-    }
-
-    if(event === "SIGNED_IN" && session){
-
-        usuario = session.user;
-
-        await entrarAplicacion();
-
-    }
-
-    if(event === "SIGNED_OUT"){
-
-        usuario = null;
-
-        loginScreen.classList.remove("hidden");
-        appScreen.classList.add("hidden");
-
-    }
-
-});
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
 
 
-/* ============================================================
-   LOGIN
-   ============================================================ */
+    /* ==========================================
+       VARIABLES
+    ========================================== */
 
-window.iniciarSesion = async function(){
+    let usuarioActual = null;
+    let registros = [];
+    let proyectos = [];
+    let actividades = [];
+    let entregables = [];
 
-    limpiarMensaje(loginMessage);
+    let registroEditando = null;
 
-    const email = document.getElementById("loginEmail").value.trim();
-    const password = document.getElementById("loginPassword").value;
 
-    if(!email || !password){
+    /* ==========================================
+       INICIO
+    ========================================== */
 
-        mostrarMensaje(
-            loginMessage,
-            "Escribe tu correo y contraseña.",
-            "error"
+    document.addEventListener(
+      "DOMContentLoaded",
+      async function() {
+
+        establecerFechaActual();
+
+        await verificarSesion();
+
+        supabaseClient.auth.onAuthStateChange(
+          async function(event, session) {
+
+            if (
+              event === "PASSWORD_RECOVERY"
+            ) {
+
+              document
+                .getElementById("newPasswordModal")
+                .classList.remove("hidden");
+
+            }
+
+            if (
+              session &&
+              !usuarioActual
+            ) {
+
+              usuarioActual =
+                session.user;
+
+              mostrarApp();
+
+              await cargarDatos();
+
+            }
+
+          }
         );
 
-        return;
-    }
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-    });
-
-    if(error){
-
-        mostrarMensaje(
-            loginMessage,
-            error.message,
-            "error"
-        );
-
-        return;
-    }
-
-    usuario = data.user;
-
-    await entrarAplicacion();
-
-};
-
-
-/* ============================================================
-   ENTRAR A LA APP
-   ============================================================ */
-
-async function entrarAplicacion(){
-
-    loginScreen.classList.add("hidden");
-    appScreen.classList.remove("hidden");
-
-    document.getElementById("usuarioActual").textContent =
-        usuario?.email || "";
-
-    await cargarCatalogos();
-    await cargarHoras();
-
-}
-
-
-/* ============================================================
-   LOGOUT
-   ============================================================ */
-
-window.cerrarSesion = async function(){
-
-    await supabase.auth.signOut();
-
-};
-
-
-/* ============================================================
-   FECHA LOCAL
-   ============================================================ */
-
-function fechaLocal(){
-
-    const ahora = new Date();
-
-    const year = ahora.getFullYear();
-    const month = String(ahora.getMonth()+1).padStart(2,"0");
-    const day = String(ahora.getDate()).padStart(2,"0");
-
-    return `${year}-${month}-${day}`;
-
-}
-
-
-/* ============================================================
-   SEMANA ISO
-   EJEMPLO: 26S42
-   ============================================================ */
-
-function obtenerSemanaISO(fechaTexto){
-
-    const fecha = new Date(fechaTexto + "T12:00:00");
-
-    const jueves = new Date(fecha);
-
-    jueves.setDate(
-        fecha.getDate() + (4 - (fecha.getDay() || 7))
+      }
     );
 
-    const inicio = new Date(
-        jueves.getFullYear(),
-        0,
-        1
-    );
 
-    const semana = Math.ceil(
-        (((jueves - inicio) / 86400000) + 1) / 7
-    );
+    /* ==========================================
+       FECHA ACTUAL
+    ========================================== */
 
-    const año = String(jueves.getFullYear()).slice(-2);
+    function establecerFechaActual() {
 
-    return `${año}S${String(semana).padStart(2,"0")}`;
+      const hoy =
+        obtenerFechaLocal();
 
-}
+      document.getElementById(
+        "fecha"
+      ).value = hoy;
+
+      document.getElementById(
+        "fechaInicio"
+      ).value = hoy;
+
+    }
 
 
-/* ============================================================
-   CARGAR CATÁLOGOS
-   ============================================================ */
+    function obtenerFechaLocal() {
 
-async function cargarCatalogos(){
+      const ahora =
+        new Date();
 
-    const { data: proyectos, error: errorProyectos } =
-        await supabase
-        .from("proyectos")
-        .select("*")
-        .eq("activo", true)
-        .order("nombre");
+      const año =
+        ahora.getFullYear();
 
-    if(errorProyectos){
+      const mes =
+        String(
+          ahora.getMonth() + 1
+        ).padStart(2, "0");
+
+      const dia =
+        String(
+          ahora.getDate()
+        ).padStart(2, "0");
+
+      return `${año}-${mes}-${dia}`;
+
+    }
+
+
+    /* ==========================================
+       SESIÓN
+    ========================================== */
+
+    async function verificarSesion() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient.auth.getSession();
+
+      if (error) {
+
+        console.error(error);
+
+        return;
+
+      }
+
+      if (
+        data.session
+      ) {
+
+        usuarioActual =
+          data.session.user;
+
+        mostrarApp();
+
+        await cargarDatos();
+
+      }
+
+    }
+
+
+    async function iniciarSesion() {
+
+      const email =
+        document
+          .getElementById("loginEmail")
+          .value
+          .trim();
+
+      const password =
+        document
+          .getElementById("loginPassword")
+          .value;
+
+      if (
+        !email ||
+        !password
+      ) {
 
         mostrarMensaje(
-            appMessage,
-            errorProyectos.message,
-            "error"
+          "loginMessage",
+          "Escribe tu correo y contraseña.",
+          "error"
         );
 
         return;
-    }
 
+      }
 
-    proyecto.innerHTML =
-        '<option value="">Seleccionar proyecto</option>';
-
-    filtroProyecto.innerHTML =
-        '<option value="">Todos los proyectos</option>';
-
-
-    proyectos.forEach(p => {
-
-        proyecto.innerHTML +=
-            `<option value="${escapeHTML(p.nombre)}">${escapeHTML(p.nombre)}</option>`;
-
-        filtroProyecto.innerHTML +=
-            `<option value="${escapeHTML(p.nombre)}">${escapeHTML(p.nombre)}</option>`;
-
-    });
-
-
-    const { data: actividades, error: errorActividades } =
-        await supabase
-        .from("actividades")
-        .select("*")
-        .eq("activo", true)
-        .order("nombre");
-
-    if(errorActividades){
-
-        mostrarMensaje(
-            appMessage,
-            errorActividades.message,
-            "error"
-        );
-
-        return;
-    }
-
-
-    actividad.innerHTML =
-        '<option value="">Seleccionar actividad</option>';
-
-    filtroActividad.innerHTML =
-        '<option value="">Todas las actividades</option>';
-
-
-    actividades.forEach(a => {
-
-        actividad.innerHTML +=
-            `<option value="${escapeHTML(a.nombre)}">${escapeHTML(a.nombre)}</option>`;
-
-        filtroActividad.innerHTML +=
-            `<option value="${escapeHTML(a.nombre)}">${escapeHTML(a.nombre)}</option>`;
-
-    });
-
-}
-
-
-/* ============================================================
-   CARGAR ENTREGABLES SEGÚN PROYECTO
-   ============================================================ */
-
-window.cargarEntregables = async function(){
-
-    const proyectoNombre = proyecto.value;
-
-    entregable.innerHTML =
-        '<option value="">Sin entregable</option>';
-
-    if(!proyectoNombre){
-        return;
-    }
-
-    const { data: proyectoData, error } =
-        await supabase
-        .from("proyectos")
-        .select("id")
-        .eq("nombre", proyectoNombre)
-        .maybeSingle();
-
-    if(error || !proyectoData){
-        return;
-    }
-
-
-    const { data: entregables } =
-        await supabase
-        .from("entregables")
-        .select("*")
-        .eq("proyecto_id", proyectoData.id)
-        .eq("activo", true)
-        .order("nombre");
-
-
-    if(entregables){
-
-        entregables.forEach(e => {
-
-            entregable.innerHTML +=
-                `<option value="${escapeHTML(e.nombre)}">${escapeHTML(e.nombre)}</option>`;
-
+      const {
+        data,
+        error
+      } =
+        await supabaseClient.auth.signInWithPassword({
+          email,
+          password
         });
 
-    }
+      if (error) {
 
-};
+        mostrarMensaje(
+          "loginMessage",
+          error.message,
+          "error"
+        );
 
-
-/* ============================================================
-   GUARDAR HORAS
-   ============================================================ */
-
-window.guardarHoras = async function(){
-
-    limpiarMensaje(appMessage);
-
-    if(!usuario){
         return;
+
+      }
+
+      usuarioActual =
+        data.user;
+
+      mostrarApp();
+
+      await cargarDatos();
+
     }
 
-    const fechaValor = fecha.value;
-    const proyectoValor = proyecto.value;
-    const actividadValor = actividad.value;
-    const entregableValor = entregable.value || "Sin entregable";
-    const fechaInicioValor = fechaInicio.value || null;
-    const fechaVencimientoValor = fechaVencimiento.value || null;
-    const horasValor = Number(horas.value);
-    const porcentajeValor = Number(porcentaje.value || 0);
-    const estadoValor = estado.value;
-    const notasValor = notas.value.trim();
 
-    if(!fechaValor){
-        mostrarMensaje(appMessage,"Selecciona una fecha.","error");
+    async function cerrarSesion() {
+
+      await supabaseClient.auth.signOut();
+
+      usuarioActual = null;
+
+      document
+        .getElementById("appScreen")
+        .classList.add("hidden");
+
+      document
+        .getElementById("loginScreen")
+        .classList.remove("hidden");
+
+    }
+
+
+    function mostrarApp() {
+
+      document
+        .getElementById("loginScreen")
+        .classList.add("hidden");
+
+      document
+        .getElementById("appScreen")
+        .classList.remove("hidden");
+
+      document
+        .getElementById("usuarioEmail")
+        .textContent =
+          usuarioActual?.email || "";
+
+    }
+
+
+    /* ==========================================
+       CARGAR DATOS
+    ========================================== */
+
+    async function cargarDatos() {
+
+      await Promise.all([
+        cargarProyectos(),
+        cargarActividades(),
+        cargarEntregables(),
+        cargarHoras()
+      ]);
+
+      actualizarFiltros();
+
+      actualizarResumen();
+
+      mostrarHoras();
+
+    }
+
+
+    async function cargarProyectos() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("proyectos")
+          .select("*")
+          .eq("activo", true)
+          .order("nombre");
+
+      if (error) {
+
+        console.error(
+          "Error proyectos:",
+          error
+        );
+
         return;
+
+      }
+
+      proyectos =
+        data || [];
+
+      const select =
+        document.getElementById(
+          "proyecto"
+        );
+
+      select.innerHTML =
+        `<option value="">
+          Seleccionar proyecto
+        </option>`;
+
+      proyectos.forEach(
+        function(proyecto) {
+
+          const option =
+            document.createElement(
+              "option"
+            );
+
+          option.value =
+            proyecto.nombre;
+
+          option.textContent =
+            proyecto.nombre;
+
+          select.appendChild(
+            option
+          );
+
+        }
+      );
+
     }
 
-    if(!proyectoValor){
-        mostrarMensaje(appMessage,"Selecciona un proyecto.","error");
+
+    async function cargarActividades() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("actividades")
+          .select("*")
+          .eq("activo", true)
+          .order("nombre");
+
+      if (error) {
+
+        console.error(
+          "Error actividades:",
+          error
+        );
+
         return;
+
+      }
+
+      actividades =
+        data || [];
+
+      const select =
+        document.getElementById(
+          "actividad"
+        );
+
+      select.innerHTML =
+        `<option value="">
+          Seleccionar actividad
+        </option>`;
+
+      actividades.forEach(
+        function(actividad) {
+
+          const option =
+            document.createElement(
+              "option"
+            );
+
+          option.value =
+            actividad.nombre;
+
+          option.textContent =
+            actividad.nombre;
+
+          select.appendChild(
+            option
+          );
+
+        }
+      );
+
     }
 
-    if(!actividadValor){
-        mostrarMensaje(appMessage,"Selecciona una actividad.","error");
+
+    async function cargarEntregables() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("entregables")
+          .select(`
+            id,
+            nombre,
+            activo,
+            proyecto_id,
+            proyectos (
+              nombre
+            )
+          `)
+          .eq("activo", true)
+          .order("nombre");
+
+      if (error) {
+
+        console.error(
+          "Error entregables:",
+          error
+        );
+
         return;
+
+      }
+
+      entregables =
+        data || [];
+
     }
 
-    if(!horas.value || horasValor <= 0){
-        mostrarMensaje(appMessage,"Escribe una cantidad de horas válida.","error");
+
+    async function cargarHoras() {
+
+      if (!usuarioActual) {
         return;
-    }
+      }
 
-    if(porcentajeValor < 0 || porcentajeValor > 100){
-        mostrarMensaje(appMessage,"% completado debe estar entre 0 y 100.","error");
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("horas")
+          .select("*")
+          .eq(
+            "usuario_id",
+            usuarioActual.id
+          )
+          .order(
+            "fecha",
+            {
+              ascending: false
+            }
+          )
+          .order(
+            "created_at",
+            {
+              ascending: false
+            }
+          );
+
+      if (error) {
+
+        console.error(
+          "Error cargando horas:",
+          error
+        );
+
+        mostrarMensaje(
+          "formMessage",
+          "No se pudieron cargar las horas: " +
+            error.message,
+          "error"
+        );
+
         return;
-    }
 
+      }
 
-    const semana = obtenerSemanaISO(fechaValor);
-
-    let cumpleObjetivo = "PENDIENTE";
-
-    if(porcentajeValor >= 100){
-
-        cumpleObjetivo = "CUMPLE";
-
-    }else if(
-        fechaVencimientoValor &&
-        fechaVencimientoValor < fechaLocal()
-    ){
-
-        cumpleObjetivo = "NO CUMPLE";
+      registros =
+        data || [];
 
     }
 
 
-    const registro = {
+    /* ==========================================
+       ENTREGABLES SEGÚN PROYECTO
+    ========================================== */
 
-        usuario_id: usuario.id,
-        fecha: fechaValor,
-        proyecto: proyectoValor,
-        actividad: actividadValor,
-        entregable: entregableValor,
-        horas: horasValor,
-        notas: notasValor,
-        fecha_inicio: fechaInicioValor,
-        fecha_vencimiento: fechaVencimientoValor,
-        porcentaje_completado: porcentajeValor,
-        estado: estadoValor,
-        cumple_objetivo: cumpleObjetivo,
+    document
+      .getElementById("proyecto")
+      .addEventListener(
+        "change",
+        function() {
 
-        // IMPORTANTE:
-        // Se guarda "26S42", no solamente 42.
-        semana: semana
+          actualizarEntregables(
+            this.value
+          );
 
-    };
+        }
+      );
 
 
-    let result;
+    function actualizarEntregables(
+      proyectoNombre
+    ) {
 
-    if(registroEditando){
+      const select =
+        document.getElementById(
+          "entregable"
+        );
 
-        result = await supabase
+      select.innerHTML =
+        `<option value="">
+          Sin entregable
+        </option>`;
+
+      if (!proyectoNombre) {
+        return;
+      }
+
+      entregables
+        .filter(
+          function(entregable) {
+
+            return (
+              entregable.proyectos &&
+              entregable.proyectos.nombre ===
+                proyectoNombre
+            );
+
+          }
+        )
+        .forEach(
+          function(entregable) {
+
+            const option =
+              document.createElement(
+                "option"
+              );
+
+            option.value =
+              entregable.nombre;
+
+            option.textContent =
+              entregable.nombre;
+
+            select.appendChild(
+              option
+            );
+
+          }
+        );
+
+    }
+
+
+    /* ==========================================
+       FILTROS
+    ========================================== */
+
+    function actualizarFiltros() {
+
+      const filtroProyecto =
+        document.getElementById(
+          "filtroProyecto"
+        );
+
+      const filtroActividad =
+        document.getElementById(
+          "filtroActividad"
+        );
+
+
+      filtroProyecto.innerHTML =
+        `<option value="">
+          Todos los proyectos
+        </option>`;
+
+      proyectos.forEach(
+        function(proyecto) {
+
+          const option =
+            document.createElement(
+              "option"
+            );
+
+          option.value =
+            proyecto.nombre;
+
+          option.textContent =
+            proyecto.nombre;
+
+          filtroProyecto.appendChild(
+            option
+          );
+
+        }
+      );
+
+
+      filtroActividad.innerHTML =
+        `<option value="">
+          Todas las actividades
+        </option>`;
+
+      actividades.forEach(
+        function(actividad) {
+
+          const option =
+            document.createElement(
+              "option"
+            );
+
+          option.value =
+            actividad.nombre;
+
+          option.textContent =
+            actividad.nombre;
+
+          filtroActividad.appendChild(
+            option
+          );
+
+        }
+      );
+
+    }
+
+
+    function limpiarFiltros() {
+
+      document.getElementById(
+        "filtroDesde"
+      ).value = "";
+
+      document.getElementById(
+        "filtroHasta"
+      ).value = "";
+
+      document.getElementById(
+        "filtroProyecto"
+      ).value = "";
+
+      document.getElementById(
+        "filtroActividad"
+      ).value = "";
+
+      document.getElementById(
+        "filtroEstado"
+      ).value = "";
+
+      mostrarHoras();
+
+    }
+
+
+    /* ==========================================
+       MOSTRAR HISTORIAL
+    ========================================== */
+
+    function mostrarHoras() {
+
+      const tbody =
+        document.getElementById(
+          "tablaHoras"
+        );
+
+      const desde =
+        document.getElementById(
+          "filtroDesde"
+        ).value;
+
+      const hasta =
+        document.getElementById(
+          "filtroHasta"
+        ).value;
+
+      const proyecto =
+        document.getElementById(
+          "filtroProyecto"
+        ).value;
+
+      const actividad =
+        document.getElementById(
+          "filtroActividad"
+        ).value;
+
+      const estado =
+        document.getElementById(
+          "filtroEstado"
+        ).value;
+
+
+      /*
+        FILTRO DESDE / HASTA
+
+        Desde:
+        fecha >= desde
+
+        Hasta:
+        fecha <= hasta
+      */
+
+      let filtrados =
+        registros.filter(
+          function(r) {
+
+            if (
+              desde &&
+              r.fecha < desde
+            ) {
+              return false;
+            }
+
+            if (
+              hasta &&
+              r.fecha > hasta
+            ) {
+              return false;
+            }
+
+            if (
+              proyecto &&
+              r.proyecto !== proyecto
+            ) {
+              return false;
+            }
+
+            if (
+              actividad &&
+              r.actividad !== actividad
+            ) {
+              return false;
+            }
+
+            if (
+              estado &&
+              r.estado !== estado
+            ) {
+              return false;
+            }
+
+            return true;
+
+          }
+        );
+
+
+      if (
+        desde &&
+        hasta &&
+        desde > hasta
+      ) {
+
+        tbody.innerHTML =
+          `<tr>
+            <td colspan="13" class="empty">
+              La fecha "Desde" no puede ser posterior
+              a la fecha "Hasta".
+            </td>
+          </tr>`;
+
+        return;
+
+      }
+
+
+      if (
+        filtrados.length === 0
+      ) {
+
+        tbody.innerHTML =
+          `<tr>
+            <td colspan="13" class="empty">
+              No hay registros que coincidan
+              con los filtros seleccionados.
+            </td>
+          </tr>`;
+
+        return;
+
+      }
+
+
+      tbody.innerHTML = "";
+
+
+      filtrados.forEach(
+        function(r) {
+
+          const tr =
+            document.createElement(
+              "tr"
+            );
+
+          tr.innerHTML = `
+
+            <td>
+              ${escapeHtml(
+                r.semana || ""
+              )}
+            </td>
+
+            <td>
+              ${formatearFecha(
+                r.fecha
+              )}
+            </td>
+
+            <td>
+              ${escapeHtml(
+                r.proyecto || ""
+              )}
+            </td>
+
+            <td>
+              ${escapeHtml(
+                r.actividad || ""
+              )}
+            </td>
+
+            <td>
+              ${escapeHtml(
+                r.entregable ||
+                "Sin entregable"
+              )}
+            </td>
+
+            <td>
+              ${formatearFecha(
+                r.fecha_inicio
+              )}
+            </td>
+
+            <td>
+              ${formatearFecha(
+                r.fecha_vencimiento
+              )}
+            </td>
+
+            <td>
+              <span class="status ${claseEstado(
+                r.estado
+              )}">
+                ${escapeHtml(
+                  r.estado || ""
+                )}
+              </span>
+            </td>
+
+            <td>
+              <span class="${claseCumplimiento(
+                r.cumple_objetivo
+              )}">
+                ${escapeHtml(
+                  r.cumple_objetivo || ""
+                )}
+              </span>
+            </td>
+
+            <td>
+              ${Number(
+                r.horas || 0
+              ).toFixed(2)}
+            </td>
+
+            <td>
+              ${Number(
+                r.porcentaje_completado || 0
+              )}%
+            </td>
+
+            <td>
+              ${escapeHtml(
+                r.notas || ""
+              )}
+            </td>
+
+            <td>
+
+              <div class="actions">
+
+                <button
+                  class="btn-warning btn-small"
+                  onclick="editarRegistro(${r.id})"
+                >
+                  Editar
+                </button>
+
+                <button
+                  class="btn-danger btn-small"
+                  onclick="eliminarRegistro(${r.id})"
+                >
+                  Eliminar
+                </button>
+
+              </div>
+
+            </td>
+
+          `;
+
+          tbody.appendChild(
+            tr
+          );
+
+        }
+      );
+
+    }
+
+
+    /* ==========================================
+       GUARDAR HORAS
+    ========================================== */
+
+    async function guardarHoras() {
+
+      if (!usuarioActual) {
+        return;
+      }
+
+      const fecha =
+        document.getElementById(
+          "fecha"
+        ).value;
+
+      const proyecto =
+        document.getElementById(
+          "proyecto"
+        ).value;
+
+      const actividad =
+        document.getElementById(
+          "actividad"
+        ).value;
+
+      const entregable =
+        document.getElementById(
+          "entregable"
+        ).value;
+
+      const fechaInicio =
+        document.getElementById(
+          "fechaInicio"
+        ).value;
+
+      const fechaVencimiento =
+        document.getElementById(
+          "fechaVencimiento"
+        ).value;
+
+      const horas =
+        Number(
+          document.getElementById(
+            "horas"
+          ).value
+        );
+
+      const porcentaje =
+        Number(
+          document.getElementById(
+            "porcentaje"
+          ).value
+        );
+
+      const estado =
+        document.getElementById(
+          "estado"
+        ).value;
+
+      const notas =
+        document.getElementById(
+          "notas"
+        ).value.trim();
+
+
+      if (!fecha) {
+
+        mostrarMensaje(
+          "formMessage",
+          "Selecciona la fecha.",
+          "error"
+        );
+
+        return;
+
+      }
+
+      if (!proyecto) {
+
+        mostrarMensaje(
+          "formMessage",
+          "Selecciona un proyecto.",
+          "error"
+        );
+
+        return;
+
+      }
+
+      if (!actividad) {
+
+        mostrarMensaje(
+          "formMessage",
+          "Selecciona una actividad.",
+          "error"
+        );
+
+        return;
+
+      }
+
+      if (
+        !horas ||
+        horas <= 0
+      ) {
+
+        mostrarMensaje(
+          "formMessage",
+          "Escribe una cantidad de horas válida.",
+          "error"
+        );
+
+        return;
+
+      }
+
+      if (
+        porcentaje < 0 ||
+        porcentaje > 100
+      ) {
+
+        mostrarMensaje(
+          "formMessage",
+          "El porcentaje debe estar entre 0 y 100.",
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      const semana =
+        obtenerSemanaISO(
+          fecha
+        );
+
+
+      const cumpleObjetivo =
+        calcularCumplimiento(
+          fechaVencimiento,
+          porcentaje
+        );
+
+
+      const registro = {
+
+        usuario_id:
+          usuarioActual.id,
+
+        fecha:
+          fecha,
+
+        proyecto:
+          proyecto,
+
+        actividad:
+          actividad,
+
+        entregable:
+          entregable || null,
+
+        horas:
+          horas,
+
+        notas:
+          notas || null,
+
+        fecha_inicio:
+          fechaInicio || null,
+
+        fecha_vencimiento:
+          fechaVencimiento || null,
+
+        porcentaje_completado:
+          porcentaje,
+
+        estado:
+          estado,
+
+        cumple_objetivo:
+          cumpleObjetivo,
+
+        /*
+          IMPORTANTE:
+          Se guarda la semana completa:
+          26S42
+          y NO solamente 42.
+        */
+        semana:
+          semana
+
+      };
+
+
+      const btn =
+        document.getElementById(
+          "btnGuardar"
+        );
+
+      btn.disabled = true;
+
+
+      let resultado;
+
+
+      if (registroEditando) {
+
+        resultado =
+          await supabaseClient
             .from("horas")
             .update(registro)
-            .eq("id", registroEditando)
-            .eq("usuario_id", usuario.id);
+            .eq(
+              "id",
+              registroEditando
+            )
+            .eq(
+              "usuario_id",
+              usuarioActual.id
+            );
 
-    }else{
+      } else {
 
-        result = await supabase
+        resultado =
+          await supabaseClient
             .from("horas")
-            .insert([registro]);
+            .insert(
+              registro
+            );
 
-    }
+      }
 
 
-    if(result.error){
+      btn.disabled = false;
+
+
+      if (resultado.error) {
+
+        console.error(
+          resultado.error
+        );
 
         mostrarMensaje(
-            appMessage,
-            result.error.message,
-            "error"
+          "formMessage",
+          "Error al guardar: " +
+            resultado.error.message,
+          "error"
         );
 
         return;
-    }
+
+      }
 
 
-    mostrarMensaje(
-        appMessage,
+      mostrarMensaje(
+        "formMessage",
         registroEditando
-            ? "Registro actualizado correctamente."
-            : "Horas guardadas correctamente.",
+          ? "Registro actualizado correctamente."
+          : "Horas guardadas correctamente.",
         "success"
-    );
+      );
 
 
-    cancelarEdicion();
-
-    await cargarHoras();
-
-};
+      limpiarFormulario();
 
 
-/* ============================================================
-   CARGAR HORAS
-   ============================================================ */
+      await cargarHoras();
 
-async function cargarHoras(){
+      actualizarResumen();
 
-    if(!usuario){
+      mostrarHoras();
+
+    }
+
+
+    /* ==========================================
+       EDITAR
+    ========================================== */
+
+    function editarRegistro(
+      id
+    ) {
+
+      const registro =
+        registros.find(
+          function(r) {
+            return r.id === id;
+          }
+        );
+
+      if (!registro) {
         return;
-    }
+      }
 
-    const { data, error } =
-        await supabase
-        .from("horas")
-        .select("*")
-        .eq("usuario_id", usuario.id)
-        .order("fecha", {ascending:false})
-        .order("created_at", {ascending:false});
 
+      registroEditando =
+        id;
 
-    if(error){
 
-        mostrarMensaje(
-            appMessage,
-            error.message,
-            "error"
-        );
-
-        return;
-    }
-
-    registros = data || [];
-
-    actualizarResumen();
-
-    mostrarHoras();
-
-}
-
-
-/* ============================================================
-   RESUMEN DE HORAS
-   NO DEPENDE DE LOS FILTROS
-   ============================================================ */
-
-function actualizarResumen(){
-
-    const hoy = fechaLocal();
-
-    const fechaHoy = new Date(hoy + "T12:00:00");
-
-    const diaSemana = fechaHoy.getDay() || 7;
-
-    const lunes = new Date(fechaHoy);
-
-    lunes.setDate(
-        fechaHoy.getDate() - diaSemana + 1
-    );
-
-    const domingo = new Date(lunes);
-
-    domingo.setDate(
-        lunes.getDate() + 6
-    );
-
-
-    const inicioSemana = convertirFecha(
-        lunes
-    );
-
-    const finSemana = convertirFecha(
-        domingo
-    );
-
-
-    const año = fechaHoy.getFullYear();
-    const mes = fechaHoy.getMonth();
-
-
-    let horasHoy = 0;
-    let horasSemana = 0;
-    let horasMes = 0;
-
-
-    registros.forEach(r => {
-
-        const cantidad = Number(r.horas) || 0;
-
-        if(r.fecha === hoy){
-
-            horasHoy += cantidad;
-
-        }
-
-        if(
-            r.fecha >= inicioSemana &&
-            r.fecha <= finSemana
-        ){
-
-            horasSemana += cantidad;
-
-        }
-
-        const fechaRegistro =
-            new Date(r.fecha + "T12:00:00");
-
-        if(
-            fechaRegistro.getFullYear() === año &&
-            fechaRegistro.getMonth() === mes
-        ){
-
-            horasMes += cantidad;
-
-        }
-
-    });
-
-
-    document.getElementById("resumenHoy").textContent =
-        formatearHoras(horasHoy);
-
-    document.getElementById("resumenSemana").textContent =
-        formatearHoras(horasSemana);
-
-    document.getElementById("resumenMes").textContent =
-        formatearHoras(horasMes);
-
-}
-
-
-/* ============================================================
-   MOSTRAR HISTORIAL
-   ============================================================ */
-
-window.mostrarHoras = function(){
-
-    let lista = [...registros];
-
-
-    if(filtroFecha.value){
-
-        lista = lista.filter(
-            r => r.fecha === filtroFecha.value
-        );
-
-    }
-
-
-    if(filtroProyecto.value){
-
-        lista = lista.filter(
-            r => r.proyecto === filtroProyecto.value
-        );
-
-    }
-
-
-    if(filtroActividad.value){
-
-        lista = lista.filter(
-            r => r.actividad === filtroActividad.value
-        );
-
-    }
-
-
-    if(filtroEstado.value){
-
-        lista = lista.filter(
-            r => r.estado === filtroEstado.value
-        );
-
-    }
-
-
-    tablaHoras.innerHTML = "";
-
-
-    if(lista.length === 0){
-
-        tablaHoras.innerHTML = `
-            <tr>
-                <td colspan="13" style="text-align:center;">
-                    No hay registros.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-
-    lista.forEach(r => {
-
-        const porcentajeValor =
-            Number(r.porcentaje_completado || 0);
-
-        const cumple =
-            calcularCumplimiento(r);
-
-
-        const tr = document.createElement("tr");
-
-
-        tr.innerHTML = `
-
-            <td>
-                ${escapeHTML(
-                    r.semana || obtenerSemanaISO(r.fecha)
-                )}
-            </td>
-
-            <td>${formatearFecha(r.fecha)}</td>
-
-            <td>${escapeHTML(r.proyecto || "")}</td>
-
-            <td>${escapeHTML(r.actividad || "")}</td>
-
-            <td>${escapeHTML(r.entregable || "Sin entregable")}</td>
-
-            <td>${formatearFecha(r.fecha_inicio)}</td>
-
-            <td>${formatearFecha(r.fecha_vencimiento)}</td>
-
-            <td>
-                ${badgeEstado(r.estado)}
-            </td>
-
-            <td>
-                ${badgeCumplimiento(cumple)}
-            </td>
-
-            <td>${formatearHoras(Number(r.horas || 0))}</td>
-
-            <td>${porcentajeValor}%</td>
-
-            <td>${escapeHTML(r.notas || "")}</td>
-
-            <td>
-
-                <div style="display:flex;gap:5px;">
-
-                    <button
-                        class="small"
-                        onclick="editarRegistro(${r.id})">
-                        Editar
-                    </button>
-
-                    <button
-                        class="small danger"
-                        onclick="eliminarRegistro(${r.id})">
-                        Eliminar
-                    </button>
-
-                </div>
-
-            </td>
-
-        `;
-
-
-        tablaHoras.appendChild(tr);
-
-    });
-
-};
-
-
-/* ============================================================
-   CUMPLIMIENTO
-   ============================================================ */
-
-function calcularCumplimiento(r){
-
-    const p = Number(r.porcentaje_completado || 0);
-
-    if(p >= 100){
-        return "CUMPLE";
-    }
-
-    if(
-        r.fecha_vencimiento &&
-        r.fecha_vencimiento < fechaLocal()
-    ){
-
-        return "NO CUMPLE";
-
-    }
-
-    return "PENDIENTE";
-
-}
-
-
-/* ============================================================
-   EDITAR
-   ============================================================ */
-
-window.editarRegistro = async function(id){
-
-    const r = registros.find(
-        registro => Number(registro.id) === Number(id)
-    );
-
-    if(!r){
-        return;
-    }
-
-    registroEditando = r.id;
-
-    fecha.value = r.fecha || "";
-    proyecto.value = r.proyecto || "";
-
-    await cargarEntregables();
-
-    actividad.value = r.actividad || "";
-    entregable.value =
-        r.entregable === "Sin entregable"
-            ? ""
-            : (r.entregable || "");
-
-    fechaInicio.value = r.fecha_inicio || "";
-    fechaVencimiento.value = r.fecha_vencimiento || "";
-    horas.value = r.horas ?? "";
-    porcentaje.value = r.porcentaje_completado ?? 0;
-    estado.value = r.estado || "NO INICIADO";
-    notas.value = r.notas || "";
-
-
-    document.getElementById("formTitle").textContent =
+      document.getElementById(
+        "formTitle"
+      ).textContent =
         "Editar registro";
 
-    document.getElementById("btnGuardar").textContent =
-        "Actualizar horas";
 
-    document.getElementById("btnCancelar")
-        .classList.remove("hidden");
-
-
-    window.scrollTo({
-        top:0,
-        behavior:"smooth"
-    });
-
-};
+      document.getElementById(
+        "fecha"
+      ).value =
+        registro.fecha || "";
 
 
-/* ============================================================
-   CANCELAR EDICIÓN
-   ============================================================ */
+      document.getElementById(
+        "proyecto"
+      ).value =
+        registro.proyecto || "";
 
-window.cancelarEdicion = function(){
 
-    registroEditando = null;
+      actualizarEntregables(
+        registro.proyecto || ""
+      );
 
-    document.getElementById("formTitle").textContent =
+
+      document.getElementById(
+        "actividad"
+      ).value =
+        registro.actividad || "";
+
+
+      document.getElementById(
+        "entregable"
+      ).value =
+        registro.entregable || "";
+
+
+      document.getElementById(
+        "fechaInicio"
+      ).value =
+        registro.fecha_inicio || "";
+
+
+      document.getElementById(
+        "fechaVencimiento"
+      ).value =
+        registro.fecha_vencimiento || "";
+
+
+      document.getElementById(
+        "horas"
+      ).value =
+        registro.horas || "";
+
+
+      document.getElementById(
+        "porcentaje"
+      ).value =
+        registro.porcentaje_completado || 0;
+
+
+      document.getElementById(
+        "estado"
+      ).value =
+        registro.estado ||
+        "NO INICIADO";
+
+
+      document.getElementById(
+        "notas"
+      ).value =
+        registro.notas || "";
+
+
+      document.getElementById(
+        "btnGuardar"
+      ).textContent =
+        "Actualizar registro";
+
+
+      document.getElementById(
+        "btnCancelarEdicion"
+      ).classList.remove(
+        "hidden"
+      );
+
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+    }
+
+
+    /* ==========================================
+       CANCELAR EDICIÓN
+    ========================================== */
+
+    function cancelarEdicion() {
+
+      registroEditando =
+        null;
+
+      document.getElementById(
+        "formTitle"
+      ).textContent =
         "Registrar horas";
 
-    document.getElementById("btnGuardar").textContent =
+      document.getElementById(
+        "btnGuardar"
+      ).textContent =
         "Guardar horas";
 
-    document.getElementById("btnCancelar")
-        .classList.add("hidden");
+      document.getElementById(
+        "btnCancelarEdicion"
+      ).classList.add(
+        "hidden"
+      );
 
+      limpiarFormulario();
 
-    limpiarFormulario();
-
-};
-
-
-/* ============================================================
-   ELIMINAR
-   ============================================================ */
-
-window.eliminarRegistro = async function(id){
-
-    if(!confirm("¿Seguro que quieres eliminar este registro?")){
-        return;
     }
 
 
-    const { error } =
-        await supabase
-        .from("horas")
-        .delete()
-        .eq("id", id)
-        .eq("usuario_id", usuario.id);
+    /* ==========================================
+       ELIMINAR
+    ========================================== */
+
+    async function eliminarRegistro(
+      id
+    ) {
+
+      const confirmar =
+        confirm(
+          "¿Seguro que quieres eliminar este registro?"
+        );
+
+      if (!confirmar) {
+        return;
+      }
 
 
-    if(error){
+      const {
+        error
+      } =
+        await supabaseClient
+          .from("horas")
+          .delete()
+          .eq(
+            "id",
+            id
+          )
+          .eq(
+            "usuario_id",
+            usuarioActual.id
+          );
+
+
+      if (error) {
+
+        console.error(error);
 
         mostrarMensaje(
-            appMessage,
+          "formMessage",
+          "No se pudo eliminar: " +
             error.message,
-            "error"
+          "error"
         );
 
         return;
-    }
+
+      }
 
 
-    mostrarMensaje(
-        appMessage,
+      await cargarHoras();
+
+      actualizarResumen();
+
+      mostrarHoras();
+
+      mostrarMensaje(
+        "formMessage",
         "Registro eliminado.",
         "success"
-    );
+      );
 
-
-    await cargarHoras();
-
-};
-
-
-/* ============================================================
-   LIMPIAR FORMULARIO
-   ============================================================ */
-
-function limpiarFormulario(){
-
-    fecha.value = fechaLocal();
-
-    proyecto.value = "";
-
-    actividad.value = "";
-
-    entregable.innerHTML =
-        '<option value="">Sin entregable</option>';
-
-    fechaInicio.value = "";
-    fechaVencimiento.value = "";
-    horas.value = "";
-    porcentaje.value = 0;
-    estado.value = "NO INICIADO";
-    notas.value = "";
-
-}
-
-
-/* ============================================================
-   RECUPERACIÓN DE CONTRASEÑA
-   ============================================================ */
-
-window.abrirRecuperacion = function(){
-
-    document.getElementById("passwordModalTitle").textContent =
-        "Recuperar contraseña";
-
-    document.getElementById("recoveryForm")
-        .classList.remove("hidden");
-
-    document.getElementById("newPasswordForm")
-        .classList.add("hidden");
-
-    document.getElementById("passwordModal")
-        .classList.remove("hidden");
-
-    passwordMessage.innerHTML = "";
-
-    const email =
-        document.getElementById("loginEmail").value.trim();
-
-    document.getElementById("recoveryEmail").value =
-        email;
-
-};
-
-
-window.cerrarPasswordModal = function(){
-
-    document.getElementById("passwordModal")
-        .classList.add("hidden");
-
-    passwordMessage.innerHTML = "";
-
-};
-
-
-/* ============================================================
-   ENVIAR RECUPERACIÓN
-   ============================================================ */
-
-window.enviarRecuperacion = async function(){
-
-    limpiarMensaje(passwordMessage);
-
-    const email =
-        document.getElementById("recoveryEmail").value.trim();
-
-    if(!email){
-
-        mostrarMensaje(
-            passwordMessage,
-            "Escribe tu correo electrónico.",
-            "error"
-        );
-
-        return;
     }
 
 
-    const redirectTo =
-        window.location.origin +
-        window.location.pathname;
+    /* ==========================================
+       LIMPIAR FORMULARIO
+    ========================================== */
+
+    function limpiarFormulario() {
+
+      registroEditando =
+        null;
+
+      document.getElementById(
+        "formTitle"
+      ).textContent =
+        "Registrar horas";
+
+      document.getElementById(
+        "fecha"
+      ).value =
+        obtenerFechaLocal();
+
+      document.getElementById(
+        "proyecto"
+      ).value =
+        "";
+
+      document.getElementById(
+        "actividad"
+      ).value =
+        "";
+
+      document.getElementById(
+        "entregable"
+      ).innerHTML =
+        `<option value="">
+          Sin entregable
+        </option>`;
+
+      document.getElementById(
+        "fechaInicio"
+      ).value =
+        obtenerFechaLocal();
+
+      document.getElementById(
+        "fechaVencimiento"
+      ).value =
+        "";
+
+      document.getElementById(
+        "horas"
+      ).value =
+        "";
+
+      document.getElementById(
+        "porcentaje"
+      ).value =
+        "0";
+
+      document.getElementById(
+        "estado"
+      ).value =
+        "NO INICIADO";
+
+      document.getElementById(
+        "notas"
+      ).value =
+        "";
+
+      document.getElementById(
+        "btnGuardar"
+      ).textContent =
+        "Guardar horas";
+
+      document.getElementById(
+        "btnCancelarEdicion"
+      ).classList.add(
+        "hidden"
+      );
+
+    }
 
 
-    const { error } =
-        await supabase.auth.resetPasswordForEmail(
+    /* ==========================================
+       RESUMEN
+    ========================================== */
+
+    function actualizarResumen() {
+
+      /*
+        IMPORTANTE:
+
+        El resumen NO utiliza los filtros
+        Desde / Hasta.
+
+        Siempre calcula:
+        - Hoy
+        - Semana actual
+        - Mes actual
+      */
+
+
+      const hoy =
+        obtenerFechaLocal();
+
+
+      const inicioSemana =
+        obtenerInicioSemana(
+          hoy
+        );
+
+
+      const inicioMes =
+        hoy.substring(
+          0,
+          8
+        ) + "01";
+
+
+      let horasHoy = 0;
+      let horasSemana = 0;
+      let horasMes = 0;
+
+
+      registros.forEach(
+        function(r) {
+
+          const horas =
+            Number(
+              r.horas || 0
+            );
+
+
+          if (
+            r.fecha === hoy
+          ) {
+
+            horasHoy +=
+              horas;
+
+          }
+
+
+          if (
+            r.fecha >=
+              inicioSemana &&
+            r.fecha <=
+              hoy
+          ) {
+
+            horasSemana +=
+              horas;
+
+          }
+
+
+          if (
+            r.fecha >=
+              inicioMes &&
+            r.fecha <=
+              hoy
+          ) {
+
+            horasMes +=
+              horas;
+
+          }
+
+        }
+      );
+
+
+      document.getElementById(
+        "horasHoy"
+      ).textContent =
+        formatearHoras(
+          horasHoy
+        );
+
+
+      document.getElementById(
+        "horasSemana"
+      ).textContent =
+        formatearHoras(
+          horasSemana
+        );
+
+
+      document.getElementById(
+        "horasMes"
+      ).textContent =
+        formatearHoras(
+          horasMes
+        );
+
+    }
+
+
+    /* ==========================================
+       SEMANA ISO
+    ========================================== */
+
+    function obtenerSemanaISO(
+      fechaString
+    ) {
+
+      const fecha =
+        new Date(
+          fechaString + "T00:00:00"
+        );
+
+
+      const dia =
+        fecha.getDay() || 7;
+
+
+      fecha.setDate(
+        fecha.getDate() +
+          4 -
+          dia
+      );
+
+
+      const año =
+        fecha.getFullYear();
+
+
+      const inicioAño =
+        new Date(
+          año,
+          0,
+          1
+        );
+
+
+      const numeroSemana =
+        Math.ceil(
+          (
+            (
+              (
+                fecha -
+                inicioAño
+              ) /
+              86400000
+            ) +
+            1
+          ) / 7
+        );
+
+
+      return (
+        String(año).slice(-2) +
+        "S" +
+        String(
+          numeroSemana
+        ).padStart(
+          2,
+          "0"
+        )
+      );
+
+    }
+
+
+    function obtenerInicioSemana(
+      fechaString
+    ) {
+
+      const fecha =
+        new Date(
+          fechaString + "T00:00:00"
+        );
+
+
+      const dia =
+        fecha.getDay();
+
+
+      const diferencia =
+        dia === 0
+          ? 6
+          : dia - 1;
+
+
+      fecha.setDate(
+        fecha.getDate() -
+          diferencia
+      );
+
+
+      const año =
+        fecha.getFullYear();
+
+      const mes =
+        String(
+          fecha.getMonth() + 1
+        ).padStart(
+          2,
+          "0"
+        );
+
+      const diaMes =
+        String(
+          fecha.getDate()
+        ).padStart(
+          2,
+          "0"
+        );
+
+
+      return `${año}-${mes}-${diaMes}`;
+
+    }
+
+
+    /* ==========================================
+       CUMPLIMIENTO
+    ========================================== */
+
+    function calcularCumplimiento(
+      fechaVencimiento,
+      porcentaje
+    ) {
+
+      if (
+        Number(porcentaje) >= 100
+      ) {
+
+        return "CUMPLE";
+
+      }
+
+
+      if (
+        fechaVencimiento
+      ) {
+
+        const hoy =
+          obtenerFechaLocal();
+
+
+        if (
+          hoy >
+          fechaVencimiento
+        ) {
+
+          return "NO CUMPLE";
+
+        }
+
+      }
+
+
+      return "PENDIENTE";
+
+    }
+
+
+    /* ==========================================
+       CLASES VISUALES
+    ========================================== */
+
+    function claseEstado(
+      estado
+    ) {
+
+      switch (
+        estado
+      ) {
+
+        case "NO INICIADO":
+          return "status-no-iniciado";
+
+        case "EN CURSO":
+          return "status-en-curso";
+
+        case "APLAZADO":
+          return "status-aplazado";
+
+        case "TERMINADO":
+          return "status-terminado";
+
+        default:
+          return "";
+
+      }
+
+    }
+
+
+    function claseCumplimiento(
+      valor
+    ) {
+
+      switch (
+        valor
+      ) {
+
+        case "CUMPLE":
+          return "cumple";
+
+        case "NO CUMPLE":
+          return "no-cumple";
+
+        case "PENDIENTE":
+          return "pendiente";
+
+        default:
+          return "";
+
+      }
+
+    }
+
+
+    /* ==========================================
+       FORMATO
+    ========================================== */
+
+    function formatearFecha(
+      fecha
+    ) {
+
+      if (!fecha) {
+        return "";
+      }
+
+      const partes =
+        fecha.split("-");
+
+      if (
+        partes.length !== 3
+      ) {
+        return fecha;
+      }
+
+      return (
+        partes[2] +
+        "/" +
+        partes[1] +
+        "/" +
+        partes[0]
+      );
+
+    }
+
+
+    function formatearHoras(
+      horas
+    ) {
+
+      return (
+        Number(horas || 0)
+          .toFixed(2)
+          .replace(
+            /\.00$/,
+            ""
+          )
+      ) + " h";
+
+    }
+
+
+    /* ==========================================
+       MENSAJES
+    ========================================== */
+
+    function mostrarMensaje(
+      elementoId,
+      mensaje,
+      tipo
+    ) {
+
+      const elemento =
+        document.getElementById(
+          elementoId
+        );
+
+      if (!elemento) {
+        return;
+      }
+
+      elemento.innerHTML =
+        `<div class="message ${tipo}">
+          ${escapeHtml(mensaje)}
+        </div>`;
+
+
+      setTimeout(
+        function() {
+
+          elemento.innerHTML =
+            "";
+
+        },
+        5000
+      );
+
+    }
+
+
+    /* ==========================================
+       ESCAPE HTML
+    ========================================== */
+
+    function escapeHtml(
+      texto
+    ) {
+
+      if (
+        texto === null ||
+        texto === undefined
+      ) {
+
+        return "";
+
+      }
+
+      return String(
+        texto
+      )
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+        .replace(
+          /</g,
+          "&lt;"
+        )
+        .replace(
+          />/g,
+          "&gt;"
+        )
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+
+    }
+
+
+    /* ==========================================
+       RECUPERAR CONTRASEÑA
+    ========================================== */
+
+    function mostrarRecuperacion() {
+
+      document
+        .getElementById(
+          "recoveryModal"
+        )
+        .classList.remove(
+          "hidden"
+        );
+
+      document.getElementById(
+        "recoveryEmail"
+      ).value =
+        document.getElementById(
+          "loginEmail"
+        ).value || "";
+
+    }
+
+
+    function cerrarRecuperacion() {
+
+      document
+        .getElementById(
+          "recoveryModal"
+        )
+        .classList.add(
+          "hidden"
+        );
+
+      document.getElementById(
+        "recoveryMessage"
+      ).innerHTML =
+        "";
+
+    }
+
+
+    async function enviarRecuperacion() {
+
+      const email =
+        document
+          .getElementById(
+            "recoveryEmail"
+          )
+          .value
+          .trim();
+
+
+      if (!email) {
+
+        mostrarMensaje(
+          "recoveryMessage",
+          "Escribe tu correo electrónico.",
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      const {
+        error
+      } =
+        await supabaseClient.auth
+          .resetPasswordForEmail(
             email,
             {
-                redirectTo
+              redirectTo:
+                APP_URL
             }
-        );
+          );
 
 
-    if(error){
+      if (error) {
+
+        console.error(error);
 
         mostrarMensaje(
-            passwordMessage,
+          "recoveryMessage",
+          "No se pudo enviar el correo: " +
             error.message,
-            "error"
+          "error"
         );
 
         return;
-    }
+
+      }
 
 
-    mostrarMensaje(
-        passwordMessage,
-        "Te enviamos un correo para cambiar tu contraseña. Revisa también la carpeta de spam.",
+      mostrarMensaje(
+        "recoveryMessage",
+        "Te enviamos un enlace para cambiar tu contraseña. Revisa tu correo.",
         "success"
-    );
+      );
 
-};
-
-
-/* ============================================================
-   CAMBIAR CONTRASEÑA DESDE LA APP
-   ============================================================ */
-
-window.enviarCorreoCambioPassword = async function(){
-
-    if(!usuario?.email){
-        return;
     }
 
 
-    const redirectTo =
-        window.location.origin +
-        window.location.pathname;
+    /* ==========================================
+       CAMBIAR CONTRASEÑA
+    ========================================== */
+
+    async function cambiarPassword() {
+
+      if (
+        !usuarioActual ||
+        !usuarioActual.email
+      ) {
+
+        return;
+
+      }
 
 
-    const { error } =
-        await supabase.auth.resetPasswordForEmail(
-            usuario.email,
+      const confirmar =
+        confirm(
+          "Se enviará un enlace para cambiar la contraseña a tu correo. ¿Continuar?"
+        );
+
+
+      if (!confirmar) {
+        return;
+      }
+
+
+      const {
+        error
+      } =
+        await supabaseClient.auth
+          .resetPasswordForEmail(
+            usuarioActual.email,
             {
-                redirectTo
+              redirectTo:
+                APP_URL
             }
-        );
+          );
 
 
-    if(error){
+      if (error) {
 
         mostrarMensaje(
-            appMessage,
+          "formMessage",
+          "No se pudo enviar el correo: " +
             error.message,
-            "error"
+          "error"
         );
 
         return;
-    }
+
+      }
 
 
-    mostrarMensaje(
-        appMessage,
-        "Te enviamos un correo para cambiar tu contraseña.",
+      mostrarMensaje(
+        "formMessage",
+        "Te enviamos el enlace para cambiar tu contraseña a tu correo.",
         "success"
-    );
+      );
 
-};
-
-
-/* ============================================================
-   GUARDAR NUEVA CONTRASEÑA
-   ============================================================ */
-
-window.guardarNuevaPassword = async function(){
-
-    limpiarMensaje(passwordMessage);
-
-    const password =
-        document.getElementById("newPassword").value;
-
-    const confirmacion =
-        document.getElementById("newPasswordConfirm").value;
-
-
-    if(!password || !confirmacion){
-
-        mostrarMensaje(
-            passwordMessage,
-            "Completa ambos campos.",
-            "error"
-        );
-
-        return;
     }
 
 
-    if(password.length < 6){
+    /* ==========================================
+       GUARDAR NUEVA CONTRASEÑA
+    ========================================== */
+
+    async function guardarNuevaPassword() {
+
+      const password =
+        document
+          .getElementById(
+            "newPassword"
+          )
+          .value;
+
+      const confirmacion =
+        document
+          .getElementById(
+            "newPasswordConfirm"
+          )
+          .value;
+
+
+      if (
+        !password ||
+        !confirmacion
+      ) {
 
         mostrarMensaje(
-            passwordMessage,
-            "La contraseña debe tener al menos 6 caracteres.",
-            "error"
+          "newPasswordMessage",
+          "Completa ambos campos.",
+          "error"
         );
 
         return;
-    }
+
+      }
 
 
-    if(password !== confirmacion){
+      if (
+        password.length < 6
+      ) {
 
         mostrarMensaje(
-            passwordMessage,
-            "Las contraseñas no coinciden.",
-            "error"
+          "newPasswordMessage",
+          "La contraseña debe tener al menos 6 caracteres.",
+          "error"
         );
 
         return;
-    }
+
+      }
 
 
-    const { error } =
-        await supabase.auth.updateUser({
-            password
-        });
-
-
-    if(error){
+      if (
+        password !==
+        confirmacion
+      ) {
 
         mostrarMensaje(
-            passwordMessage,
+          "newPasswordMessage",
+          "Las contraseñas no coinciden.",
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      const {
+        error
+      } =
+        await supabaseClient.auth
+          .updateUser({
+            password:
+              password
+          });
+
+
+      if (error) {
+
+        console.error(error);
+
+        mostrarMensaje(
+          "newPasswordMessage",
+          "No se pudo cambiar la contraseña: " +
             error.message,
-            "error"
+          "error"
         );
 
         return;
-    }
+
+      }
 
 
-    mostrarMensaje(
-        passwordMessage,
+      mostrarMensaje(
+        "newPasswordMessage",
         "Contraseña actualizada correctamente.",
         "success"
-    );
+      );
 
 
-    document.getElementById("newPassword").value = "";
-    document.getElementById("newPasswordConfirm").value = "";
+      setTimeout(
+        function() {
 
+          document
+            .getElementById(
+              "newPasswordModal"
+            )
+            .classList.add(
+              "hidden"
+            );
 
-    setTimeout(() => {
+          document.getElementById(
+            "newPassword"
+          ).value =
+            "";
 
-        cerrarPasswordModal();
+          document.getElementById(
+            "newPasswordConfirm"
+          ).value =
+            "";
 
-    },1500);
-
-};
-
-
-/* ============================================================
-   UTILIDADES
-   ============================================================ */
-
-function convertirFecha(fechaObjeto){
-
-    const año = fechaObjeto.getFullYear();
-
-    const mes =
-        String(fechaObjeto.getMonth()+1)
-        .padStart(2,"0");
-
-    const dia =
-        String(fechaObjeto.getDate())
-        .padStart(2,"0");
-
-    return `${año}-${mes}-${dia}`;
-
-}
-
-
-function formatearFecha(valor){
-
-    if(!valor){
-        return "-";
-    }
-
-    const partes = valor.split("-");
-
-    if(partes.length !== 3){
-        return valor;
-    }
-
-    return `${partes[2]}/${partes[1]}/${partes[0]}`;
-
-}
-
-
-function formatearHoras(valor){
-
-    const numero = Number(valor || 0);
-
-    return `${numero.toLocaleString("es-MX", {
-        maximumFractionDigits:2
-    })} h`;
-
-}
-
-
-function badgeEstado(valor){
-
-    if(valor === "TERMINADO"){
-
-        return `<span class="badge badge-green">TERMINADO</span>`;
+        },
+        1500
+      );
 
     }
 
-    if(valor === "EN CURSO"){
-
-        return `<span class="badge badge-yellow">EN CURSO</span>`;
-
-    }
-
-    if(valor === "APLAZADO"){
-
-        return `<span class="badge badge-red">APLAZADO</span>`;
-
-    }
-
-    return `<span class="badge badge-gray">NO INICIADO</span>`;
-
-}
-
-
-function badgeCumplimiento(valor){
-
-    if(valor === "CUMPLE"){
-
-        return `<span class="badge badge-green">CUMPLE</span>`;
-
-    }
-
-    if(valor === "NO CUMPLE"){
-
-        return `<span class="badge badge-red">NO CUMPLE</span>`;
-
-    }
-
-    return `<span class="badge badge-yellow">PENDIENTE</span>`;
-
-}
-
-
-function mostrarMensaje(elemento,texto,tipo){
-
-    elemento.innerHTML =
-        `<div class="message ${tipo}">${escapeHTML(texto)}</div>`;
-
-}
-
-
-function limpiarMensaje(elemento){
-
-    elemento.innerHTML = "";
-
-}
-
-
-function escapeHTML(valor){
-
-    if(valor === null || valor === undefined){
-        return "";
-    }
-
-    return String(valor)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-
-}
-
-</script>
+  </script>
 
 </body>
 </html>
