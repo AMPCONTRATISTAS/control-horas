@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Control de Horas</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Horas AMP</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -31,7 +32,7 @@
       margin-bottom: 20px;
     }
 
-    header .header-content {
+    .header-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -46,8 +47,14 @@
     .user-info {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 14px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .user-email {
+      font-size: 13px;
+      opacity: 0.9;
+      margin-right: 5px;
     }
 
     .card {
@@ -59,10 +66,13 @@
     }
 
     .card h2 {
-      margin-top: 0;
-      margin-bottom: 18px;
+      margin: 0 0 18px 0;
       font-size: 20px;
     }
+
+    /* =========================
+       RESUMEN
+    ========================== */
 
     .summary-grid {
       display: grid;
@@ -78,17 +88,21 @@
       text-align: center;
     }
 
-    .summary-card .label {
+    .summary-label {
       font-size: 14px;
       color: #6b7280;
       margin-bottom: 8px;
     }
 
-    .summary-card .value {
+    .summary-value {
       font-size: 28px;
       font-weight: bold;
       color: #111827;
     }
+
+    /* =========================
+       FORMULARIOS
+    ========================== */
 
     .form-grid {
       display: grid;
@@ -120,11 +134,7 @@
       border-radius: 7px;
       font-size: 14px;
       background: white;
-    }
-
-    textarea {
-      min-height: 80px;
-      resize: vertical;
+      color: #1f2937;
     }
 
     input:focus,
@@ -132,6 +142,11 @@
     textarea:focus {
       outline: none;
       border-color: #2563eb;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
     }
 
     .buttons {
@@ -150,6 +165,11 @@
       font-weight: 600;
     }
 
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     .btn-primary {
       background: #2563eb;
       color: white;
@@ -164,9 +184,17 @@
       color: white;
     }
 
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+
     .btn-danger {
       background: #dc2626;
       color: white;
+    }
+
+    .btn-danger:hover {
+      background: #b91c1c;
     }
 
     .btn-warning {
@@ -174,28 +202,51 @@
       color: white;
     }
 
+    .btn-warning:hover {
+      background: #b45309;
+    }
+
     .btn-small {
       padding: 6px 9px;
       font-size: 12px;
     }
 
+    /* =========================
+       FILTROS HISTORIAL
+    ========================== */
+
     .filters {
       display: grid;
-      grid-template-columns: 1fr 1fr 1.5fr 1.5fr 1.3fr auto;
+      grid-template-columns:
+        1fr
+        1fr
+        1.4fr
+        1.4fr
+        1.2fr
+        auto;
       gap: 12px;
       align-items: end;
       margin-bottom: 18px;
     }
 
+    .filter-button {
+      height: 39px;
+      white-space: nowrap;
+    }
+
+    /* =========================
+       TABLA
+    ========================== */
+
     .table-container {
-      overflow-x: auto;
       width: 100%;
+      overflow-x: auto;
     }
 
     table {
       width: 100%;
+      min-width: 1250px;
       border-collapse: collapse;
-      min-width: 1200px;
       font-size: 13px;
     }
 
@@ -213,72 +264,25 @@
       white-space: nowrap;
     }
 
-    tr:hover td {
+    tbody tr:hover td {
       background: #fafafa;
     }
 
-    .login-container {
-      min-height: 100vh;
+    .actions {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      gap: 5px;
+      flex-wrap: wrap;
     }
 
-    .login-card {
-      background: white;
-      width: min(420px, 100%);
-      border-radius: 14px;
+    .empty {
+      text-align: center;
       padding: 30px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+      color: #6b7280;
     }
 
-    .login-card h1 {
-      margin-top: 0;
-      text-align: center;
-    }
-
-    .login-card .form-group {
-      margin-bottom: 15px;
-    }
-
-    .login-links {
-      margin-top: 15px;
-      text-align: center;
-    }
-
-    .login-links a {
-      color: #2563eb;
-      cursor: pointer;
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .message {
-      padding: 10px 12px;
-      border-radius: 7px;
-      margin-bottom: 15px;
-      font-size: 14px;
-    }
-
-    .message.success {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .message.error {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .message.info {
-      background: #dbeafe;
-      color: #1e40af;
-    }
+    /* =========================
+       ESTADOS
+    ========================== */
 
     .status {
       display: inline-block;
@@ -324,17 +328,86 @@
       font-weight: bold;
     }
 
-    .actions {
+    /* =========================
+       LOGIN
+    ========================== */
+
+    .login-container {
+      min-height: 100vh;
       display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
 
-    .empty {
-      text-align: center;
+    .login-card {
+      background: white;
+      width: min(420px, 100%);
+      border-radius: 14px;
       padding: 30px;
-      color: #6b7280;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
     }
+
+    .login-card h1 {
+      margin-top: 0;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .login-card .form-group {
+      margin-bottom: 15px;
+    }
+
+    .login-button {
+      width: 100%;
+      margin-top: 5px;
+    }
+
+    .login-links {
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .login-links a {
+      color: #2563eb;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .login-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* =========================
+       MENSAJES
+    ========================== */
+
+    .message {
+      padding: 10px 12px;
+      border-radius: 7px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .message.success {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .message.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .message.info {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    /* =========================
+       MODALES
+    ========================== */
 
     .modal {
       position: fixed;
@@ -358,494 +431,744 @@
       margin-top: 0;
     }
 
-    .loading {
-      opacity: 0.6;
-      pointer-events: none;
+    /* =========================
+       UTILIDADES
+    ========================== */
+
+    .hidden {
+      display: none !important;
     }
 
-    @media (max-width: 1000px) {
+    @media (max-width: 1100px) {
       .form-grid {
         grid-template-columns: repeat(2, 1fr);
       }
 
       .filters {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
       }
     }
 
-    @media (max-width: 650px) {
+    @media (max-width: 700px) {
       .summary-grid,
       .form-grid,
       .filters {
         grid-template-columns: 1fr;
       }
 
-      header .header-content {
+      .header-content {
         flex-direction: column;
         align-items: flex-start;
       }
+
+      .user-info {
+        width: 100%;
+      }
     }
   </style>
+
 </head>
 
 <body>
 
-  <!-- =========================
+  <!-- ==================================================
        LOGIN
-  ========================== -->
+  =================================================== -->
+
   <div id="loginScreen" class="login-container">
 
-    <div class="login-card">
+```
+<div class="login-card">
 
-      <h1>Control de Horas</h1>
+  <h1>Control de Horas AMP</h1>
 
-      <div id="loginMessage"></div>
+  <div id="loginMessage"></div>
 
-      <div class="form-group">
-        <label for="loginEmail">Correo electrónico</label>
-        <input
-          type="email"
-          id="loginEmail"
-          placeholder="correo@empresa.com"
-          autocomplete="email"
-        />
-      </div>
+  <form id="loginForm">
 
-      <div class="form-group">
-        <label for="loginPassword">Contraseña</label>
-        <input
-          type="password"
-          id="loginPassword"
-          placeholder="Contraseña"
-          autocomplete="current-password"
-        />
-      </div>
+    <div class="form-group">
+      <label for="loginEmail">
+        Correo electrónico
+      </label>
+
+      <input
+        type="email"
+        id="loginEmail"
+        placeholder="correo@empresa.com"
+        autocomplete="email"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="loginPassword">
+        Contraseña
+      </label>
+
+      <input
+        type="password"
+        id="loginPassword"
+        placeholder="Contraseña"
+        autocomplete="current-password"
+        required
+      >
+    </div>
+
+    <button
+      type="submit"
+      class="btn-primary login-button"
+      id="loginButton"
+    >
+      Iniciar sesión
+    </button>
+
+  </form>
+
+  <div class="login-links">
+    <a onclick="mostrarRecuperacion()">
+      ¿Olvidaste tu contraseña?
+    </a>
+  </div>
+
+</div>
+```
+
+  </div>
+
+  <!-- ==================================================
+       APLICACIÓN
+  =================================================== -->
+
+  <div id="appScreen" class="hidden">
+
+```
+<header>
+
+  <div class="container header-content">
+
+    <h1>Control de Horas AMP</h1>
+
+    <div class="user-info">
+
+      <span
+        id="usuarioEmail"
+        class="user-email"
+      ></span>
 
       <button
-        class="btn-primary"
-        style="width:100%;"
-        onclick="iniciarSesion()"
+        class="btn-secondary btn-small"
+        onclick="cambiarPassword()"
       >
-        Iniciar sesión
+        Cambiar contraseña
       </button>
 
-      <div class="login-links">
-        <a onclick="mostrarRecuperacion()">
-          ¿Olvidaste tu contraseña?
-        </a>
-      </div>
+      <button
+        class="btn-danger btn-small"
+        onclick="cerrarSesion()"
+      >
+        Cerrar sesión
+      </button>
 
     </div>
 
   </div>
 
+</header>
 
-  <!-- =========================
-       APP
-  ========================== -->
-  <div id="appScreen" class="hidden">
 
-    <header>
-      <div class="container header-content">
+<main class="container">
 
-        <h1>Control de Horas</h1>
+  <!-- ==================================================
+       1. RESUMEN
+  =================================================== -->
 
-        <div class="user-info">
-          <span id="usuarioEmail"></span>
+  <section class="card">
 
-          <button
-            class="btn-secondary btn-small"
-            onclick="cambiarPassword()"
-          >
-            Cambiar contraseña
-          </button>
+    <h2>Resumen de horas</h2>
 
-          <button
-            class="btn-danger btn-small"
-            onclick="cerrarSesion()"
-          >
-            Cerrar sesión
-          </button>
+    <div class="summary-grid">
+
+      <div class="summary-card">
+
+        <div class="summary-label">
+          Hoy
+        </div>
+
+        <div
+          class="summary-value"
+          id="horasHoy"
+        >
+          0 h
         </div>
 
       </div>
-    </header>
 
 
-    <main class="container">
+      <div class="summary-card">
 
-
-      <!-- =========================
-           RESUMEN
-      ========================== -->
-
-      <section class="card">
-
-        <h2>Resumen de horas</h2>
-
-        <div class="summary-grid">
-
-          <div class="summary-card">
-            <div class="label">Hoy</div>
-            <div class="value" id="horasHoy">0 h</div>
-          </div>
-
-          <div class="summary-card">
-            <div class="label">Esta semana</div>
-            <div class="value" id="horasSemana">0 h</div>
-          </div>
-
-          <div class="summary-card">
-            <div class="label">Este mes</div>
-            <div class="value" id="horasMes">0 h</div>
-          </div>
-
+        <div class="summary-label">
+          Esta semana
         </div>
 
-      </section>
-
-
-      <!-- =========================
-           REGISTRAR HORAS
-      ========================== -->
-
-      <section class="card">
-
-        <h2 id="formTitle">Registrar horas</h2>
-
-        <div id="formMessage"></div>
-
-        <div class="form-grid">
-
-          <div class="form-group">
-            <label for="fecha">Fecha de trabajo</label>
-            <input type="date" id="fecha" />
-          </div>
-
-          <div class="form-group">
-            <label for="proyecto">Proyecto</label>
-            <select id="proyecto">
-              <option value="">Seleccionar proyecto</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="actividad">Actividad</label>
-            <select id="actividad">
-              <option value="">Seleccionar actividad</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="entregable">Entregable</label>
-            <select id="entregable">
-              <option value="">Sin entregable</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="fechaInicio">Fecha de inicio</label>
-            <input type="date" id="fechaInicio" />
-          </div>
-
-          <div class="form-group">
-            <label for="fechaVencimiento">Fecha de vencimiento</label>
-            <input type="date" id="fechaVencimiento" />
-          </div>
-
-          <div class="form-group">
-            <label for="horas">Horas</label>
-            <input
-              type="number"
-              id="horas"
-              min="0"
-              step="0.25"
-              placeholder="Ej. 1.5"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="porcentaje">Porcentaje completado</label>
-            <input
-              type="number"
-              id="porcentaje"
-              min="0"
-              max="100"
-              step="1"
-              value="0"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="estado">Estado</label>
-            <select id="estado">
-              <option value="NO INICIADO">NO INICIADO</option>
-              <option value="EN CURSO">EN CURSO</option>
-              <option value="APLAZADO">APLAZADO</option>
-              <option value="TERMINADO">TERMINADO</option>
-            </select>
-          </div>
-
-          <div class="form-group full">
-            <label for="notas">Notas</label>
-            <textarea
-              id="notas"
-              placeholder="Notas adicionales..."
-            ></textarea>
-          </div>
-
+        <div
+          class="summary-value"
+          id="horasSemana"
+        >
+          0 h
         </div>
 
-        <div class="buttons">
+      </div>
 
-          <button
-            class="btn-primary"
-            id="btnGuardar"
-            onclick="guardarHoras()"
+
+      <div class="summary-card">
+
+        <div class="summary-label">
+          Este mes
+        </div>
+
+        <div
+          class="summary-value"
+          id="horasMes"
+        >
+          0 h
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ==================================================
+       2. REGISTRAR HORAS
+  =================================================== -->
+
+  <section class="card">
+
+    <h2 id="formTitle">
+      Registrar horas
+    </h2>
+
+    <div id="formMessage"></div>
+
+    <form id="hoursForm">
+
+      <div class="form-grid">
+
+        <div class="form-group">
+
+          <label for="fecha">
+            Fecha de trabajo
+          </label>
+
+          <input
+            type="date"
+            id="fecha"
+            required
           >
-            Guardar horas
-          </button>
 
-          <button
-            class="btn-secondary hidden"
-            id="btnCancelarEdicion"
-            onclick="cancelarEdicion()"
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="proyecto">
+            Proyecto
+          </label>
+
+          <select
+            id="proyecto"
+            required
           >
-            Cancelar edición
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <!-- =========================
-           HISTORIAL
-      ========================== -->
-
-      <section class="card">
-
-        <h2>Historial de horas</h2>
-
-        <!--
-          IMPORTANTE:
-          Desde y Hasta son FILTROS.
-          NO son columnas de la tabla.
-        -->
-
-        <div class="filters">
-
-          <div class="form-group">
-            <label for="filtroDesde">Desde</label>
-            <input
-              type="date"
-              id="filtroDesde"
-              onchange="mostrarHoras()"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="filtroHasta">Hasta</label>
-            <input
-              type="date"
-              id="filtroHasta"
-              onchange="mostrarHoras()"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="filtroProyecto">Proyecto</label>
-            <select
-              id="filtroProyecto"
-              onchange="mostrarHoras()"
-            >
-              <option value="">Todos los proyectos</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="filtroActividad">Actividad</label>
-            <select
-              id="filtroActividad"
-              onchange="mostrarHoras()"
-            >
-              <option value="">Todas las actividades</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="filtroEstado">Estado</label>
-            <select
-              id="filtroEstado"
-              onchange="mostrarHoras()"
-            >
-              <option value="">Todos los estados</option>
-              <option value="NO INICIADO">NO INICIADO</option>
-              <option value="EN CURSO">EN CURSO</option>
-              <option value="APLAZADO">APLAZADO</option>
-              <option value="TERMINADO">TERMINADO</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-
-            <button
-              class="btn-secondary"
-              onclick="limpiarFiltros()"
-            >
-              Limpiar filtros
-            </button>
-
-          </div>
+            <option value="">
+              Seleccionar proyecto
+            </option>
+          </select>
 
         </div>
 
 
-        <div class="table-container">
+        <div class="form-group">
 
-          <table>
+          <label for="actividad">
+            Actividad
+          </label>
 
-            <thead>
-              <tr>
-                <th>Semana</th>
-                <th>Fecha</th>
-                <th>Proyecto</th>
-                <th>Actividad</th>
-                <th>Entregable</th>
-                <th>Inicio</th>
-                <th>Vencimiento</th>
-                <th>Estado</th>
-                <th>Cumple objetivo</th>
-                <th>Horas</th>
-                <th>%</th>
-                <th>Notas</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-
-            <tbody id="tablaHoras"></tbody>
-
-          </table>
+          <select
+            id="actividad"
+            required
+          >
+            <option value="">
+              Seleccionar actividad
+            </option>
+          </select>
 
         </div>
 
-      </section>
 
-    </main>
+        <div class="form-group">
+
+          <label for="entregable">
+            Entregable
+          </label>
+
+          <select id="entregable">
+
+            <option value="">
+              Sin entregable
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="fechaInicio">
+            Fecha de inicio
+          </label>
+
+          <input
+            type="date"
+            id="fechaInicio"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="fechaVencimiento">
+            Fecha de vencimiento
+          </label>
+
+          <input
+            type="date"
+            id="fechaVencimiento"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="horas">
+            Horas
+          </label>
+
+          <input
+            type="number"
+            id="horas"
+            min="0"
+            step="0.25"
+            placeholder="Ej. 1.5"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="porcentaje">
+            % completado
+          </label>
+
+          <input
+            type="number"
+            id="porcentaje"
+            min="0"
+            max="100"
+            step="1"
+            value="0"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="estado">
+            Estado
+          </label>
+
+          <select id="estado">
+
+            <option value="NO INICIADO">
+              NO INICIADO
+            </option>
+
+            <option value="EN CURSO">
+              EN CURSO
+            </option>
+
+            <option value="APLAZADO">
+              APLAZADO
+            </option>
+
+            <option value="TERMINADO">
+              TERMINADO
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="form-group full">
+
+          <label for="notas">
+            Notas
+          </label>
+
+          <textarea
+            id="notas"
+            placeholder="Notas adicionales..."
+          ></textarea>
+
+        </div>
+
+      </div>
+
+
+      <div class="buttons">
+
+        <button
+          type="submit"
+          class="btn-primary"
+          id="btnGuardar"
+        >
+          Guardar horas
+        </button>
+
+        <button
+          type="button"
+          class="btn-secondary hidden"
+          id="btnCancelarEdicion"
+          onclick="cancelarEdicion()"
+        >
+          Cancelar edición
+        </button>
+
+      </div>
+
+    </form>
+
+  </section>
+
+
+  <!-- ==================================================
+       3. HISTORIAL
+  =================================================== -->
+
+  <section class="card">
+
+    <h2>
+      Historial de horas
+    </h2>
+
+
+    <!--
+      ESTOS SON FILTROS.
+      NO SON COLUMNAS DE LA TABLA.
+    -->
+
+    <div class="filters">
+
+
+      <div class="form-group">
+
+        <label for="filtroDesde">
+          Desde
+        </label>
+
+        <input
+          type="date"
+          id="filtroDesde"
+          onchange="mostrarHoras()"
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="filtroHasta">
+          Hasta
+        </label>
+
+        <input
+          type="date"
+          id="filtroHasta"
+          onchange="mostrarHoras()"
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="filtroProyecto">
+          Proyecto
+        </label>
+
+        <select
+          id="filtroProyecto"
+          onchange="mostrarHoras()"
+        >
+
+          <option value="">
+            Todos los proyectos
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="filtroActividad">
+          Actividad
+        </label>
+
+        <select
+          id="filtroActividad"
+          onchange="mostrarHoras()"
+        >
+
+          <option value="">
+            Todas las actividades
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="filtroEstado">
+          Estado
+        </label>
+
+        <select
+          id="filtroEstado"
+          onchange="mostrarHoras()"
+        >
+
+          <option value="">
+            Todos los estados
+          </option>
+
+          <option value="NO INICIADO">
+            NO INICIADO
+          </option>
+
+          <option value="EN CURSO">
+            EN CURSO
+          </option>
+
+          <option value="APLAZADO">
+            APLAZADO
+          </option>
+
+          <option value="TERMINADO">
+            TERMINADO
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <button
+          type="button"
+          class="btn-secondary filter-button"
+          onclick="limpiarFiltros()"
+        >
+          Limpiar filtros
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         TABLA
+    =================================================== -->
+
+    <div class="table-container">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Semana</th>
+            <th>Fecha</th>
+            <th>Proyecto</th>
+            <th>Actividad</th>
+            <th>Entregable</th>
+            <th>Inicio</th>
+            <th>Vencimiento</th>
+            <th>Estado</th>
+            <th>Cumple objetivo</th>
+            <th>Horas</th>
+            <th>%</th>
+            <th>Notas</th>
+            <th>Acciones</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody id="tablaHoras"></tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+</main>
+```
 
   </div>
 
-
-  <!-- =========================
+  <!-- ==================================================
        MODAL RECUPERAR CONTRASEÑA
-  ========================== -->
+  =================================================== -->
 
   <div
     id="recoveryModal"
     class="modal hidden"
   >
 
-    <div class="modal-content">
+```
+<div class="modal-content">
 
-      <h2>Recuperar contraseña</h2>
+  <h2>
+    Recuperar contraseña
+  </h2>
 
-      <div id="recoveryMessage"></div>
+  <div id="recoveryMessage"></div>
 
-      <div class="form-group">
-        <label for="recoveryEmail">
-          Correo electrónico
-        </label>
+  <div class="form-group">
 
-        <input
-          type="email"
-          id="recoveryEmail"
-          placeholder="correo@empresa.com"
-        />
-      </div>
+    <label for="recoveryEmail">
+      Correo electrónico
+    </label>
 
-      <div class="buttons">
-
-        <button
-          class="btn-primary"
-          onclick="enviarRecuperacion()"
-        >
-          Enviar enlace
-        </button>
-
-        <button
-          class="btn-secondary"
-          onclick="cerrarRecuperacion()"
-        >
-          Cancelar
-        </button>
-
-      </div>
-
-    </div>
+    <input
+      type="email"
+      id="recoveryEmail"
+      placeholder="correo@empresa.com"
+    >
 
   </div>
 
+  <div class="buttons">
 
-  <!-- =========================
+    <button
+      type="button"
+      class="btn-primary"
+      onclick="enviarRecuperacion()"
+    >
+      Enviar enlace
+    </button>
+
+    <button
+      type="button"
+      class="btn-secondary"
+      onclick="cerrarRecuperacion()"
+    >
+      Cancelar
+    </button>
+
+  </div>
+
+</div>
+```
+
+  </div>
+
+  <!-- ==================================================
        MODAL NUEVA CONTRASEÑA
-  ========================== -->
+  =================================================== -->
 
   <div
     id="newPasswordModal"
     class="modal hidden"
   >
 
-    <div class="modal-content">
+```
+<div class="modal-content">
 
-      <h2>Nueva contraseña</h2>
+  <h2>
+    Nueva contraseña
+  </h2>
 
-      <div id="newPasswordMessage"></div>
+  <div id="newPasswordMessage"></div>
 
-      <div class="form-group">
-        <label for="newPassword">
-          Nueva contraseña
-        </label>
+  <div class="form-group">
 
-        <input
-          type="password"
-          id="newPassword"
-          placeholder="Nueva contraseña"
-        />
-      </div>
+    <label for="newPassword">
+      Nueva contraseña
+    </label>
 
-      <div class="form-group">
-        <label for="newPasswordConfirm">
-          Confirmar contraseña
-        </label>
-
-        <input
-          type="password"
-          id="newPasswordConfirm"
-          placeholder="Confirmar contraseña"
-        />
-      </div>
-
-      <div class="buttons">
-
-        <button
-          class="btn-primary"
-          onclick="guardarNuevaPassword()"
-        >
-          Guardar contraseña
-        </button>
-
-      </div>
-
-    </div>
+    <input
+      type="password"
+      id="newPassword"
+      placeholder="Nueva contraseña"
+    >
 
   </div>
 
 
+  <div class="form-group">
+
+    <label for="newPasswordConfirm">
+      Confirmar contraseña
+    </label>
+
+    <input
+      type="password"
+      id="newPasswordConfirm"
+      placeholder="Confirmar contraseña"
+    >
+
+  </div>
+
+
+  <div class="buttons">
+
+    <button
+      type="button"
+      class="btn-primary"
+      onclick="guardarNuevaPassword()"
+    >
+      Guardar contraseña
+    </button>
+
+  </div>
+
+</div>
+```
+
+  </div>
+
   <script>
 
-    /* ==========================================
+    /* ==================================================
        SUPABASE
-    ========================================== */
+    =================================================== */
 
     const SUPABASE_URL =
       "https://sdgnadhsbihrayxlmcua.supabase.co";
@@ -863,22 +1186,26 @@
       );
 
 
-    /* ==========================================
+    /* ==================================================
        VARIABLES
-    ========================================== */
+    =================================================== */
 
     let usuarioActual = null;
+
     let registros = [];
+
     let proyectos = [];
+
     let actividades = [];
+
     let entregables = [];
 
     let registroEditando = null;
 
 
-    /* ==========================================
+    /* ==================================================
        INICIO
-    ========================================== */
+    =================================================== */
 
     document.addEventListener(
       "DOMContentLoaded",
@@ -886,7 +1213,92 @@
 
         establecerFechaActual();
 
+
+        /*
+          IMPORTANTE:
+
+          Al usar un FORM con submit,
+          ENTER en correo o contraseña
+          ejecutará iniciarSesion().
+        */
+
+        document
+          .getElementById("loginForm")
+          .addEventListener(
+            "submit",
+            async function(event) {
+
+              event.preventDefault();
+
+              await iniciarSesion();
+
+            }
+          );
+
+
+        document
+          .getElementById("hoursForm")
+          .addEventListener(
+            "submit",
+            async function(event) {
+
+              event.preventDefault();
+
+              await guardarHoras();
+
+            }
+          );
+
+
+        /*
+          Enter también funciona explícitamente
+          desde los campos del login.
+        */
+
+        document
+          .getElementById("loginEmail")
+          .addEventListener(
+            "keydown",
+            function(event) {
+
+              if (
+                event.key === "Enter"
+              ) {
+
+                event.preventDefault();
+
+                document
+                  .getElementById("loginPassword")
+                  .focus();
+
+              }
+
+            }
+          );
+
+
+        document
+          .getElementById("loginPassword")
+          .addEventListener(
+            "keydown",
+            async function(event) {
+
+              if (
+                event.key === "Enter"
+              ) {
+
+                event.preventDefault();
+
+                await iniciarSesion();
+
+              }
+
+            }
+          );
+
+
         await verificarSesion();
+
 
         supabaseClient.auth.onAuthStateChange(
           async function(event, session) {
@@ -900,6 +1312,7 @@
                 .classList.remove("hidden");
 
             }
+
 
             if (
               session &&
@@ -922,22 +1335,22 @@
     );
 
 
-    /* ==========================================
+    /* ==================================================
        FECHA ACTUAL
-    ========================================== */
+    =================================================== */
 
     function establecerFechaActual() {
 
       const hoy =
         obtenerFechaLocal();
 
-      document.getElementById(
-        "fecha"
-      ).value = hoy;
+      document
+        .getElementById("fecha")
+        .value = hoy;
 
-      document.getElementById(
-        "fechaInicio"
-      ).value = hoy;
+      document
+        .getElementById("fechaInicio")
+        .value = hoy;
 
     }
 
@@ -965,9 +1378,9 @@
     }
 
 
-    /* ==========================================
+    /* ==================================================
        SESIÓN
-    ========================================== */
+    =================================================== */
 
     async function verificarSesion() {
 
@@ -977,6 +1390,7 @@
       } =
         await supabaseClient.auth.getSession();
 
+
       if (error) {
 
         console.error(error);
@@ -984,6 +1398,7 @@
         return;
 
       }
+
 
       if (
         data.session
@@ -1014,6 +1429,7 @@
           .getElementById("loginPassword")
           .value;
 
+
       if (
         !email ||
         !password
@@ -1029,26 +1445,49 @@
 
       }
 
+
+      const boton =
+        document.getElementById(
+          "loginButton"
+        );
+
+      boton.disabled = true;
+
+      boton.textContent =
+        "Iniciando sesión...";
+
+
       const {
         data,
         error
       } =
-        await supabaseClient.auth.signInWithPassword({
-          email,
-          password
-        });
+        await supabaseClient.auth
+          .signInWithPassword({
+            email,
+            password
+          });
+
+
+      boton.disabled = false;
+
+      boton.textContent =
+        "Iniciar sesión";
+
 
       if (error) {
 
+        console.error(error);
+
         mostrarMensaje(
           "loginMessage",
-          error.message,
+          "Correo o contraseña incorrectos.",
           "error"
         );
 
         return;
 
       }
+
 
       usuarioActual =
         data.user;
@@ -1066,6 +1505,8 @@
 
       usuarioActual = null;
 
+      registros = [];
+
       document
         .getElementById("appScreen")
         .classList.add("hidden");
@@ -1073,6 +1514,10 @@
       document
         .getElementById("loginScreen")
         .classList.remove("hidden");
+
+      document
+        .getElementById("loginPassword")
+        .value = "";
 
     }
 
@@ -1095,9 +1540,9 @@
     }
 
 
-    /* ==========================================
+    /* ==================================================
        CARGAR DATOS
-    ========================================== */
+    =================================================== */
 
     async function cargarDatos() {
 
@@ -1129,6 +1574,7 @@
           .eq("activo", true)
           .order("nombre");
 
+
       if (error) {
 
         console.error(
@@ -1140,18 +1586,22 @@
 
       }
 
+
       proyectos =
         data || [];
+
 
       const select =
         document.getElementById(
           "proyecto"
         );
 
+
       select.innerHTML =
         `<option value="">
           Seleccionar proyecto
         </option>`;
+
 
       proyectos.forEach(
         function(proyecto) {
@@ -1189,6 +1639,7 @@
           .eq("activo", true)
           .order("nombre");
 
+
       if (error) {
 
         console.error(
@@ -1200,18 +1651,22 @@
 
       }
 
+
       actividades =
         data || [];
+
 
       const select =
         document.getElementById(
           "actividad"
         );
 
+
       select.innerHTML =
         `<option value="">
           Seleccionar actividad
         </option>`;
+
 
       actividades.forEach(
         function(actividad) {
@@ -1257,6 +1712,7 @@
           .eq("activo", true)
           .order("nombre");
 
+
       if (error) {
 
         console.error(
@@ -1267,6 +1723,7 @@
         return;
 
       }
+
 
       entregables =
         data || [];
@@ -1279,6 +1736,7 @@
       if (!usuarioActual) {
         return;
       }
+
 
       const {
         data,
@@ -1304,6 +1762,7 @@
             }
           );
 
+
       if (error) {
 
         console.error(
@@ -1322,15 +1781,16 @@
 
       }
 
+
       registros =
         data || [];
 
     }
 
 
-    /* ==========================================
-       ENTREGABLES SEGÚN PROYECTO
-    ========================================== */
+    /* ==================================================
+       ENTREGABLES
+    =================================================== */
 
     document
       .getElementById("proyecto")
@@ -1355,14 +1815,17 @@
           "entregable"
         );
 
+
       select.innerHTML =
         `<option value="">
           Sin entregable
         </option>`;
 
+
       if (!proyectoNombre) {
         return;
       }
+
 
       entregables
         .filter(
@@ -1400,9 +1863,9 @@
     }
 
 
-    /* ==========================================
+    /* ==================================================
        FILTROS
-    ========================================== */
+    =================================================== */
 
     function actualizarFiltros() {
 
@@ -1410,6 +1873,7 @@
         document.getElementById(
           "filtroProyecto"
         );
+
 
       const filtroActividad =
         document.getElementById(
@@ -1421,6 +1885,7 @@
         `<option value="">
           Todos los proyectos
         </option>`;
+
 
       proyectos.forEach(
         function(proyecto) {
@@ -1449,6 +1914,7 @@
           Todas las actividades
         </option>`;
 
+
       actividades.forEach(
         function(actividad) {
 
@@ -1475,34 +1941,34 @@
 
     function limpiarFiltros() {
 
-      document.getElementById(
-        "filtroDesde"
-      ).value = "";
+      document
+        .getElementById("filtroDesde")
+        .value = "";
 
-      document.getElementById(
-        "filtroHasta"
-      ).value = "";
+      document
+        .getElementById("filtroHasta")
+        .value = "";
 
-      document.getElementById(
-        "filtroProyecto"
-      ).value = "";
+      document
+        .getElementById("filtroProyecto")
+        .value = "";
 
-      document.getElementById(
-        "filtroActividad"
-      ).value = "";
+      document
+        .getElementById("filtroActividad")
+        .value = "";
 
-      document.getElementById(
-        "filtroEstado"
-      ).value = "";
+      document
+        .getElementById("filtroEstado")
+        .value = "";
 
       mostrarHoras();
 
     }
 
 
-    /* ==========================================
+    /* ==================================================
        MOSTRAR HISTORIAL
-    ========================================== */
+    =================================================== */
 
     function mostrarHoras() {
 
@@ -1511,86 +1977,42 @@
           "tablaHoras"
         );
 
+
       const desde =
-        document.getElementById(
-          "filtroDesde"
-        ).value;
+        document
+          .getElementById("filtroDesde")
+          .value;
+
 
       const hasta =
-        document.getElementById(
-          "filtroHasta"
-        ).value;
+        document
+          .getElementById("filtroHasta")
+          .value;
+
 
       const proyecto =
-        document.getElementById(
-          "filtroProyecto"
-        ).value;
+        document
+          .getElementById("filtroProyecto")
+          .value;
+
 
       const actividad =
-        document.getElementById(
-          "filtroActividad"
-        ).value;
+        document
+          .getElementById("filtroActividad")
+          .value;
+
 
       const estado =
-        document.getElementById(
-          "filtroEstado"
-        ).value;
+        document
+          .getElementById("filtroEstado")
+          .value;
 
 
       /*
-        FILTRO DESDE / HASTA
+        VALIDACIÓN:
 
-        Desde:
-        fecha >= desde
-
-        Hasta:
-        fecha <= hasta
+        Desde no puede ser mayor que Hasta.
       */
-
-      let filtrados =
-        registros.filter(
-          function(r) {
-
-            if (
-              desde &&
-              r.fecha < desde
-            ) {
-              return false;
-            }
-
-            if (
-              hasta &&
-              r.fecha > hasta
-            ) {
-              return false;
-            }
-
-            if (
-              proyecto &&
-              r.proyecto !== proyecto
-            ) {
-              return false;
-            }
-
-            if (
-              actividad &&
-              r.actividad !== actividad
-            ) {
-              return false;
-            }
-
-            if (
-              estado &&
-              r.estado !== estado
-            ) {
-              return false;
-            }
-
-            return true;
-
-          }
-        );
-
 
       if (
         desde &&
@@ -1600,9 +2022,12 @@
 
         tbody.innerHTML =
           `<tr>
-            <td colspan="13" class="empty">
-              La fecha "Desde" no puede ser posterior
-              a la fecha "Hasta".
+            <td
+              colspan="13"
+              class="empty"
+            >
+              La fecha "Desde" no puede
+              ser posterior a la fecha "Hasta".
             </td>
           </tr>`;
 
@@ -1611,13 +2036,100 @@
       }
 
 
+      let filtrados =
+        registros.filter(
+          function(r) {
+
+            /*
+              DESDE
+
+              Incluye la fecha seleccionada.
+            */
+
+            if (
+              desde &&
+              r.fecha < desde
+            ) {
+
+              return false;
+
+            }
+
+
+            /*
+              HASTA
+
+              Incluye la fecha seleccionada.
+            */
+
+            if (
+              hasta &&
+              r.fecha > hasta
+            ) {
+
+              return false;
+
+            }
+
+
+            /*
+              PROYECTO
+            */
+
+            if (
+              proyecto &&
+              r.proyecto !== proyecto
+            ) {
+
+              return false;
+
+            }
+
+
+            /*
+              ACTIVIDAD
+            */
+
+            if (
+              actividad &&
+              r.actividad !== actividad
+            ) {
+
+              return false;
+
+            }
+
+
+            /*
+              ESTADO
+            */
+
+            if (
+              estado &&
+              r.estado !== estado
+            ) {
+
+              return false;
+
+            }
+
+
+            return true;
+
+          }
+        );
+
+
       if (
         filtrados.length === 0
       ) {
 
         tbody.innerHTML =
           `<tr>
-            <td colspan="13" class="empty">
+            <td
+              colspan="13"
+              class="empty"
+            >
               No hay registros que coincidan
               con los filtros seleccionados.
             </td>
@@ -1639,11 +2151,15 @@
               "tr"
             );
 
+
           tr.innerHTML = `
 
             <td>
               ${escapeHtml(
-                r.semana || ""
+                r.semana ||
+                obtenerSemanaISO(
+                  r.fecha
+                )
               )}
             </td>
 
@@ -1727,6 +2243,7 @@
               <div class="actions">
 
                 <button
+                  type="button"
                   class="btn-warning btn-small"
                   onclick="editarRegistro(${r.id})"
                 >
@@ -1734,6 +2251,7 @@
                 </button>
 
                 <button
+                  type="button"
                   class="btn-danger btn-small"
                   onclick="eliminarRegistro(${r.id})"
                 >
@@ -1746,6 +2264,7 @@
 
           `;
 
+
           tbody.appendChild(
             tr
           );
@@ -1756,9 +2275,9 @@
     }
 
 
-    /* ==========================================
+    /* ==================================================
        GUARDAR HORAS
-    ========================================== */
+    =================================================== */
 
     async function guardarHoras() {
 
@@ -1766,59 +2285,70 @@
         return;
       }
 
+
       const fecha =
-        document.getElementById(
-          "fecha"
-        ).value;
+        document
+          .getElementById("fecha")
+          .value;
+
 
       const proyecto =
-        document.getElementById(
-          "proyecto"
-        ).value;
+        document
+          .getElementById("proyecto")
+          .value;
+
 
       const actividad =
-        document.getElementById(
-          "actividad"
-        ).value;
+        document
+          .getElementById("actividad")
+          .value;
+
 
       const entregable =
-        document.getElementById(
-          "entregable"
-        ).value;
+        document
+          .getElementById("entregable")
+          .value;
+
 
       const fechaInicio =
-        document.getElementById(
-          "fechaInicio"
-        ).value;
+        document
+          .getElementById("fechaInicio")
+          .value;
+
 
       const fechaVencimiento =
-        document.getElementById(
-          "fechaVencimiento"
-        ).value;
+        document
+          .getElementById("fechaVencimiento")
+          .value;
+
 
       const horas =
         Number(
-          document.getElementById(
-            "horas"
-          ).value
+          document
+            .getElementById("horas")
+            .value
         );
+
 
       const porcentaje =
         Number(
-          document.getElementById(
-            "porcentaje"
-          ).value
+          document
+            .getElementById("porcentaje")
+            .value
         );
 
+
       const estado =
-        document.getElementById(
-          "estado"
-        ).value;
+        document
+          .getElementById("estado")
+          .value;
+
 
       const notas =
-        document.getElementById(
-          "notas"
-        ).value.trim();
+        document
+          .getElementById("notas")
+          .value
+          .trim();
 
 
       if (!fecha) {
@@ -1833,6 +2363,7 @@
 
       }
 
+
       if (!proyecto) {
 
         mostrarMensaje(
@@ -1845,6 +2376,7 @@
 
       }
 
+
       if (!actividad) {
 
         mostrarMensaje(
@@ -1856,6 +2388,7 @@
         return;
 
       }
+
 
       if (
         !horas ||
@@ -1871,6 +2404,7 @@
         return;
 
       }
+
 
       if (
         porcentaje < 0 ||
@@ -1941,28 +2475,33 @@
 
         /*
           IMPORTANTE:
-          Se guarda la semana completa:
+          Se guarda:
           26S42
-          y NO solamente 42.
+          y no solamente:
+          42
         */
+
         semana:
           semana
 
       };
 
 
-      const btn =
+      const boton =
         document.getElementById(
           "btnGuardar"
         );
 
-      btn.disabled = true;
+
+      boton.disabled = true;
 
 
       let resultado;
 
 
-      if (registroEditando) {
+      if (
+        registroEditando
+      ) {
 
         resultado =
           await supabaseClient
@@ -1989,10 +2528,12 @@
       }
 
 
-      btn.disabled = false;
+      boton.disabled = false;
 
 
-      if (resultado.error) {
+      if (
+        resultado.error
+      ) {
 
         console.error(
           resultado.error
@@ -2031,9 +2572,9 @@
     }
 
 
-    /* ==========================================
+    /* ==================================================
        EDITAR
-    ========================================== */
+    =================================================== */
 
     function editarRegistro(
       id
@@ -2042,9 +2583,12 @@
       const registro =
         registros.find(
           function(r) {
+
             return r.id === id;
+
           }
         );
+
 
       if (!registro) {
         return;
@@ -2055,22 +2599,22 @@
         id;
 
 
-      document.getElementById(
-        "formTitle"
-      ).textContent =
-        "Editar registro";
+      document
+        .getElementById("formTitle")
+        .textContent =
+          "Editar registro";
 
 
-      document.getElementById(
-        "fecha"
-      ).value =
-        registro.fecha || "";
+      document
+        .getElementById("fecha")
+        .value =
+          registro.fecha || "";
 
 
-      document.getElementById(
-        "proyecto"
-      ).value =
-        registro.proyecto || "";
+      document
+        .getElementById("proyecto")
+        .value =
+          registro.proyecto || "";
 
 
       actualizarEntregables(
@@ -2078,66 +2622,66 @@
       );
 
 
-      document.getElementById(
-        "actividad"
-      ).value =
-        registro.actividad || "";
+      document
+        .getElementById("actividad")
+        .value =
+          registro.actividad || "";
 
 
-      document.getElementById(
-        "entregable"
-      ).value =
-        registro.entregable || "";
+      document
+        .getElementById("entregable")
+        .value =
+          registro.entregable || "";
 
 
-      document.getElementById(
-        "fechaInicio"
-      ).value =
-        registro.fecha_inicio || "";
+      document
+        .getElementById("fechaInicio")
+        .value =
+          registro.fecha_inicio || "";
 
 
-      document.getElementById(
-        "fechaVencimiento"
-      ).value =
-        registro.fecha_vencimiento || "";
+      document
+        .getElementById("fechaVencimiento")
+        .value =
+          registro.fecha_vencimiento || "";
 
 
-      document.getElementById(
-        "horas"
-      ).value =
-        registro.horas || "";
+      document
+        .getElementById("horas")
+        .value =
+          registro.horas || "";
 
 
-      document.getElementById(
-        "porcentaje"
-      ).value =
-        registro.porcentaje_completado || 0;
+      document
+        .getElementById("porcentaje")
+        .value =
+          registro.porcentaje_completado || 0;
 
 
-      document.getElementById(
-        "estado"
-      ).value =
-        registro.estado ||
-        "NO INICIADO";
+      document
+        .getElementById("estado")
+        .value =
+          registro.estado ||
+          "NO INICIADO";
 
 
-      document.getElementById(
-        "notas"
-      ).value =
-        registro.notas || "";
+      document
+        .getElementById("notas")
+        .value =
+          registro.notas || "";
 
 
-      document.getElementById(
-        "btnGuardar"
-      ).textContent =
-        "Actualizar registro";
+      document
+        .getElementById("btnGuardar")
+        .textContent =
+          "Actualizar registro";
 
 
-      document.getElementById(
-        "btnCancelarEdicion"
-      ).classList.remove(
-        "hidden"
-      );
+      document
+        .getElementById("btnCancelarEdicion")
+        .classList.remove(
+          "hidden"
+        );
 
 
       window.scrollTo({
@@ -2148,39 +2692,43 @@
     }
 
 
-    /* ==========================================
+    /* ==================================================
        CANCELAR EDICIÓN
-    ========================================== */
+    =================================================== */
 
     function cancelarEdicion() {
 
       registroEditando =
         null;
 
-      document.getElementById(
-        "formTitle"
-      ).textContent =
-        "Registrar horas";
 
-      document.getElementById(
-        "btnGuardar"
-      ).textContent =
-        "Guardar horas";
+      document
+        .getElementById("formTitle")
+        .textContent =
+          "Registrar horas";
 
-      document.getElementById(
-        "btnCancelarEdicion"
-      ).classList.add(
-        "hidden"
-      );
+
+      document
+        .getElementById("btnGuardar")
+        .textContent =
+          "Guardar horas";
+
+
+      document
+        .getElementById("btnCancelarEdicion")
+        .classList.add(
+          "hidden"
+        );
+
 
       limpiarFormulario();
 
     }
 
 
-    /* ==========================================
+    /* ==================================================
        ELIMINAR
-    ========================================== */
+    =================================================== */
 
     async function eliminarRegistro(
       id
@@ -2190,6 +2738,7 @@
         confirm(
           "¿Seguro que quieres eliminar este registro?"
         );
+
 
       if (!confirmar) {
         return;
@@ -2234,6 +2783,7 @@
 
       mostrarHoras();
 
+
       mostrarMensaje(
         "formMessage",
         "Registro eliminado.",
@@ -2243,102 +2793,113 @@
     }
 
 
-    /* ==========================================
+    /* ==================================================
        LIMPIAR FORMULARIO
-    ========================================== */
+    =================================================== */
 
     function limpiarFormulario() {
 
       registroEditando =
         null;
 
-      document.getElementById(
-        "formTitle"
-      ).textContent =
-        "Registrar horas";
 
-      document.getElementById(
-        "fecha"
-      ).value =
-        obtenerFechaLocal();
+      document
+        .getElementById("formTitle")
+        .textContent =
+          "Registrar horas";
 
-      document.getElementById(
-        "proyecto"
-      ).value =
-        "";
 
-      document.getElementById(
-        "actividad"
-      ).value =
-        "";
+      document
+        .getElementById("fecha")
+        .value =
+          obtenerFechaLocal();
 
-      document.getElementById(
-        "entregable"
-      ).innerHTML =
-        `<option value="">
-          Sin entregable
-        </option>`;
 
-      document.getElementById(
-        "fechaInicio"
-      ).value =
-        obtenerFechaLocal();
+      document
+        .getElementById("proyecto")
+        .value =
+          "";
 
-      document.getElementById(
-        "fechaVencimiento"
-      ).value =
-        "";
 
-      document.getElementById(
-        "horas"
-      ).value =
-        "";
+      document
+        .getElementById("actividad")
+        .value =
+          "";
 
-      document.getElementById(
-        "porcentaje"
-      ).value =
-        "0";
 
-      document.getElementById(
-        "estado"
-      ).value =
-        "NO INICIADO";
+      document
+        .getElementById("entregable")
+        .innerHTML =
+          `<option value="">
+            Sin entregable
+          </option>`;
 
-      document.getElementById(
-        "notas"
-      ).value =
-        "";
 
-      document.getElementById(
-        "btnGuardar"
-      ).textContent =
-        "Guardar horas";
+      document
+        .getElementById("fechaInicio")
+        .value =
+          obtenerFechaLocal();
 
-      document.getElementById(
-        "btnCancelarEdicion"
-      ).classList.add(
-        "hidden"
-      );
+
+      document
+        .getElementById("fechaVencimiento")
+        .value =
+          "";
+
+
+      document
+        .getElementById("horas")
+        .value =
+          "";
+
+
+      document
+        .getElementById("porcentaje")
+        .value =
+          "0";
+
+
+      document
+        .getElementById("estado")
+        .value =
+          "NO INICIADO";
+
+
+      document
+        .getElementById("notas")
+        .value =
+          "";
+
+
+      document
+        .getElementById("btnGuardar")
+        .textContent =
+          "Guardar horas";
+
+
+      document
+        .getElementById("btnCancelarEdicion")
+        .classList.add(
+          "hidden"
+        );
 
     }
 
 
-    /* ==========================================
+    /* ==================================================
        RESUMEN
-    ========================================== */
+    =================================================== */
 
     function actualizarResumen() {
 
       /*
-        IMPORTANTE:
-
-        El resumen NO utiliza los filtros
-        Desde / Hasta.
+        EL RESUMEN ES INDEPENDIENTE
+        DE LOS FILTROS DEL HISTORIAL.
 
         Siempre calcula:
         - Hoy
-        - Semana actual
-        - Mes actual
+        - Esta semana
+        - Este mes
       */
 
 
@@ -2360,7 +2921,9 @@
 
 
       let horasHoy = 0;
+
       let horasSemana = 0;
+
       let horasMes = 0;
 
 
@@ -2412,43 +2975,49 @@
       );
 
 
-      document.getElementById(
-        "horasHoy"
-      ).textContent =
-        formatearHoras(
-          horasHoy
-        );
+      document
+        .getElementById("horasHoy")
+        .textContent =
+          formatearHoras(
+            horasHoy
+          );
 
 
-      document.getElementById(
-        "horasSemana"
-      ).textContent =
-        formatearHoras(
-          horasSemana
-        );
+      document
+        .getElementById("horasSemana")
+        .textContent =
+          formatearHoras(
+            horasSemana
+          );
 
 
-      document.getElementById(
-        "horasMes"
-      ).textContent =
-        formatearHoras(
-          horasMes
-        );
+      document
+        .getElementById("horasMes")
+        .textContent =
+          formatearHoras(
+            horasMes
+          );
 
     }
 
 
-    /* ==========================================
+    /* ==================================================
        SEMANA ISO
-    ========================================== */
+    =================================================== */
 
     function obtenerSemanaISO(
       fechaString
     ) {
 
+      if (!fechaString) {
+        return "";
+      }
+
+
       const fecha =
         new Date(
-          fechaString + "T00:00:00"
+          fechaString +
+          "T00:00:00"
         );
 
 
@@ -2510,7 +3079,8 @@
 
       const fecha =
         new Date(
-          fechaString + "T00:00:00"
+          fechaString +
+          "T00:00:00"
         );
 
 
@@ -2533,6 +3103,7 @@
       const año =
         fecha.getFullYear();
 
+
       const mes =
         String(
           fecha.getMonth() + 1
@@ -2540,6 +3111,7 @@
           2,
           "0"
         );
+
 
       const diaMes =
         String(
@@ -2555,9 +3127,9 @@
     }
 
 
-    /* ==========================================
+    /* ==================================================
        CUMPLIMIENTO
-    ========================================== */
+    =================================================== */
 
     function calcularCumplimiento(
       fechaVencimiento,
@@ -2598,9 +3170,9 @@
     }
 
 
-    /* ==========================================
-       CLASES VISUALES
-    ========================================== */
+    /* ==================================================
+       ESTADOS VISUALES
+    =================================================== */
 
     function claseEstado(
       estado
@@ -2655,9 +3227,9 @@
     }
 
 
-    /* ==========================================
+    /* ==================================================
        FORMATO
-    ========================================== */
+    =================================================== */
 
     function formatearFecha(
       fecha
@@ -2667,14 +3239,19 @@
         return "";
       }
 
+
       const partes =
         fecha.split("-");
+
 
       if (
         partes.length !== 3
       ) {
+
         return fecha;
+
       }
+
 
       return (
         partes[2] +
@@ -2692,20 +3269,22 @@
     ) {
 
       return (
-        Number(horas || 0)
-          .toFixed(2)
-          .replace(
-            /\.00$/,
-            ""
-          )
+        Number(
+          horas || 0
+        )
+        .toFixed(2)
+        .replace(
+          /\.00$/,
+          ""
+        )
       ) + " h";
 
     }
 
 
-    /* ==========================================
+    /* ==================================================
        MENSAJES
-    ========================================== */
+    =================================================== */
 
     function mostrarMensaje(
       elementoId,
@@ -2718,9 +3297,11 @@
           elementoId
         );
 
+
       if (!elemento) {
         return;
       }
+
 
       elemento.innerHTML =
         `<div class="message ${tipo}">
@@ -2741,9 +3322,9 @@
     }
 
 
-    /* ==========================================
-       ESCAPE HTML
-    ========================================== */
+    /* ==================================================
+       SEGURIDAD HTML
+    =================================================== */
 
     function escapeHtml(
       texto
@@ -2758,9 +3339,8 @@
 
       }
 
-      return String(
-        texto
-      )
+
+      return String(texto)
         .replace(
           /&/g,
           "&amp;"
@@ -2785,26 +3365,25 @@
     }
 
 
-    /* ==========================================
-       RECUPERAR CONTRASEÑA
-    ========================================== */
+    /* ==================================================
+       RECUPERACIÓN DE CONTRASEÑA
+    =================================================== */
 
     function mostrarRecuperacion() {
 
       document
-        .getElementById(
-          "recoveryModal"
-        )
+        .getElementById("recoveryModal")
         .classList.remove(
           "hidden"
         );
 
-      document.getElementById(
-        "recoveryEmail"
-      ).value =
-        document.getElementById(
-          "loginEmail"
-        ).value || "";
+
+      document
+        .getElementById("recoveryEmail")
+        .value =
+          document
+            .getElementById("loginEmail")
+            .value || "";
 
     }
 
@@ -2812,17 +3391,16 @@
     function cerrarRecuperacion() {
 
       document
-        .getElementById(
-          "recoveryModal"
-        )
+        .getElementById("recoveryModal")
         .classList.add(
           "hidden"
         );
 
-      document.getElementById(
-        "recoveryMessage"
-      ).innerHTML =
-        "";
+
+      document
+        .getElementById("recoveryMessage")
+        .innerHTML =
+          "";
 
     }
 
@@ -2831,9 +3409,7 @@
 
       const email =
         document
-          .getElementById(
-            "recoveryEmail"
-          )
+          .getElementById("recoveryEmail")
           .value
           .trim();
 
@@ -2889,9 +3465,9 @@
     }
 
 
-    /* ==========================================
+    /* ==================================================
        CAMBIAR CONTRASEÑA
-    ========================================== */
+    =================================================== */
 
     async function cambiarPassword() {
 
@@ -2952,24 +3528,21 @@
     }
 
 
-    /* ==========================================
+    /* ==================================================
        GUARDAR NUEVA CONTRASEÑA
-    ========================================== */
+    =================================================== */
 
     async function guardarNuevaPassword() {
 
       const password =
         document
-          .getElementById(
-            "newPassword"
-          )
+          .getElementById("newPassword")
           .value;
+
 
       const confirmacion =
         document
-          .getElementById(
-            "newPasswordConfirm"
-          )
+          .getElementById("newPasswordConfirm")
           .value;
 
 
@@ -3057,22 +3630,22 @@
         function() {
 
           document
-            .getElementById(
-              "newPasswordModal"
-            )
+            .getElementById("newPasswordModal")
             .classList.add(
               "hidden"
             );
 
-          document.getElementById(
-            "newPassword"
-          ).value =
-            "";
 
-          document.getElementById(
-            "newPasswordConfirm"
-          ).value =
-            "";
+          document
+            .getElementById("newPassword")
+            .value =
+              "";
+
+
+          document
+            .getElementById("newPasswordConfirm")
+            .value =
+              "";
 
         },
         1500
