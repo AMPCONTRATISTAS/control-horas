@@ -3787,6 +3787,22 @@
       return `Por seguridad, solo puedes solicitar un correo de recuperación cada 5 minutos. Inténtalo de nuevo en ${minutos} min ${restantes} s.`;
     }
 
+    // La función de servidor verifica que el correo exista en Supabase Auth y
+    // aplica el intervalo de 5 minutos también entre navegadores/dispositivos.
+    // Nunca se incluye la service_role en este HTML.
+    async function solicitarCodigoRecuperacion(email) {
+      const { data, error } = await supabaseClient.functions.invoke(
+        "solicitar-recuperacion",
+        { body: { email: String(email || "").trim().toLowerCase() } }
+      );
+      if (error) {
+        console.error("Error en solicitar-recuperacion:", error);
+        return { error: new Error("No se pudo procesar la solicitud. Comprueba que la función de Supabase esté desplegada e inténtalo más tarde.") };
+      }
+      if (data?.error) return { error: new Error(data.error) };
+      return { error: null, data };
+    }
+
     async function enviarRecuperacion() {
       const email = document.getElementById("recoveryEmail").value.trim();
 
@@ -3801,14 +3817,10 @@
         return;
       }
 
-      const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+      const { error } = await solicitarCodigoRecuperacion(email);
 
       if (error) {
-        console.error(error);
-        const mensaje = /rate limit|too many requests|429/i.test(error.message || "")
-          ? "Supabase limitó temporalmente los envíos. Espera 5 minutos antes de volver a intentarlo."
-          : "No se pudo enviar el código: " + error.message;
-        mostrarMensaje("recoveryMessage", mensaje, "error");
+        mostrarMensaje("recoveryMessage", error.message, "error");
         return;
       }
 
@@ -3822,7 +3834,7 @@
       mostrarFormularioNuevaPassword();
       mostrarMensaje(
         "newPasswordMessage",
-        "Enviamos un código de 8 dígitos a tu correo. Escríbelo aquí y define tu nueva contraseña.",
+        "Si el correo pertenece a una cuenta autorizada, recibirás un código de 8 dígitos. Introdúcelo aquí para establecer tu nueva contraseña.",
         "success"
       );
     }
@@ -3860,20 +3872,11 @@
       }
 
 
-      const { error } = await supabaseClient.auth.resetPasswordForEmail(usuarioActual.email);
-
+      const { error } = await solicitarCodigoRecuperacion(usuarioActual.email);
 
       if (error) {
-
-        mostrarMensaje(
-          "formMessage",
-          "No se pudo enviar el correo: " +
-            error.message,
-          "error"
-        );
-
+        mostrarMensaje("formMessage", error.message, "error");
         return;
-
       }
 
       marcarEnvioRecuperacion(usuarioActual.email);
@@ -3883,7 +3886,7 @@
       mostrarFormularioNuevaPassword();
       mostrarMensaje(
         "newPasswordMessage",
-        "Te enviamos un código de 8 dígitos. Escríbelo para confirmar la recuperación y establecer tu nueva contraseña.",
+        "Si la cuenta está autorizada, recibirás un código de 8 dígitos. Escríbelo para establecer tu nueva contraseña.",
         "success"
       );
 
