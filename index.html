@@ -1251,6 +1251,19 @@
     </div>
 
     <div id="importarEntregablesPanel" class="hidden">
+      <h3>Agregar entregable por texto</h3>
+      <p class="deliverables-help">Selecciona el proyecto en el campo de destino y escribe un solo entregable. No necesitas preparar un archivo.</p>
+      <div class="deliverables-grid">
+        <div class="form-group">
+          <label for="entregableManualNombre">Nombre del entregable</label>
+          <input id="entregableManualNombre" type="text" maxlength="180" placeholder="Ej. Plano de alumbrado nivel 1" autocomplete="off">
+        </div>
+        <div class="form-group" style="align-self:end">
+          <button type="button" class="btn-primary" id="btnAgregarEntregableManual">Agregar entregable</button>
+        </div>
+      </div>
+      <div id="entregableManualMessage" class="deliverables-status" aria-live="polite"></div>
+      <hr style="margin:20px 0;border:0;border-top:1px solid #e2e8f0">
       <h3>Importar archivo</h3>
       <div class="deliverables-grid">
         <div class="form-group">
@@ -1280,8 +1293,8 @@
       </div>
       <div class="deliverables-table-wrap">
         <table class="deliverables-table">
-          <thead><tr><th style="width:44px"><input type="checkbox" id="seleccionarTodosEntregables" aria-label="Seleccionar todos los entregables"></th><th>Entregable</th><th>Acción</th></tr></thead>
-          <tbody id="listaEntregablesBorrar"><tr><td colspan="3">Selecciona un proyecto.</td></tr></tbody>
+          <thead><tr><th style="width:44px"><input type="checkbox" id="seleccionarTodosEntregables" aria-label="Seleccionar todos los entregables"></th><th>Entregable</th><th>Renombrar</th><th>Acción</th></tr></thead>
+          <tbody id="listaEntregablesBorrar"><tr><td colspan="4">Selecciona un proyecto.</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -1330,6 +1343,44 @@
         <div id="adminActividadesMessage" class="deliverables-status" aria-live="polite"></div>
       </div>
     </div>
+
+    <hr style="margin:24px 0;border:0;border-top:1px solid #e2e8f0">
+    <h3>Editar o desactivar proyectos</h3>
+    <p class="deliverables-help">Renombrar un proyecto también actualizará los registros históricos de horas para que todos utilicen el nuevo nombre. Desactivarlo lo oculta de los nuevos registros, pero conserva el historial.</p>
+    <div class="deliverables-grid">
+      <div class="form-group">
+        <label for="adminProyectoGestion">Proyecto existente</label>
+        <select id="adminProyectoGestion"><option value="">Seleccionar proyecto</option></select>
+      </div>
+      <div class="form-group">
+        <label for="adminProyectoNombreNuevo">Nuevo nombre</label>
+        <input id="adminProyectoNombreNuevo" type="text" maxlength="120" placeholder="Escribe el nombre actualizado">
+      </div>
+    </div>
+    <div class="buttons" style="margin-top:8px">
+      <button type="button" class="btn-primary" id="btnRenombrarProyecto">Renombrar proyecto y actualizar horas</button>
+      <button type="button" class="btn-danger" id="btnDesactivarProyecto">Desactivar proyecto</button>
+    </div>
+    <div id="adminProyectoGestionMessage" class="deliverables-status" aria-live="polite"></div>
+
+    <hr style="margin:24px 0;border:0;border-top:1px solid #e2e8f0">
+    <h3>Editar o desactivar actividades</h3>
+    <p class="deliverables-help">Renombrar una actividad también actualizará los registros históricos de horas. Desactivarla la oculta de los nuevos registros, pero conserva el historial.</p>
+    <div class="deliverables-grid">
+      <div class="form-group">
+        <label for="adminActividadGestion">Actividad existente</label>
+        <select id="adminActividadGestion"><option value="">Seleccionar actividad</option></select>
+      </div>
+      <div class="form-group">
+        <label for="adminActividadNombreNuevo">Nuevo nombre</label>
+        <input id="adminActividadNombreNuevo" type="text" maxlength="120" placeholder="Escribe el nombre actualizado">
+      </div>
+    </div>
+    <div class="buttons" style="margin-top:8px">
+      <button type="button" class="btn-primary" id="btnRenombrarActividad">Renombrar actividad y actualizar horas</button>
+      <button type="button" class="btn-danger" id="btnDesactivarActividad">Desactivar actividad</button>
+    </div>
+    <div id="adminActividadGestionMessage" class="deliverables-status" aria-live="polite"></div>
   </section>
 
   <!-- ==================================================
@@ -1875,6 +1926,13 @@
         document.getElementById("btnPromoverAdmin")?.addEventListener("click", promoverAdministrador);
         document.getElementById("btnCrearProyecto")?.addEventListener("click", crearProyectoDesdeApp);
         document.getElementById("btnCrearActividad")?.addEventListener("click", crearActividadDesdeApp);
+        document.getElementById("btnAgregarEntregableManual")?.addEventListener("click", agregarEntregableManual);
+        document.getElementById("btnRenombrarProyecto")?.addEventListener("click", renombrarProyectoDesdeApp);
+        document.getElementById("btnDesactivarProyecto")?.addEventListener("click", desactivarProyectoDesdeApp);
+        document.getElementById("btnRenombrarActividad")?.addEventListener("click", renombrarActividadDesdeApp);
+        document.getElementById("btnDesactivarActividad")?.addEventListener("click", desactivarActividadDesdeApp);
+        document.getElementById("adminProyectoGestion")?.addEventListener("change", () => { const x = proyectos.find(p => String(p.id) === String(document.getElementById("adminProyectoGestion").value)); document.getElementById("adminProyectoNombreNuevo").value = x?.nombre || ""; });
+        document.getElementById("adminActividadGestion")?.addEventListener("change", () => { const x = actividades.find(a => String(a.id) === String(document.getElementById("adminActividadGestion").value)); document.getElementById("adminActividadNombreNuevo").value = x?.nombre || ""; });
         document.getElementById("btnImportarEntregables")?.addEventListener("click", importarEntregablesDesdeArchivo);
         document.getElementById("borrarProyecto")?.addEventListener("change", renderListaEntregablesBorrar);
         document.getElementById("seleccionarTodosEntregables")?.addEventListener("change", event => {
@@ -2647,9 +2705,9 @@
       if (selectAll) { selectAll.checked = false; selectAll.indeterminate = false; selectAll.disabled = true; }
       const btnBulk = document.getElementById("btnBorrarEntregablesSeleccionados");
       if (btnBulk) { btnBulk.disabled = true; btnBulk.textContent = "Eliminar seleccionados (0)"; }
-      if (!projectId) { body.innerHTML = '<tr><td colspan="3">Selecciona un proyecto.</td></tr>'; actualizarContadorSeleccionEntregables(); return; }
+      if (!projectId) { body.innerHTML = '<tr><td colspan="4">Selecciona un proyecto.</td></tr>'; actualizarContadorSeleccionEntregables(); return; }
       const items = entregables.filter(e => String(e.proyecto_id) === String(projectId) && e.activo !== false);
-      if (!items.length) { body.innerHTML = '<tr><td colspan="3">No hay entregables activos en este proyecto.</td></tr>'; actualizarContadorSeleccionEntregables(); return; }
+      if (!items.length) { body.innerHTML = '<tr><td colspan="4">No hay entregables activos en este proyecto.</td></tr>'; actualizarContadorSeleccionEntregables(); return; }
       body.innerHTML = "";
       items.forEach(item => {
         const tr = document.createElement("tr");
@@ -2661,6 +2719,14 @@
         check.addEventListener("change", actualizarContadorSeleccionEntregables);
         tdCheck.appendChild(check);
         const tdName = document.createElement("td"); tdName.textContent = item.nombre;
+        const tdRename = document.createElement("td");
+        if (esAdminApp()) {
+          const wrap = document.createElement("div"); wrap.style.display = "flex"; wrap.style.gap = "6px"; wrap.style.minWidth = "220px";
+          const inputRename = document.createElement("input"); inputRename.type = "text"; inputRename.maxLength = 180; inputRename.value = item.nombre; inputRename.setAttribute("aria-label", "Nuevo nombre de " + item.nombre); inputRename.style.minWidth = "100px"; inputRename.style.width = "100%";
+          const btnRename = document.createElement("button"); btnRename.type = "button"; btnRename.className = "btn-primary btn-small"; btnRename.textContent = "Guardar";
+          btnRename.addEventListener("click", () => renombrarEntregableDesdeApp(item, inputRename));
+          wrap.appendChild(inputRename); wrap.appendChild(btnRename); tdRename.appendChild(wrap);
+        } else { tdRename.textContent = "Solo administradores"; }
         const tdAction = document.createElement("td");
         const btn = document.createElement("button"); btn.type = "button"; btn.className = "btn-danger btn-small"; btn.textContent = "Borrar";
         btn.disabled = !puedeBorrarProyecto(item.proyecto_id);
@@ -2673,7 +2739,7 @@
           actualizarEntregables();
           renderListaEntregablesBorrar();
         });
-        tdAction.appendChild(btn); tr.appendChild(tdCheck); tr.appendChild(tdName); tr.appendChild(tdAction); body.appendChild(tr);
+        tdAction.appendChild(btn); tr.appendChild(tdCheck); tr.appendChild(tdName); tr.appendChild(tdRename); tr.appendChild(tdAction); body.appendChild(tr);
       });
       actualizarContadorSeleccionEntregables();
     }
@@ -2704,6 +2770,122 @@
       actualizarEntregables();
       renderListaEntregablesBorrar();
       alert(`Se eliminaron ${selectedItems.length} entregable(s).`);
+    }
+
+    function actualizarSelectoresGestionCatalogos() {
+      const configuraciones = [
+        ["adminProyectoGestion", proyectos, "Seleccionar proyecto"],
+        ["adminActividadGestion", actividades, "Seleccionar actividad"]
+      ];
+      configuraciones.forEach(([id, items, placeholder]) => {
+        const select = document.getElementById(id);
+        if (!select) return;
+        const anterior = select.value;
+        select.innerHTML = "";
+        const opt = document.createElement("option"); opt.value = ""; opt.textContent = placeholder; select.appendChild(opt);
+        items.filter(x => x.activo !== false).forEach(item => {
+          const option = document.createElement("option"); option.value = String(item.id); option.textContent = item.nombre; select.appendChild(option);
+        });
+        if ([...select.options].some(o => o.value === anterior)) select.value = anterior;
+        select.dispatchEvent(new Event("change"));
+      });
+    }
+
+    async function agregarEntregableManual() {
+      const projectId = document.getElementById("importarProyecto")?.value;
+      const nombre = String(document.getElementById("entregableManualNombre")?.value || "").trim();
+      if (!projectId) { setMensajeEntregables("entregableManualMessage", "Selecciona un proyecto destino.", "error"); return; }
+      if (!nombre) { setMensajeEntregables("entregableManualMessage", "Escribe el nombre del entregable.", "error"); return; }
+      if (nombre.length > 180) { setMensajeEntregables("entregableManualMessage", "El nombre no puede superar 180 caracteres.", "error"); return; }
+      if (!puedeImportarProyecto(projectId)) { setMensajeEntregables("entregableManualMessage", "No tienes permiso para agregar entregables en este proyecto.", "error"); return; }
+      const proyecto = proyectos.find(p => String(p.id) === String(projectId));
+      if (!proyecto) { setMensajeEntregables("entregableManualMessage", "El proyecto seleccionado ya no está disponible.", "error"); return; }
+      const exists = entregables.some(e => String(e.proyecto_id) === String(projectId) && String(e.nombre || "").trim().toLocaleLowerCase() === nombre.toLocaleLowerCase() && e.activo !== false);
+      if (exists) { setMensajeEntregables("entregableManualMessage", "Ese entregable ya existe en el proyecto.", "error"); return; }
+      const { error } = await supabaseClient.from("entregables").insert({ proyecto_id: proyecto.id, nombre, activo: true });
+      if (error) { console.error("No se pudo agregar entregable manual:", error); setMensajeEntregables("entregableManualMessage", "No se pudo agregar el entregable: " + error.message, "error"); return; }
+      document.getElementById("entregableManualNombre").value = "";
+      await cargarEntregables(); actualizarEntregables(document.getElementById("proyecto")?.value); renderListaEntregablesBorrar();
+      setMensajeEntregables("entregableManualMessage", "Entregable agregado a " + proyecto.nombre + ".", "success");
+    }
+
+    async function renombrarProyectoDesdeApp() {
+      if (!esAdminApp()) return;
+      const id = document.getElementById("adminProyectoGestion")?.value;
+      const nombre = String(document.getElementById("adminProyectoNombreNuevo")?.value || "").trim();
+      const actual = proyectos.find(p => String(p.id) === String(id));
+      if (!actual) { setMensajeEntregables("adminProyectoGestionMessage", "Selecciona un proyecto.", "error"); return; }
+      if (!nombre) { setMensajeEntregables("adminProyectoGestionMessage", "Escribe el nuevo nombre.", "error"); return; }
+      if (proyectos.some(p => String(p.id) !== String(id) && String(p.nombre || "").trim().toLocaleLowerCase() === nombre.toLocaleLowerCase())) { setMensajeEntregables("adminProyectoGestionMessage", "Ya existe otro proyecto con ese nombre.", "error"); return; }
+      if (nombre === actual.nombre) { setMensajeEntregables("adminProyectoGestionMessage", "El nombre no cambió.", "info"); return; }
+      if (!confirm(`¿Renombrar el proyecto “${actual.nombre}” a “${nombre}” y actualizar los registros históricos de horas?`)) return;
+      const { data, error } = await supabaseClient.rpc("admin_renombrar_proyecto", { p_proyecto_id: String(id), p_nuevo_nombre: nombre });
+      if (error) { setMensajeEntregables("adminProyectoGestionMessage", "No se pudo renombrar: " + error.message + ". Verifica que hayas ejecutado el SQL complementario.", "error"); return; }
+      await recargarCatalogosTrasCambio();
+      setMensajeEntregables("adminProyectoGestionMessage", "Proyecto renombrado. Se actualizaron los registros históricos relacionados.", "success");
+    }
+
+    async function desactivarProyectoDesdeApp() {
+      if (!esAdminApp()) return;
+      const id = document.getElementById("adminProyectoGestion")?.value;
+      const actual = proyectos.find(p => String(p.id) === String(id));
+      if (!actual) { setMensajeEntregables("adminProyectoGestionMessage", "Selecciona un proyecto.", "error"); return; }
+      if (!confirm(`¿Desactivar “${actual.nombre}”? No aparecerá en nuevos registros; se conservará el historial y sus entregables se desactivarán.`)) return;
+      const { error } = await supabaseClient.rpc("admin_desactivar_proyecto", { p_proyecto_id: String(id) });
+      if (error) { setMensajeEntregables("adminProyectoGestionMessage", "No se pudo desactivar: " + error.message + ". Verifica que hayas ejecutado el SQL complementario.", "error"); return; }
+      await recargarCatalogosTrasCambio();
+      setMensajeEntregables("adminProyectoGestionMessage", "Proyecto desactivado; el historial se conservó.", "success");
+    }
+
+    async function renombrarActividadDesdeApp() {
+      if (!esAdminApp()) return;
+      const id = document.getElementById("adminActividadGestion")?.value;
+      const nombre = String(document.getElementById("adminActividadNombreNuevo")?.value || "").trim();
+      const actual = actividades.find(a => String(a.id) === String(id));
+      if (!actual) { setMensajeEntregables("adminActividadGestionMessage", "Selecciona una actividad.", "error"); return; }
+      if (!nombre) { setMensajeEntregables("adminActividadGestionMessage", "Escribe el nuevo nombre.", "error"); return; }
+      if (actividades.some(a => String(a.id) !== String(id) && String(a.nombre || "").trim().toLocaleLowerCase() === nombre.toLocaleLowerCase())) { setMensajeEntregables("adminActividadGestionMessage", "Ya existe otra actividad con ese nombre.", "error"); return; }
+      if (nombre === actual.nombre) { setMensajeEntregables("adminActividadGestionMessage", "El nombre no cambió.", "info"); return; }
+      if (!confirm(`¿Renombrar la actividad “${actual.nombre}” a “${nombre}” y actualizar los registros históricos de horas?`)) return;
+      const { error } = await supabaseClient.rpc("admin_renombrar_actividad", { p_actividad_id: String(id), p_nuevo_nombre: nombre });
+      if (error) { setMensajeEntregables("adminActividadGestionMessage", "No se pudo renombrar: " + error.message + ". Verifica que hayas ejecutado el SQL complementario.", "error"); return; }
+      await recargarCatalogosTrasCambio();
+      setMensajeEntregables("adminActividadGestionMessage", "Actividad renombrada y registros históricos actualizados.", "success");
+    }
+
+    async function desactivarActividadDesdeApp() {
+      if (!esAdminApp()) return;
+      const id = document.getElementById("adminActividadGestion")?.value;
+      const actual = actividades.find(a => String(a.id) === String(id));
+      if (!actual) { setMensajeEntregables("adminActividadGestionMessage", "Selecciona una actividad.", "error"); return; }
+      if (!confirm(`¿Desactivar “${actual.nombre}”? No aparecerá en nuevos registros, pero se conservará el historial.`)) return;
+      const { error } = await supabaseClient.rpc("admin_desactivar_actividad", { p_actividad_id: String(id) });
+      if (error) { setMensajeEntregables("adminActividadGestionMessage", "No se pudo desactivar: " + error.message + ". Verifica que hayas ejecutado el SQL complementario.", "error"); return; }
+      await recargarCatalogosTrasCambio();
+      setMensajeEntregables("adminActividadGestionMessage", "Actividad desactivada; el historial se conservó.", "success");
+    }
+
+    async function renombrarEntregableDesdeApp(item, input) {
+      if (!esAdminApp()) return;
+      const nombre = String(input?.value || "").trim();
+      if (!nombre) { alert("Escribe el nuevo nombre del entregable."); return; }
+      if (nombre === String(item.nombre || "").trim()) { alert("El nombre no cambió."); return; }
+      const duplicado = entregables.some(e => String(e.proyecto_id) === String(item.proyecto_id) && String(e.id) !== String(item.id) && String(e.nombre || "").trim().toLocaleLowerCase() === nombre.toLocaleLowerCase() && e.activo !== false);
+      if (duplicado) { alert("Ya existe otro entregable con ese nombre en este proyecto."); return; }
+      if (!confirm(`¿Renombrar “${item.nombre}” a “${nombre}” y actualizar los registros de horas de este proyecto?`)) return;
+      const { error } = await supabaseClient.rpc("admin_renombrar_entregable", { p_entregable_id: String(item.id), p_nuevo_nombre: nombre });
+      if (error) { alert("No se pudo renombrar el entregable: " + error.message + ". Verifica que hayas ejecutado el SQL complementario."); return; }
+      await recargarCatalogosTrasCambio();
+      renderListaEntregablesBorrar();
+      alert("Entregable renombrado y registros históricos actualizados.");
+    }
+
+    async function recargarCatalogosTrasCambio() {
+      await Promise.all([cargarProyectos(), cargarActividades(), cargarEntregables(), cargarHoras()]);
+      actualizarSelectoresGestionCatalogos();
+      actualizarFiltros(); actualizarResumen(); mostrarHoras();
+      await cargarPermisosYPrepararModuloEntregables();
+      renderListaEntregablesBorrar();
     }
 
     async function cargarProyectos() {
@@ -2767,6 +2949,7 @@
 
         }
       );
+      actualizarSelectoresGestionCatalogos();
 
     }
 
@@ -2832,6 +3015,7 @@
 
         }
       );
+      actualizarSelectoresGestionCatalogos();
 
     }
 
