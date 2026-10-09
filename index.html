@@ -271,6 +271,18 @@
       margin: 10px 0 0;
     }
 
+    .character-counter {
+      margin-top: 6px;
+      text-align: right;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .character-counter.limit-reached {
+      color: #b91c1c;
+      font-weight: 700;
+    }
+
     @media (max-width: 800px) {
       .charts-grid {
         grid-template-columns: 1fr;
@@ -868,7 +880,11 @@
           <textarea
             id="notas"
             placeholder="Notas adicionales..."
+            maxlength="500"
+            oninput="actualizarContadorNotas()"
+            aria-describedby="contadorNotas"
           ></textarea>
+          <div id="contadorNotas" class="character-counter" aria-live="polite">0 / 500 caracteres</div>
 
         </div>
 
@@ -1271,6 +1287,7 @@
       async function() {
 
         establecerFechaActual();
+        actualizarContadorNotas();
 
 
         /*
@@ -2462,6 +2479,26 @@
 
 
     /* ==================================================
+       CONTADOR DE CARACTERES DE NOTAS
+    =================================================== */
+
+    function actualizarContadorNotas() {
+      const campo = document.getElementById("notas");
+      const contador = document.getElementById("contadorNotas");
+      if (!campo || !contador) return;
+
+      // Defensa adicional: nunca permitir más de 500 caracteres, incluso al pegar texto.
+      if (campo.value.length > 500) {
+        campo.value = campo.value.slice(0, 500);
+      }
+
+      const cantidad = campo.value.length;
+      contador.textContent = `${cantidad} / 500 caracteres`;
+      contador.classList.toggle("limit-reached", cantidad >= 500);
+    }
+
+
+    /* ==================================================
        GUARDAR HORAS
     =================================================== */
 
@@ -2536,6 +2573,14 @@
           .value
           .trim();
 
+      if (notas.length > 500) {
+        mostrarMensaje(
+          "formMessage",
+          "Las notas no pueden superar los 500 caracteres.",
+          "error"
+        );
+        return;
+      }
 
       if (!fecha) {
 
@@ -2856,8 +2901,9 @@
       document
         .getElementById("notas")
         .value =
-          registro.notas || "";
+          (registro.notas || "").slice(0, 500);
 
+      actualizarContadorNotas();
 
       document
         .getElementById("btnGuardar")
@@ -3058,6 +3104,7 @@
         .value =
           "";
 
+      actualizarContadorNotas();
 
       document
         .getElementById("btnGuardar")
