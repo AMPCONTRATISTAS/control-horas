@@ -1201,14 +1201,14 @@
   </div>
 
   <div class="form-group">
-    <label for="recoveryOtpCode">Código de recuperación (6 dígitos)</label>
+    <label for="recoveryOtpCode">Código de recuperación (8 dígitos)</label>
     <input
       type="text"
       id="recoveryOtpCode"
       placeholder="Código recibido por correo"
       inputmode="numeric"
       autocomplete="one-time-code"
-      maxlength="6"
+      maxlength="8"
     >
   </div>
 
@@ -3779,7 +3779,7 @@
       mostrarFormularioNuevaPassword();
       mostrarMensaje(
         "newPasswordMessage",
-        "Enviamos un código de 6 dígitos a tu correo. Escríbelo aquí y define tu nueva contraseña.",
+        "Enviamos un código de 8 dígitos a tu correo. Escríbelo aquí y define tu nueva contraseña.",
         "success"
       );
     }
@@ -3834,7 +3834,7 @@
       mostrarFormularioNuevaPassword();
       mostrarMensaje(
         "newPasswordMessage",
-        "Te enviamos un código de 6 dígitos. Escríbelo para confirmar la recuperación y establecer tu nueva contraseña.",
+        "Te enviamos un código de 8 dígitos. Escríbelo para confirmar la recuperación y establecer tu nueva contraseña.",
         "success"
       );
 
@@ -3906,7 +3906,7 @@
       }
 
 
-      // En el flujo OTP, validar primero el código de seis dígitos.
+      // En el flujo OTP, validar primero el código de ocho dígitos.
       // verifyOtp(type: recovery) crea la sesión necesaria para updateUser().
       if (requiereCodigoRecuperacion) {
         const emailOtp = document.getElementById("recoveryOtpEmail").value.trim();
@@ -3916,8 +3916,8 @@
           mostrarMensaje("newPasswordMessage", "Escribe el correo donde recibiste el código.", "error");
           return;
         }
-        if (!/^\d{6}$/.test(tokenOtp)) {
-          mostrarMensaje("newPasswordMessage", "Introduce el código de 6 dígitos que recibiste por correo.", "error");
+        if (!/^\d{8}$/.test(tokenOtp)) {
+          mostrarMensaje("newPasswordMessage", "Introduce el código de 8 dígitos que recibiste por correo.", "error");
           return;
         }
 
