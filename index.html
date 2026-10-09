@@ -1254,6 +1254,19 @@
     const APP_URL =
       "https://ampcontratistas.github.io/control-horas/";
 
+    // Capturar la intención de recuperación ANTES de que Supabase procese
+    // el enlace y pueda limpiar el fragmento de la URL.
+    const enlaceDeRecuperacion = /(?:[?#&])type=recovery(?:[&#]|$)/i.test(
+      window.location.search + window.location.hash
+    ) || /type=recovery/i.test(window.location.href);
+
+    function mostrarFormularioNuevaPassword() {
+      const modal = document.getElementById("newPasswordModal");
+      if (modal) modal.classList.remove("hidden");
+      const campo = document.getElementById("newPassword");
+      if (campo) setTimeout(() => campo.focus(), 100);
+    }
+
     const supabaseClient =
       supabase.createClient(
         SUPABASE_URL,
@@ -1379,13 +1392,7 @@
           function(event, session) {
 
             if (event === "PASSWORD_RECOVERY") {
-              document
-                .getElementById("newPasswordModal")
-                .classList.remove("hidden");
-
-              document
-                .getElementById("newPassword")
-                .focus();
+              mostrarFormularioNuevaPassword();
             }
 
             if (event === "SIGNED_OUT") {
@@ -1412,12 +1419,10 @@
 
         await verificarSesion();
 
-        // Respaldo visual para enlaces de recuperación que regresen con type=recovery.
-        const authUrl = window.location.href;
-        if (/[#&?]type=recovery(?:&|$)/i.test(authUrl)) {
-          document
-            .getElementById("newPasswordModal")
-            .classList.remove("hidden");
+        // Respaldo: mostrar el formulario aunque PASSWORD_RECOVERY se haya
+        // emitido antes de registrar el listener o Supabase haya limpiado la URL.
+        if (enlaceDeRecuperacion) {
+          mostrarFormularioNuevaPassword();
         }
 
       }
