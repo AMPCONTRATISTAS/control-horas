@@ -1157,7 +1157,7 @@
       class="btn-primary"
       onclick="enviarRecuperacion()"
     >
-      Enviar enlace
+      Enviar código
     </button>
 
     <button
@@ -1189,6 +1189,28 @@
   </h2>
 
   <div id="newPasswordMessage"></div>
+
+  <div class="form-group">
+    <label for="recoveryOtpEmail">Correo electrónico</label>
+    <input
+      type="email"
+      id="recoveryOtpEmail"
+      placeholder="correo@empresa.com"
+      autocomplete="email"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="recoveryOtpCode">Código de recuperación (6 dígitos)</label>
+    <input
+      type="text"
+      id="recoveryOtpCode"
+      placeholder="Código recibido por correo"
+      inputmode="numeric"
+      autocomplete="one-time-code"
+      maxlength="6"
+    >
+  </div>
 
   <div class="form-group">
 
@@ -1263,6 +1285,8 @@
 
     // Supabase normalmente redirige con ?code=... y no conserva type=recovery.
     // Por eso el enlace de recuperación también usa ?recovery=1 como marca.
+    let requiereCodigoRecuperacion = false;
+
     const enlaceDeRecuperacion =
       parametrosIniciales.get("recovery") === "1" ||
       parametrosIniciales.get("reset") === "1" ||
@@ -1497,13 +1521,16 @@
         // Primero intercambiar el código/token del enlace; después consultar
         // la sesión. Mostrar el modal por sí solo no autentica la recuperación.
         if (enlaceDeRecuperacion) {
-          await procesarEnlaceDeAutenticacion();
-        }
-
-        await verificarSesion();
-
-        if (enlaceDeRecuperacion) {
+          // El flujo nuevo utiliza un código OTP escrito por el usuario;
+          // no debe intentar validar un enlace de un solo uso.
+          requiereCodigoRecuperacion = true;
+          await verificarSesion();
           mostrarFormularioNuevaPassword();
+          const emailLogin = document.getElementById("loginEmail")?.value || "";
+          if (emailLogin) document.getElementById("recoveryOtpEmail").value = emailLogin;
+        } else {
+          await procesarEnlaceDeAutenticacion();
+          await verificarSesion();
         }
 
       }
@@ -3728,63 +3755,34 @@
 
 
     async function enviarRecuperacion() {
-
-      const email =
-        document
-          .getElementById("recoveryEmail")
-          .value
-          .trim();
-
+      const email = document.getElementById("recoveryEmail").value.trim();
 
       if (!email) {
-
-        mostrarMensaje(
-          "recoveryMessage",
-          "Escribe tu correo electrónico.",
-          "error"
-        );
-
+        mostrarMensaje("recoveryMessage", "Escribe tu correo electrónico.", "error");
         return;
-
       }
 
-
-      const {
-        error
-      } =
-        await supabaseClient.auth
-          .resetPasswordForEmail(
-            email,
-            {
-              redirectTo: APP_URL + "?recovery=1"
-            }
-          );
-
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
 
       if (error) {
-
         console.error(error);
-
-        mostrarMensaje(
-          "recoveryMessage",
-          "No se pudo enviar el correo: " +
-            error.message,
-          "error"
-        );
-
+        mostrarMensaje("recoveryMessage", "No se pudo enviar el código: " + error.message, "error");
         return;
-
       }
 
-
+      requiereCodigoRecuperacion = true;
+      document.getElementById("recoveryOtpEmail").value = email;
+      document.getElementById("recoveryOtpCode").value = "";
+      document.getElementById("newPassword").value = "";
+      document.getElementById("newPasswordConfirm").value = "";
+      cerrarRecuperacion();
+      mostrarFormularioNuevaPassword();
       mostrarMensaje(
-        "recoveryMessage",
-        "Te enviamos un enlace para cambiar tu contraseña. Revisa tu correo.",
+        "newPasswordMessage",
+        "Enviamos un código de 6 dígitos a tu correo. Escríbelo aquí y define tu nueva contraseña.",
         "success"
       );
-
     }
-
 
     /* ==================================================
        CAMBIAR CONTRASEÑA
@@ -3804,7 +3802,7 @@
 
       const confirmar =
         confirm(
-          "Se enviará un enlace para cambiar la contraseña a tu correo. ¿Continuar?"
+          "Se enviará un código de recuperación a tu correo. ¿Continuar?"
         );
 
 
@@ -3813,16 +3811,7 @@
       }
 
 
-      const {
-        error
-      } =
-        await supabaseClient.auth
-          .resetPasswordForEmail(
-            usuarioActual.email,
-            {
-              redirectTo: APP_URL + "?recovery=1"
-            }
-          );
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(usuarioActual.email);
 
 
       if (error) {
@@ -3839,9 +3828,13 @@
       }
 
 
+      requiereCodigoRecuperacion = true;
+      document.getElementById("recoveryOtpEmail").value = usuarioActual.email;
+      document.getElementById("recoveryOtpCode").value = "";
+      mostrarFormularioNuevaPassword();
       mostrarMensaje(
-        "formMessage",
-        "Te enviamos el enlace para cambiar tu contraseña a tu correo.",
+        "newPasswordMessage",
+        "Te enviamos un código de 6 dígitos. Escríbelo para confirmar la recuperación y establecer tu nueva contraseña.",
         "success"
       );
 
@@ -3913,26 +3906,47 @@
       }
 
 
-      // Confirmar que el enlace dejó una sesión válida antes de cambiar la contraseña.
-      const { data: sesionActual, error: errorSesion } =
-        await supabaseClient.auth.getSession();
+      // En el flujo OTP, validar primero el código de seis dígitos.
+      // verifyOtp(type: recovery) crea la sesión necesaria para updateUser().
+      if (requiereCodigoRecuperacion) {
+        const emailOtp = document.getElementById("recoveryOtpEmail").value.trim();
+        const tokenOtp = document.getElementById("recoveryOtpCode").value.trim().replace(/\s/g, "");
 
+        if (!emailOtp) {
+          mostrarMensaje("newPasswordMessage", "Escribe el correo donde recibiste el código.", "error");
+          return;
+        }
+        if (!/^\d{6}$/.test(tokenOtp)) {
+          mostrarMensaje("newPasswordMessage", "Introduce el código de 6 dígitos que recibiste por correo.", "error");
+          return;
+        }
+
+        const { data: datosOtp, error: errorOtp } = await supabaseClient.auth.verifyOtp({
+          email: emailOtp,
+          token: tokenOtp,
+          type: "recovery"
+        });
+
+        if (errorOtp || !datosOtp?.session) {
+          console.error("Error verificando código de recuperación:", errorOtp);
+          mostrarMensaje(
+            "newPasswordMessage",
+            "No se pudo validar el código. Verifica el correo, solicita un código nuevo y utiliza el más reciente.",
+            "error"
+          );
+          return;
+        }
+        requiereCodigoRecuperacion = false;
+      }
+
+      // Confirmar que hay una sesión válida antes de actualizar la contraseña.
+      const { data: sesionActual, error: errorSesion } = await supabaseClient.auth.getSession();
       if (errorSesion || !sesionActual?.session) {
-        mostrarMensaje(
-          "newPasswordMessage",
-          "El enlace de recuperación no creó una sesión válida o ya venció. Solicita un correo nuevo y abre el enlace más reciente.",
-          "error"
-        );
+        mostrarMensaje("newPasswordMessage", "No se pudo establecer una sesión válida. Solicita un código nuevo e inténtalo otra vez.", "error");
         return;
       }
 
-      const {
-        error
-      } =
-        await supabaseClient.auth
-          .updateUser({
-            password: password
-          });
+      const { error } = await supabaseClient.auth.updateUser({ password });
 
 
       if (error) {
@@ -3978,6 +3992,8 @@
             .getElementById("newPasswordConfirm")
             .value =
               "";
+          document.getElementById("recoveryOtpCode").value = "";
+          requiereCodigoRecuperacion = false;
 
         },
         1500
