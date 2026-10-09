@@ -1256,9 +1256,19 @@
 
     // Capturar la intención de recuperación ANTES de que Supabase procese
     // el enlace y pueda limpiar el fragmento de la URL.
-    const enlaceDeRecuperacion = /(?:[?#&])type=recovery(?:[&#]|$)/i.test(
-      window.location.search + window.location.hash
-    ) || /type=recovery/i.test(window.location.href);
+    const parametrosIniciales = new URLSearchParams(window.location.search);
+    const hashInicial = new URLSearchParams(
+      window.location.hash.replace(/^#/, "")
+    );
+
+    // Supabase normalmente redirige con ?code=... y no conserva type=recovery.
+    // Por eso el enlace de recuperación también usa ?recovery=1 como marca.
+    const enlaceDeRecuperacion =
+      parametrosIniciales.get("recovery") === "1" ||
+      parametrosIniciales.get("reset") === "1" ||
+      parametrosIniciales.get("type") === "recovery" ||
+      hashInicial.get("type") === "recovery" ||
+      /[?&#]type=recovery(?:[&#]|$)/i.test(window.location.href);
 
     function mostrarFormularioNuevaPassword() {
       const modal = document.getElementById("newPasswordModal");
@@ -3675,8 +3685,7 @@
           .resetPasswordForEmail(
             email,
             {
-              redirectTo:
-                APP_URL
+              redirectTo: APP_URL + "?recovery=1"
             }
           );
 
@@ -3740,8 +3749,7 @@
           .resetPasswordForEmail(
             usuarioActual.email,
             {
-              redirectTo:
-                APP_URL
+              redirectTo: APP_URL + "?recovery=1"
             }
           );
 
@@ -3834,13 +3842,25 @@
       }
 
 
+      // Confirmar que el enlace dejó una sesión válida antes de cambiar la contraseña.
+      const { data: sesionActual, error: errorSesion } =
+        await supabaseClient.auth.getSession();
+
+      if (errorSesion || !sesionActual?.session) {
+        mostrarMensaje(
+          "newPasswordMessage",
+          "El enlace de recuperación no creó una sesión válida o ya venció. Solicita un correo nuevo y abre el enlace más reciente.",
+          "error"
+        );
+        return;
+      }
+
       const {
         error
       } =
         await supabaseClient.auth
           .updateUser({
-            password:
-              password
+            password: password
           });
 
 
