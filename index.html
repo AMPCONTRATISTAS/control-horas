@@ -3754,6 +3754,39 @@
     }
 
 
+    // Limita las solicitudes de recuperación a una cada 5 minutos por correo
+    // en este navegador. Configura también el límite del lado de Supabase.
+    const INTERVALO_RECUPERACION_MS = 5 * 60 * 1000;
+    const CLAVE_RECUPERACION_STORAGE = "amp_control_horas_ultimo_envio_recuperacion:";
+
+    function segundosEsperaRecuperacion(email) {
+      try {
+        const clave = CLAVE_RECUPERACION_STORAGE + email.trim().toLowerCase();
+        const ultimoEnvio = Number(localStorage.getItem(clave) || 0);
+        if (!ultimoEnvio) return 0;
+        const restante = INTERVALO_RECUPERACION_MS - (Date.now() - ultimoEnvio);
+        return restante > 0 ? Math.ceil(restante / 1000) : 0;
+      } catch (e) {
+        console.warn("No se pudo leer el tiempo de espera local:", e);
+        return 0;
+      }
+    }
+
+    function marcarEnvioRecuperacion(email) {
+      try {
+        const clave = CLAVE_RECUPERACION_STORAGE + email.trim().toLowerCase();
+        localStorage.setItem(clave, String(Date.now()));
+      } catch (e) {
+        console.warn("No se pudo guardar el tiempo de espera local:", e);
+      }
+    }
+
+    function mensajeEsperaRecuperacion(segundos) {
+      const minutos = Math.floor(segundos / 60);
+      const restantes = segundos % 60;
+      return `Por seguridad, solo puedes solicitar un correo de recuperación cada 5 minutos. Inténtalo de nuevo en ${minutos} min ${restantes} s.`;
+    }
+
     async function enviarRecuperacion() {
       const email = document.getElementById("recoveryEmail").value.trim();
 
@@ -3762,14 +3795,24 @@
         return;
       }
 
+      const espera = segundosEsperaRecuperacion(email);
+      if (espera > 0) {
+        mostrarMensaje("recoveryMessage", mensajeEsperaRecuperacion(espera), "error");
+        return;
+      }
+
       const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
 
       if (error) {
         console.error(error);
-        mostrarMensaje("recoveryMessage", "No se pudo enviar el código: " + error.message, "error");
+        const mensaje = /rate limit|too many requests|429/i.test(error.message || "")
+          ? "Supabase limitó temporalmente los envíos. Espera 5 minutos antes de volver a intentarlo."
+          : "No se pudo enviar el código: " + error.message;
+        mostrarMensaje("recoveryMessage", mensaje, "error");
         return;
       }
 
+      marcarEnvioRecuperacion(email);
       requiereCodigoRecuperacion = true;
       document.getElementById("recoveryOtpEmail").value = email;
       document.getElementById("recoveryOtpCode").value = "";
@@ -3800,6 +3843,12 @@
       }
 
 
+      const espera = segundosEsperaRecuperacion(usuarioActual.email);
+      if (espera > 0) {
+        mostrarMensaje("formMessage", mensajeEsperaRecuperacion(espera), "error");
+        return;
+      }
+
       const confirmar =
         confirm(
           "Se enviará un código de recuperación a tu correo. ¿Continuar?"
@@ -3827,7 +3876,7 @@
 
       }
 
-
+      marcarEnvioRecuperacion(usuarioActual.email);
       requiereCodigoRecuperacion = true;
       document.getElementById("recoveryOtpEmail").value = usuarioActual.email;
       document.getElementById("recoveryOtpCode").value = "";
