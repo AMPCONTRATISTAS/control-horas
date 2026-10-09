@@ -7,6 +7,7 @@
   <title>Control de Horas AMP</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
   <style>
@@ -498,6 +499,11 @@
       margin-top: 0;
     }
 
+    .main-tabs { display:flex; gap:10px; flex-wrap:wrap; margin: 18px 0 20px; }
+    .main-tab-button { border:1px solid #cbd5e1; border-radius:10px; padding:11px 18px; font-weight:700; cursor:pointer; background:#fff; color:#334155; }
+    .main-tab-button.active { background:var(--primary, #1d4ed8); color:#fff; border-color:var(--primary, #1d4ed8); }
+    .tab-view-hidden { display:none !important; }
+
     /* =========================
        UTILIDADES
     ========================== */
@@ -532,6 +538,21 @@
         width: 100%;
       }
     }
+
+    .deliverables-help { color: var(--text-muted, #64748b); font-size: .92rem; margin: 6px 0 14px; }
+    .deliverables-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+    .deliverables-table-wrap { overflow-x: auto; margin-top: 12px; }
+    .deliverables-table { width: 100%; border-collapse: collapse; }
+    .deliverables-table th, .deliverables-table td { text-align: left; padding: 10px; border-bottom: 1px solid #e2e8f0; }
+    .deliverables-table th { background: #f8fafc; }
+    .deliverables-checks { display:flex; flex-wrap:wrap; gap:18px; margin: 12px 0; }
+    .deliverables-checks label { display:flex; align-items:center; gap:8px; }
+    .deliverables-checks input { width:auto; }
+    .deliverables-status { margin-top: 12px; }
+    .deliverables-status.success { color:#15803d; }
+    .deliverables-status.error { color:#b91c1c; }
+    .deliverables-status.info { color:#1d4ed8; }
+
   </style>
 
 </head>
@@ -640,6 +661,11 @@
 
 
 <main class="container">
+
+  <nav id="mainTabs" class="main-tabs" aria-label="Secciones de la aplicación">
+    <button type="button" id="tabMisHoras" class="main-tab-button active" aria-selected="true">Mis horas</button>
+    <button type="button" id="tabAdministracion" class="main-tab-button" aria-selected="false" style="display:none">Administración / entregables</button>
+  </nav>
 
   <!-- ==================================================
        1. RESUMEN
@@ -925,6 +951,121 @@
 
   </section>
 
+
+  <!-- ==================================================
+       ADMINISTRAR ENTREGABLES
+  =================================================== -->
+
+  <section class="card hidden" id="adminEntregablesCard">
+    <h2>Administrar entregables</h2>
+    <p class="deliverables-help">Importa hasta 500 entregables por archivo CSV o Excel (.xlsx). El archivo debe tener una sola columna llamada <strong>nombre</strong>. El proyecto se selecciona aquí; no agregues el proyecto al archivo.</p>
+
+    <div id="adminPermisosPanel" class="hidden">
+      <h3>Permisos por persona y proyecto</h3>
+      <p class="deliverables-help">Selecciona a la persona, el proyecto y los permisos que tendrá. Los administradores de la app pueden modificar estas autorizaciones.</p>
+      <div class="deliverables-grid">
+        <div class="form-group">
+          <label for="permisoUsuario">Persona</label>
+          <select id="permisoUsuario"><option value="">Seleccionar persona</option></select>
+        </div>
+        <div class="form-group">
+          <label for="permisoProyecto">Proyecto</label>
+          <select id="permisoProyecto"><option value="">Seleccionar proyecto</option></select>
+        </div>
+      </div>
+      <div class="deliverables-checks">
+        <label><input type="checkbox" id="permisoPuedeCargar"> Puede importar entregables</label>
+        <label><input type="checkbox" id="permisoPuedeBorrar"> Puede borrar entregables</label>
+      </div>
+      <button type="button" class="btn-primary" id="guardarPermisoEntregables">Guardar permisos</button>
+      <div id="permisosEntregablesMessage" class="deliverables-status" aria-live="polite"></div>
+      <h3>Permisos configurados</h3>
+      <div class="deliverables-table-wrap">
+        <table class="deliverables-table">
+          <thead><tr><th>Persona</th><th>Proyecto</th><th>Importar</th><th>Borrar</th><th>Acción</th></tr></thead>
+          <tbody id="permisosEntregablesBody"><tr><td colspan="5">Cargando permisos…</td></tr></tbody>
+        </table>
+      </div>
+      <hr style="margin:24px 0;border:0;border-top:1px solid #e2e8f0">
+    </div>
+
+    <div id="importarEntregablesPanel" class="hidden">
+      <h3>Importar archivo</h3>
+      <div class="deliverables-grid">
+        <div class="form-group">
+          <label for="importarProyecto">Proyecto destino</label>
+          <select id="importarProyecto"><option value="">Seleccionar proyecto</option></select>
+        </div>
+        <div class="form-group">
+          <label for="archivoEntregables">Archivo CSV o Excel</label>
+          <input type="file" id="archivoEntregables" accept=".csv,.xlsx,.xls">
+        </div>
+      </div>
+      <p class="deliverables-help">Formato requerido: encabezado <code>nombre</code> en la primera fila y un entregable por fila. No se permiten más de 500 filas con nombres.</p>
+      <button type="button" class="btn-primary" id="btnImportarEntregables">Validar e importar</button>
+      <div id="importarEntregablesMessage" class="deliverables-status" aria-live="polite"></div>
+    </div>
+
+    <div id="gestionarEntregablesPanel" class="hidden" style="margin-top:24px">
+      <h3>Entregables existentes</h3>
+      <div class="form-group">
+        <label for="borrarProyecto">Proyecto</label>
+        <select id="borrarProyecto"><option value="">Seleccionar proyecto</option></select>
+      </div>
+      <p class="deliverables-help">Borrar un entregable lo elimina de la lista del proyecto y dejará de aparecer en el selector de registros de horas. Esta acción no se puede deshacer.</p>
+      <div class="deliverables-table-wrap">
+        <table class="deliverables-table">
+          <thead><tr><th>Entregable</th><th>Acción</th></tr></thead>
+          <tbody id="listaEntregablesBorrar"><tr><td colspan="2">Selecciona un proyecto.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================
+       ADMINISTRACIÓN GENERAL: ADMINS, PROYECTOS Y ACTIVIDADES
+  =================================================== -->
+  <section class="card hidden" id="adminGeneralCard">
+    <h2>Administración de la aplicación</h2>
+    <p class="deliverables-help">Solo los administradores pueden usar estas opciones. Los cambios se validan también en Supabase.</p>
+
+    <div class="deliverables-grid">
+      <div class="form-group">
+        <h3>Dar de alta administrador</h3>
+        <label for="nuevoAdminUsuario">Usuario registrado</label>
+        <select id="nuevoAdminUsuario"><option value="">Seleccionar usuario</option></select>
+        <button type="button" class="btn-primary" id="btnPromoverAdmin" style="margin-top:10px">Dar permisos de administrador</button>
+        <div id="adminUsuariosMessage" class="deliverables-status" aria-live="polite"></div>
+      </div>
+      <div class="form-group">
+        <h3>Administradores actuales</h3>
+        <div class="deliverables-table-wrap">
+          <table class="deliverables-table">
+            <thead><tr><th>Persona</th><th>Acción</th></tr></thead>
+            <tbody id="administradoresAppBody"><tr><td colspan="2">Cargando…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr style="margin:24px 0;border:0;border-top:1px solid #e2e8f0">
+    <div class="deliverables-grid">
+      <div class="form-group">
+        <h3>Dar de alta proyecto</h3>
+        <label for="nuevoProyectoNombre">Nombre del proyecto</label>
+        <input id="nuevoProyectoNombre" type="text" maxlength="120" placeholder="Ej. ABBOTT" autocomplete="off">
+        <button type="button" class="btn-primary" id="btnCrearProyecto" style="margin-top:10px">Crear proyecto</button>
+        <div id="adminProyectosMessage" class="deliverables-status" aria-live="polite"></div>
+      </div>
+      <div class="form-group">
+        <h3>Dar de alta actividad</h3>
+        <label for="nuevaActividadNombre">Nombre de la actividad</label>
+        <input id="nuevaActividadNombre" type="text" maxlength="120" placeholder="Ej. Modelado eléctrico" autocomplete="off">
+        <button type="button" class="btn-primary" id="btnCrearActividad" style="margin-top:10px">Crear actividad</button>
+        <div id="adminActividadesMessage" class="deliverables-status" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
 
   <!-- ==================================================
        3. HISTORIAL
@@ -1400,6 +1541,16 @@
     let actividades = [];
 
     let entregables = [];
+    let permisosEntregables = [];
+    let empleadosParaPermisos = [];
+    let administradoresApp = [];
+    // Administradores maestros inmutables: sus permisos no se pueden revocar desde la app.
+    const ADMIN_MAESTROS = {
+      "bbe57d9d-21ab-4bb5-bf7b-a75b95c2c638": "rgodinez@ampcontratistas.com.mx",
+      "a77b4e66-fb5a-45a8-885b-773e3546eb7e": "rsoto@ampcontratistas.com.mx"
+    };
+    const ADMIN_MAESTRO_IDS = Object.keys(ADMIN_MAESTROS);
+    const esAdminMaestroId = (id) => ADMIN_MAESTRO_IDS.includes(String(id || ""));
 
     let registroEditando = null;
 
@@ -1414,6 +1565,10 @@
 
         establecerFechaActual();
         actualizarContadorNotas();
+
+        document.getElementById("tabMisHoras")?.addEventListener("click", () => cambiarPestanaPrincipal("horas"));
+        document.getElementById("tabAdministracion")?.addEventListener("click", () => cambiarPestanaPrincipal("admin"));
+        cambiarPestanaPrincipal("horas");
 
 
         /*
@@ -1450,6 +1605,15 @@
 
             }
           );
+
+        document.getElementById("guardarPermisoEntregables")?.addEventListener("click", guardarPermisoEntregables);
+        document.getElementById("btnPromoverAdmin")?.addEventListener("click", promoverAdministrador);
+        document.getElementById("btnCrearProyecto")?.addEventListener("click", crearProyectoDesdeApp);
+        document.getElementById("btnCrearActividad")?.addEventListener("click", crearActividadDesdeApp);
+        document.getElementById("btnImportarEntregables")?.addEventListener("click", importarEntregablesDesdeArchivo);
+        document.getElementById("borrarProyecto")?.addEventListener("change", renderListaEntregablesBorrar);
+        document.getElementById("permisoProyecto")?.addEventListener("change", cargarPermisoSeleccionadoEnFormulario);
+        document.getElementById("permisoUsuario")?.addEventListener("change", cargarPermisoSeleccionadoEnFormulario);
 
 
         /*
@@ -1511,6 +1675,10 @@
             if (event === "SIGNED_OUT") {
               usuarioActual = null;
               registros = [];
+              permisosEntregables = [];
+              administradoresApp = [];
+              document.getElementById("adminEntregablesCard")?.classList.add("hidden");
+              document.getElementById("adminGeneralCard")?.classList.add("hidden");
               document
                 .getElementById("appScreen")
                 .classList.add("hidden");
@@ -1718,6 +1886,9 @@
       await supabaseClient.auth.signOut();
 
       usuarioActual = null;
+      administradoresApp = [];
+      document.getElementById("adminGeneralCard")?.classList.add("hidden");
+      document.getElementById("adminEntregablesCard")?.classList.add("hidden");
 
       registros = [];
 
@@ -1751,8 +1922,44 @@
         .textContent =
           usuarioActual?.email || "";
 
+      cambiarPestanaPrincipal("horas");
+
     }
 
+
+    /* ==================================================
+       PESTAÑAS PRINCIPALES: HORAS PERSONALES / ADMINISTRACIÓN
+    =================================================== */
+
+    function actualizarVisibilidadPestanaAdministracion() {
+      const btn = document.getElementById("tabAdministracion");
+      const cardEntregables = document.getElementById("adminEntregablesCard");
+      const mostrar = !!usuarioActual && (esAdminApp() || (cardEntregables && !cardEntregables.classList.contains("hidden")));
+      if (btn) btn.style.display = mostrar ? "inline-flex" : "none";
+      if (!mostrar) cambiarPestanaPrincipal("horas");
+    }
+
+    function cambiarPestanaPrincipal(pestana) {
+      const main = document.querySelector("#appScreen main.container");
+      if (!main) return;
+      const cardEntregables = document.getElementById("adminEntregablesCard");
+      const admin = pestana === "admin" && !!usuarioActual && (esAdminApp() || (cardEntregables && !cardEntregables.classList.contains("hidden")));
+      const adminIds = new Set(["adminEntregablesCard", "adminGeneralCard"]);
+      main.querySelectorAll(":scope > section.card").forEach(card => {
+        const esSeccionAdmin = adminIds.has(card.id);
+        card.classList.toggle("tab-view-hidden", admin ? !esSeccionAdmin : esSeccionAdmin);
+      });
+      const btnHoras = document.getElementById("tabMisHoras");
+      const btnAdmin = document.getElementById("tabAdministracion");
+      btnHoras?.classList.toggle("active", !admin);
+      btnHoras?.setAttribute("aria-selected", String(!admin));
+      btnAdmin?.classList.toggle("active", admin);
+      btnAdmin?.setAttribute("aria-selected", String(admin));
+      if (btnAdmin) btnAdmin.style.display = (usuarioActual && (esAdminApp() || (cardEntregables && !cardEntregables.classList.contains("hidden")))) ? "inline-flex" : "none";
+      if (admin && esAdminApp()) {
+        prepararAdministracionGeneral().catch(err => console.error("Error preparando administración:", err));
+      }
+    }
 
     /* ==================================================
        CARGAR DATOS
@@ -1760,12 +1967,16 @@
 
     async function cargarDatos() {
 
+      await cargarAdministradoresApp();
+
       await Promise.all([
         cargarProyectos(),
         cargarActividades(),
         cargarEntregables(),
         cargarHoras()
       ]);
+
+      await cargarPermisosYPrepararModuloEntregables();
 
       actualizarFiltros();
 
@@ -1775,6 +1986,396 @@
 
     }
 
+
+    function esAdminApp() {
+      return !!usuarioActual && (esAdminMaestroId(usuarioActual.id) || administradoresApp.some(a => a.usuario_id === usuarioActual.id && a.activo !== false));
+    }
+
+    // Compatibilidad con el módulo existente de entregables: cualquier administrador
+    // de la aplicación también puede administrar entregables y permisos.
+    function esAdminEntregables() {
+      return esAdminApp();
+    }
+
+    async function cargarAdministradoresApp() {
+      if (!usuarioActual) return;
+      const { data, error } = await supabaseClient
+        .from("administradores_app")
+        .select("usuario_id, activo, created_at");
+      if (error) {
+        console.error("No se pudieron cargar administradores de la app:", error);
+        administradoresApp = ADMIN_MAESTRO_IDS.map(id => ({ usuario_id: id, activo: true }));
+        document.getElementById("adminGeneralCard")?.classList.toggle("hidden", !esAdminApp());
+        return;
+      }
+      administradoresApp = (data || []).filter(a => a.activo !== false);
+      // Fallback de interfaz para las cuentas maestras; las operaciones siguen protegidas por RLS.
+      for (const masterId of ADMIN_MAESTRO_IDS) {
+        if (!administradoresApp.some(a => a.usuario_id === masterId)) {
+          administradoresApp.push({ usuario_id: masterId, activo: true });
+        }
+      }
+      document.getElementById("adminGeneralCard")?.classList.toggle("hidden", !esAdminApp());
+      actualizarVisibilidadPestanaAdministracion();
+    }
+
+    function permisoEnProyecto(proyectoId) {
+      return permisosEntregables.find(p => String(p.proyecto_id) === String(proyectoId)) || null;
+    }
+
+    function puedeImportarProyecto(proyectoId) {
+      if (esAdminEntregables()) return true;
+      return permisoEnProyecto(proyectoId)?.puede_cargar === true;
+    }
+
+    function puedeBorrarProyecto(proyectoId) {
+      if (esAdminEntregables()) return true;
+      return permisoEnProyecto(proyectoId)?.puede_borrar === true;
+    }
+
+    function setMensajeEntregables(id, texto, tipo) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = texto || "";
+      el.className = "deliverables-status" + (tipo ? " " + tipo : "");
+    }
+
+    function poblarSelectProyectosEntregables(selectId, permiso) {
+      const select = document.getElementById(selectId);
+      if (!select) return;
+      const anterior = select.value;
+      select.innerHTML = '<option value="">Seleccionar proyecto</option>';
+      proyectos.filter(p => p.activo !== false && (!permiso || permiso(String(p.id)))).forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = String(p.id);
+        opt.textContent = p.nombre;
+        select.appendChild(opt);
+      });
+      if ([...select.options].some(o => o.value === anterior)) select.value = anterior;
+    }
+
+    async function prepararAdministracionGeneral() {
+      const card = document.getElementById("adminGeneralCard");
+      if (!card) return;
+      card.classList.toggle("hidden", !esAdminApp());
+      if (!esAdminApp()) return;
+      await cargarEmpleadosParaPermisos();
+      const select = document.getElementById("nuevoAdminUsuario");
+      if (select) {
+        const anterior = select.value;
+        select.innerHTML = '<option value="">Seleccionar usuario</option>';
+        empleadosParaPermisos.forEach(e => {
+          const opt = document.createElement("option");
+          opt.value = e.usuario_id;
+          opt.textContent = (e.NOMBRE || e.nombre || e.usuario_id) + " — " + e.usuario_id;
+          select.appendChild(opt);
+        });
+        if ([...select.options].some(o => o.value === anterior)) select.value = anterior;
+      }
+      renderAdministradoresApp();
+      actualizarVisibilidadPestanaAdministracion();
+    }
+
+    function renderAdministradoresApp() {
+      const body = document.getElementById("administradoresAppBody");
+      if (!body) return;
+      const admins = administradoresApp.filter(a => a.activo !== false);
+      if (!admins.length) { body.innerHTML = '<tr><td colspan="2">No hay administradores registrados.</td></tr>'; return; }
+      body.innerHTML = "";
+      admins.forEach(a => {
+        const emp = empleadosParaPermisos.find(e => e.usuario_id === a.usuario_id);
+        const master = esAdminMaestroId(a.usuario_id);
+        const nombre = ADMIN_MAESTROS[a.usuario_id] || emp?.NOMBRE || emp?.nombre || a.usuario_id;
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.textContent = nombre + (a.usuario_id === usuarioActual?.id ? " (tu cuenta)" : "") + (master ? " — ADMINISTRADOR MAESTRO" : "");
+        tr.appendChild(td);
+        const action = document.createElement("td");
+        if (master) {
+          const fixed = document.createElement("span");
+          fixed.className = "deliverables-status success";
+          fixed.textContent = "Protegido: no se puede revocar";
+          action.appendChild(fixed);
+        } else {
+          const btn = document.createElement("button");
+          btn.type = "button"; btn.className = "btn-danger btn-small"; btn.textContent = "Quitar administrador";
+          btn.disabled = a.usuario_id === usuarioActual?.id;
+          btn.title = btn.disabled ? "No puedes quitarte tus propios permisos desde esta sesión." : "Revocar permisos de administrador";
+          btn.addEventListener("click", () => revocarAdministrador(a.usuario_id, emp?.NOMBRE || emp?.nombre || a.usuario_id));
+          action.appendChild(btn);
+        }
+        tr.appendChild(action); body.appendChild(tr);
+      });
+    }
+
+    async function promoverAdministrador() {
+      if (!esAdminApp()) return;
+      const userId = document.getElementById("nuevoAdminUsuario")?.value;
+      if (!userId) { setMensajeEntregables("adminUsuariosMessage", "Selecciona un usuario registrado.", "error"); return; }
+      if (administradoresApp.some(a => a.usuario_id === userId && a.activo !== false)) { setMensajeEntregables("adminUsuariosMessage", "Ese usuario ya es administrador.", "info"); return; }
+      const { error } = await supabaseClient.from("administradores_app").upsert({ usuario_id: userId, activo: true }, { onConflict: "usuario_id" });
+      if (error) { setMensajeEntregables("adminUsuariosMessage", "No se pudo dar de alta al administrador. Verifica el SQL y los permisos RLS. " + error.message, "error"); return; }
+      await cargarAdministradoresApp();
+      await prepararAdministracionGeneral();
+      setMensajeEntregables("adminUsuariosMessage", "Administrador habilitado correctamente.", "success");
+    }
+
+    async function revocarAdministrador(userId, nombre) {
+      if (!esAdminApp() || userId === usuarioActual?.id || esAdminMaestroId(userId)) return;
+      if (!confirm("¿Quitar los permisos de administrador a " + nombre + "?")) return;
+      const { error } = await supabaseClient.from("administradores_app").update({ activo: false }).eq("usuario_id", userId);
+      if (error) { setMensajeEntregables("adminUsuariosMessage", "No se pudo revocar el administrador: " + error.message, "error"); return; }
+      await cargarAdministradoresApp();
+      await prepararAdministracionGeneral();
+      setMensajeEntregables("adminUsuariosMessage", "Permisos de administrador revocados.", "success");
+    }
+
+    async function crearProyectoDesdeApp() {
+      if (!esAdminApp()) return;
+      const input = document.getElementById("nuevoProyectoNombre");
+      const nombre = String(input?.value || "").trim();
+      if (!nombre) { setMensajeEntregables("adminProyectosMessage", "Escribe el nombre del proyecto.", "error"); return; }
+      if (proyectos.some(p => String(p.nombre || "").trim().toLocaleLowerCase() === nombre.toLocaleLowerCase())) { setMensajeEntregables("adminProyectosMessage", "Ya existe un proyecto activo con ese nombre.", "error"); return; }
+      const { error } = await supabaseClient.from("proyectos").insert({ nombre, activo: true });
+      if (error) { setMensajeEntregables("adminProyectosMessage", "No se pudo crear el proyecto. Verifica el SQL y las políticas RLS. " + error.message, "error"); return; }
+      input.value = "";
+      await cargarProyectos();
+      actualizarFiltros();
+      await cargarPermisosYPrepararModuloEntregables();
+      setMensajeEntregables("adminProyectosMessage", "Proyecto creado correctamente.", "success");
+    }
+
+    async function crearActividadDesdeApp() {
+      if (!esAdminApp()) return;
+      const input = document.getElementById("nuevaActividadNombre");
+      const nombre = String(input?.value || "").trim();
+      if (!nombre) { setMensajeEntregables("adminActividadesMessage", "Escribe el nombre de la actividad.", "error"); return; }
+      if (actividades.some(a => String(a.nombre || "").trim().toLocaleLowerCase() === nombre.toLocaleLowerCase())) { setMensajeEntregables("adminActividadesMessage", "Ya existe una actividad activa con ese nombre.", "error"); return; }
+      const { error } = await supabaseClient.from("actividades").insert({ nombre, activo: true });
+      if (error) { setMensajeEntregables("adminActividadesMessage", "No se pudo crear la actividad. Verifica el SQL y las políticas RLS. " + error.message, "error"); return; }
+      input.value = "";
+      await cargarActividades();
+      actualizarFiltros();
+      setMensajeEntregables("adminActividadesMessage", "Actividad creada correctamente.", "success");
+    }
+
+    async function cargarPermisosYPrepararModuloEntregables() {
+      const card = document.getElementById("adminEntregablesCard");
+      if (!usuarioActual || !card) return;
+
+      await prepararAdministracionGeneral();
+
+      const { data, error } = await supabaseClient
+        .from("permisos_entregables")
+        .select("usuario_id, proyecto_id, puede_cargar, puede_borrar, created_at");
+
+      if (error) {
+        console.error("No se pudieron cargar los permisos de entregables:", error);
+        permisosEntregables = [];
+        if (esAdminEntregables()) {
+          card.classList.remove("hidden");
+          document.getElementById("adminPermisosPanel")?.classList.remove("hidden");
+          setMensajeEntregables("permisosEntregablesMessage", "No se pudieron cargar los permisos. Ejecuta primero el SQL de configuración en Supabase.", "error");
+        }
+        return;
+      }
+
+      permisosEntregables = data || [];
+      const admin = esAdminEntregables();
+      const tienePermiso = permisosEntregables.some(p => p.puede_cargar || p.puede_borrar);
+      if (!admin && !tienePermiso) {
+        card.classList.add("hidden");
+        return;
+      }
+
+      card.classList.remove("hidden");
+      document.getElementById("adminPermisosPanel")?.classList.toggle("hidden", !admin);
+      document.getElementById("importarEntregablesPanel")?.classList.toggle("hidden", !(admin || permisosEntregables.some(p => p.puede_cargar)));
+      document.getElementById("gestionarEntregablesPanel")?.classList.toggle("hidden", !(admin || permisosEntregables.some(p => p.puede_borrar)));
+
+      if (admin) {
+        await cargarEmpleadosParaPermisos();
+        poblarSelectProyectosEntregables("permisoProyecto", null);
+        renderPermisosEntregables();
+      }
+      poblarSelectProyectosEntregables("importarProyecto", id => puedeImportarProyecto(id));
+      poblarSelectProyectosEntregables("borrarProyecto", id => puedeBorrarProyecto(id));
+      renderListaEntregablesBorrar();
+      actualizarVisibilidadPestanaAdministracion();
+    }
+
+    async function cargarEmpleadosParaPermisos() {
+      // En public."EMPLEADOS" la columna de identidad real es id, no usuario_id.
+      const { data, error } = await supabaseClient
+        .from("EMPLEADOS")
+        .select("id, NOMBRE")
+        .not("id", "is", null)
+        .order("NOMBRE");
+      if (error) {
+        console.error("No se pudieron cargar empleados para permisos:", error);
+        const mensaje = "No se pudo leer EMPLEADOS: " + (error.message || "error desconocido") + ". Revisa permisos SELECT y RLS.";
+        setMensajeEntregables("permisosEntregablesMessage", mensaje, "error");
+        setMensajeEntregables("adminUsuariosMessage", mensaje, "error");
+        empleadosParaPermisos = [];
+        return;
+      }
+      // Normalizamos id a usuario_id para que los demás módulos mantengan su lógica.
+      empleadosParaPermisos = (data || []).map(e => ({ ...e, usuario_id: e.id })).filter(e => e.usuario_id);
+      const select = document.getElementById("permisoUsuario");
+      select.innerHTML = '<option value="">Seleccionar persona</option>';
+      empleadosParaPermisos.forEach(e => {
+        const opt = document.createElement("option");
+        opt.value = e.usuario_id;
+        opt.textContent = (e.NOMBRE || e.nombre || e.usuario_id) + " — " + e.usuario_id;
+        select.appendChild(opt);
+      });
+    }
+
+    function renderPermisosEntregables() {
+      const body = document.getElementById("permisosEntregablesBody");
+      if (!body) return;
+      if (!permisosEntregables.length) {
+        body.innerHTML = '<tr><td colspan="5">Todavía no hay permisos configurados.</td></tr>';
+        return;
+      }
+      body.innerHTML = "";
+      permisosEntregables.forEach(p => {
+        const empleado = empleadosParaPermisos.find(e => e.usuario_id === p.usuario_id);
+        const proyecto = proyectos.find(x => String(x.id) === String(p.proyecto_id));
+        const tr = document.createElement("tr");
+        const nombre = empleado?.NOMBRE || empleado?.nombre || p.usuario_id;
+        const nombreProyecto = proyecto?.nombre || String(p.proyecto_id);
+        [nombre, nombreProyecto, p.puede_cargar ? "Sí" : "No", p.puede_borrar ? "Sí" : "No"].forEach(value => {
+          const td = document.createElement("td"); td.textContent = value; tr.appendChild(td);
+        });
+        const actionTd = document.createElement("td");
+        const btn = document.createElement("button");
+        btn.type = "button"; btn.className = "btn-danger btn-small"; btn.textContent = "Revocar";
+        btn.addEventListener("click", () => revocarPermisoEntregables(p.usuario_id, p.proyecto_id, nombre, nombreProyecto));
+        actionTd.appendChild(btn); tr.appendChild(actionTd); body.appendChild(tr);
+      });
+    }
+
+    function cargarPermisoSeleccionadoEnFormulario() {
+      const userId = document.getElementById("permisoUsuario")?.value;
+      const projectId = document.getElementById("permisoProyecto")?.value;
+      const permiso = permisosEntregables.find(p => p.usuario_id === userId && String(p.proyecto_id) === String(projectId));
+      document.getElementById("permisoPuedeCargar").checked = !!permiso?.puede_cargar;
+      document.getElementById("permisoPuedeBorrar").checked = !!permiso?.puede_borrar;
+    }
+
+    async function guardarPermisoEntregables() {
+      if (!esAdminEntregables()) return;
+      const userId = document.getElementById("permisoUsuario").value;
+      const projectIdString = document.getElementById("permisoProyecto").value;
+      const puedeCargar = document.getElementById("permisoPuedeCargar").checked;
+      const puedeBorrar = document.getElementById("permisoPuedeBorrar").checked;
+      if (!userId || !projectIdString) {
+        setMensajeEntregables("permisosEntregablesMessage", "Selecciona una persona y un proyecto.", "error"); return;
+      }
+      const proyecto = proyectos.find(p => String(p.id) === String(projectIdString));
+      if (!proyecto) { setMensajeEntregables("permisosEntregablesMessage", "Proyecto no válido.", "error"); return; }
+      if (!puedeCargar && !puedeBorrar) {
+        const { error } = await supabaseClient.from("permisos_entregables").delete().eq("usuario_id", userId).eq("proyecto_id", proyecto.id);
+        if (error) { setMensajeEntregables("permisosEntregablesMessage", "No se pudo quitar el permiso: " + error.message, "error"); return; }
+      } else {
+        const { error } = await supabaseClient.from("permisos_entregables").upsert({
+          usuario_id: userId, proyecto_id: proyecto.id, puede_cargar: puedeCargar, puede_borrar: puedeBorrar
+        }, { onConflict: "usuario_id,proyecto_id" });
+        if (error) { setMensajeEntregables("permisosEntregablesMessage", "No se pudo guardar el permiso: " + error.message, "error"); return; }
+      }
+      setMensajeEntregables("permisosEntregablesMessage", "Permisos actualizados.", "success");
+      await cargarPermisosYPrepararModuloEntregables();
+    }
+
+    async function revocarPermisoEntregables(userId, projectId, nombre, nombreProyecto) {
+      if (!esAdminEntregables()) return;
+      if (!confirm("¿Revocar los permisos de " + nombre + " para el proyecto " + nombreProyecto + "?")) return;
+      const { error } = await supabaseClient.from("permisos_entregables").delete().eq("usuario_id", userId).eq("proyecto_id", projectId);
+      if (error) { setMensajeEntregables("permisosEntregablesMessage", "No se pudo revocar: " + error.message, "error"); return; }
+      setMensajeEntregables("permisosEntregablesMessage", "Permiso revocado.", "success");
+      await cargarPermisosYPrepararModuloEntregables();
+    }
+
+    async function importarEntregablesDesdeArchivo() {
+      const file = document.getElementById("archivoEntregables").files?.[0];
+      const projectIdString = document.getElementById("importarProyecto").value;
+      if (!file || !projectIdString) {
+        setMensajeEntregables("importarEntregablesMessage", "Selecciona el proyecto y el archivo.", "error"); return;
+      }
+      const proyecto = proyectos.find(p => String(p.id) === String(projectIdString));
+      if (!proyecto || !puedeImportarProyecto(proyecto.id)) {
+        setMensajeEntregables("importarEntregablesMessage", "No tienes permiso para importar entregables en ese proyecto.", "error"); return;
+      }
+      if (!window.XLSX) {
+        setMensajeEntregables("importarEntregablesMessage", "No se pudo cargar el lector de Excel. Recarga la aplicación e inténtalo otra vez.", "error"); return;
+      }
+      try {
+        const buffer = await file.arrayBuffer();
+        const workbook = XLSX.read(buffer, { type: "array" });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: "" });
+        if (!rows.length || String(rows[0][0] || "").trim().toLowerCase() !== "nombre" || rows[0].slice(1).some(v => String(v).trim() !== "")) {
+          setMensajeEntregables("importarEntregablesMessage", "Formato incorrecto. La primera fila debe contener únicamente el encabezado nombre.", "error"); return;
+        }
+        const names = rows.slice(1).map(r => {
+          if (r.slice(1).some(v => String(v ?? "").trim() !== "")) throw new Error("El archivo solo puede tener una columna: nombre.");
+          return String(r[0] ?? "").trim();
+        }).filter(Boolean);
+        if (!names.length) { setMensajeEntregables("importarEntregablesMessage", "El archivo no contiene nombres de entregables.", "error"); return; }
+        if (names.length > 500) { setMensajeEntregables("importarEntregablesMessage", "El archivo contiene " + names.length + " entregables. El máximo permitido por carga es 500. No se guardó ningún registro.", "error"); return; }
+        const seen = new Set();
+        const duplicatesFile = [];
+        names.forEach(n => { const k = n.toLocaleLowerCase(); if (seen.has(k)) duplicatesFile.push(n); seen.add(k); });
+        if (duplicatesFile.length) { setMensajeEntregables("importarEntregablesMessage", "Hay nombres repetidos dentro del archivo (por ejemplo: " + duplicatesFile.slice(0, 5).join(", ") + "). Corrige el archivo; no se importó nada.", "error"); return; }
+        const existingNames = new Set(entregables.filter(e => String(e.proyecto_id) === String(proyecto.id)).map(e => String(e.nombre || "").trim().toLocaleLowerCase()));
+        const alreadyThere = names.filter(n => existingNames.has(n.toLocaleLowerCase()));
+        const newNames = names.filter(n => !existingNames.has(n.toLocaleLowerCase()));
+        if (!newNames.length) { setMensajeEntregables("importarEntregablesMessage", "Todos los entregables del archivo ya existen en este proyecto. No se agregó nada.", "info"); return; }
+        const payload = newNames.map(nombre => ({ proyecto_id: proyecto.id, nombre, activo: true }));
+        const { error } = await supabaseClient.from("entregables").insert(payload);
+        if (error) {
+          console.error("Error importando entregables:", error);
+          setMensajeEntregables("importarEntregablesMessage", "No se pudo importar. Verifica que el SQL de permisos esté aplicado y que tengas autorización. " + error.message, "error"); return;
+        }
+        await cargarEntregables();
+        actualizarEntregables();
+        await cargarPermisosYPrepararModuloEntregables();
+        const omisiones = alreadyThere.length ? " Se omitieron " + alreadyThere.length + " que ya existían." : "";
+        setMensajeEntregables("importarEntregablesMessage", "Importación completada: " + newNames.length + " entregables agregados a " + proyecto.nombre + "." + omisiones, "success");
+        document.getElementById("archivoEntregables").value = "";
+      } catch (err) {
+        console.error("Archivo de entregables inválido:", err);
+        setMensajeEntregables("importarEntregablesMessage", err?.message || "No se pudo leer el archivo. Usa CSV UTF-8 o Excel .xlsx.", "error");
+      }
+    }
+
+    function renderListaEntregablesBorrar() {
+      const body = document.getElementById("listaEntregablesBorrar");
+      if (!body) return;
+      const projectId = document.getElementById("borrarProyecto")?.value;
+      if (!projectId) { body.innerHTML = '<tr><td colspan="2">Selecciona un proyecto.</td></tr>'; return; }
+      const items = entregables.filter(e => String(e.proyecto_id) === String(projectId) && e.activo !== false);
+      if (!items.length) { body.innerHTML = '<tr><td colspan="2">No hay entregables activos en este proyecto.</td></tr>'; return; }
+      body.innerHTML = "";
+      items.forEach(item => {
+        const tr = document.createElement("tr");
+        const tdName = document.createElement("td"); tdName.textContent = item.nombre;
+        const tdAction = document.createElement("td");
+        const btn = document.createElement("button"); btn.type = "button"; btn.className = "btn-danger btn-small"; btn.textContent = "Borrar";
+        btn.disabled = !puedeBorrarProyecto(item.proyecto_id);
+        btn.addEventListener("click", async () => {
+          if (!puedeBorrarProyecto(item.proyecto_id)) { alert("No tienes permiso para borrar entregables de este proyecto."); return; }
+          if (!confirm("¿Borrar el entregable “" + item.nombre + "”? Esta acción no se puede deshacer.")) return;
+          const { error } = await supabaseClient.from("entregables").delete().eq("id", item.id).eq("proyecto_id", item.proyecto_id);
+          if (error) { alert("No se pudo borrar el entregable: " + error.message); return; }
+          entregables = entregables.filter(e => String(e.id) !== String(item.id));
+          actualizarEntregables();
+          renderListaEntregablesBorrar();
+        });
+        tdAction.appendChild(btn); tr.appendChild(tdName); tr.appendChild(tdAction); body.appendChild(tr);
+      });
+    }
 
     async function cargarProyectos() {
 
