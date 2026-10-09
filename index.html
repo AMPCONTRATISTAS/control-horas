@@ -1254,15 +1254,10 @@
     const APP_URL =
       "https://ampcontratistas.github.io/control-horas/";
 
-    // Capturar la intención de recuperación ANTES de que Supabase procese
-    // el enlace y pueda limpiar el fragmento de la URL.
+    // Detectar la intención de recuperación desde el primer momento,
+    // antes de que Supabase procese o limpie los parámetros de la URL.
     const parametrosIniciales = new URLSearchParams(window.location.search);
-    const hashInicial = new URLSearchParams(
-      window.location.hash.replace(/^#/, "")
-    );
-
-    // Supabase normalmente redirige con ?code=... y no conserva type=recovery.
-    // Por eso el enlace de recuperación también usa ?recovery=1 como marca.
+    const hashInicial = new URLSearchParams(window.location.hash.replace(/^#/, ""));
     const enlaceDeRecuperacion =
       parametrosIniciales.get("recovery") === "1" ||
       parametrosIniciales.get("reset") === "1" ||
@@ -1396,8 +1391,8 @@
           );
 
 
-        // Escuchar cambios de autenticación antes de revisar la sesión actual.
-        // Esto evita perder el evento PASSWORD_RECOVERY al abrir un enlace.
+        // Escuchar cambios de autenticación y abrir el formulario si Supabase
+        // confirma que el enlace corresponde a recuperación de contraseña.
         supabaseClient.auth.onAuthStateChange(
           function(event, session) {
 
@@ -1429,8 +1424,9 @@
 
         await verificarSesion();
 
-        // Respaldo: mostrar el formulario aunque PASSWORD_RECOVERY se haya
-        // emitido antes de registrar el listener o Supabase haya limpiado la URL.
+        // Respaldo visual para la marca ?recovery=1 o type=recovery.
+        // Con enlaces PKCE, Supabase puede devolver ?code=... y la marca
+        // permite abrir la ventana aunque el evento sea SIGNED_IN.
         if (enlaceDeRecuperacion) {
           mostrarFormularioNuevaPassword();
         }
@@ -3842,25 +3838,13 @@
       }
 
 
-      // Confirmar que el enlace dejó una sesión válida antes de cambiar la contraseña.
-      const { data: sesionActual, error: errorSesion } =
-        await supabaseClient.auth.getSession();
-
-      if (errorSesion || !sesionActual?.session) {
-        mostrarMensaje(
-          "newPasswordMessage",
-          "El enlace de recuperación no creó una sesión válida o ya venció. Solicita un correo nuevo y abre el enlace más reciente.",
-          "error"
-        );
-        return;
-      }
-
       const {
         error
       } =
         await supabaseClient.auth
           .updateUser({
-            password: password
+            password:
+              password
           });
 
 
