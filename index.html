@@ -1254,10 +1254,15 @@
     const APP_URL =
       "https://ampcontratistas.github.io/control-horas/";
 
-    // Detectar la intención de recuperación desde el primer momento,
-    // antes de que Supabase procese o limpie los parámetros de la URL.
+    // Capturar la intención de recuperación ANTES de que Supabase procese
+    // el enlace y pueda limpiar el fragmento de la URL.
     const parametrosIniciales = new URLSearchParams(window.location.search);
-    const hashInicial = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const hashInicial = new URLSearchParams(
+      window.location.hash.replace(/^#/, "")
+    );
+
+    // Supabase normalmente redirige con ?code=... y no conserva type=recovery.
+    // Por eso el enlace de recuperación también usa ?recovery=1 como marca.
     const enlaceDeRecuperacion =
       parametrosIniciales.get("recovery") === "1" ||
       parametrosIniciales.get("reset") === "1" ||
@@ -1272,11 +1277,78 @@
       if (campo) setTimeout(() => campo.focus(), 100);
     }
 
-    const supabaseClient =
-      supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
+    // Procesamos manualmente el enlace para asegurar que el código PKCE se
+    // intercambie por una sesión antes de permitir guardar la contraseña.
+    const supabaseClient = supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY,
+      {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: false,
+          flowType: "pkce"
+        }
+      }
+    );
+
+    async function procesarEnlaceDeAutenticacion() {
+      const url = new URL(window.location.href);
+      const code = url.searchParams.get("code");
+      const hashParams = new URLSearchParams(url.hash.replace(/^#/, ""));
+      const accessToken = hashParams.get("access_token");
+      const refreshToken = hashParams.get("refresh_token");
+      const errorDescription = url.searchParams.get("error_description") ||
+        hashParams.get("error_description");
+
+      if (errorDescription) {
+        console.error("Error del enlace de recuperación:", errorDescription);
+        mostrarMensaje(
+          "newPasswordMessage",
+          "El enlace de recuperación no es válido o venció. Solicita uno nuevo.",
+          "error"
+        );
+        return false;
+      }
+
+      if (code) {
+        const { data, error } = await supabaseClient.auth.exchangeCodeForSession(code);
+        if (error || !data?.session) {
+          console.error("No se pudo intercambiar el código de recuperación:", error);
+          mostrarMensaje(
+            "newPasswordMessage",
+            "No se pudo validar el enlace de recuperación. Solicita un correo nuevo y abre el enlace más reciente en el mismo navegador.",
+            "error"
+          );
+          return false;
+        }
+        // Retirar el código de la barra de direcciones después de intercambiarlo.
+        url.searchParams.delete("code");
+        window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
+        return true;
+      }
+
+      // Compatibilidad con enlaces antiguos que devuelven tokens en el fragmento.
+      if (accessToken && refreshToken) {
+        const { error } = await supabaseClient.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken
+        });
+        if (error) {
+          console.error("No se pudo establecer la sesión de recuperación:", error);
+          mostrarMensaje(
+            "newPasswordMessage",
+            "No se pudo validar el enlace de recuperación. Solicita uno nuevo.",
+            "error"
+          );
+          return false;
+        }
+        window.history.replaceState({}, document.title, url.pathname + url.search);
+        return true;
+      }
+
+      return false;
+    }
 
 
     /* ==================================================
@@ -1391,8 +1463,8 @@
           );
 
 
-        // Escuchar cambios de autenticación y abrir el formulario si Supabase
-        // confirma que el enlace corresponde a recuperación de contraseña.
+        // Escuchar cambios de autenticación antes de revisar la sesión actual.
+        // Esto evita perder el evento PASSWORD_RECOVERY al abrir un enlace.
         supabaseClient.auth.onAuthStateChange(
           function(event, session) {
 
@@ -1422,11 +1494,14 @@
           }
         );
 
+        // Primero intercambiar el código/token del enlace; después consultar
+        // la sesión. Mostrar el modal por sí solo no autentica la recuperación.
+        if (enlaceDeRecuperacion) {
+          await procesarEnlaceDeAutenticacion();
+        }
+
         await verificarSesion();
 
-        // Respaldo visual para la marca ?recovery=1 o type=recovery.
-        // Con enlaces PKCE, Supabase puede devolver ?code=... y la marca
-        // permite abrir la ventana aunque el evento sea SIGNED_IN.
         if (enlaceDeRecuperacion) {
           mostrarFormularioNuevaPassword();
         }
@@ -3838,13 +3913,25 @@
       }
 
 
+      // Confirmar que el enlace dejó una sesión válida antes de cambiar la contraseña.
+      const { data: sesionActual, error: errorSesion } =
+        await supabaseClient.auth.getSession();
+
+      if (errorSesion || !sesionActual?.session) {
+        mostrarMensaje(
+          "newPasswordMessage",
+          "El enlace de recuperación no creó una sesión válida o ya venció. Solicita un correo nuevo y abre el enlace más reciente.",
+          "error"
+        );
+        return;
+      }
+
       const {
         error
       } =
         await supabaseClient.auth
           .updateUser({
-            password:
-              password
+            password: password
           });
 
 
