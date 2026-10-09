@@ -3804,8 +3804,7 @@
     }
 
     async function enviarRecuperacion() {
-      const email = document.getElementById("recoveryEmail").value.trim();
-
+      const email = document.getElementById("recoveryEmail").value.trim().toLowerCase();
       if (!email) {
         mostrarMensaje("recoveryMessage", "Escribe tu correo electrónico.", "error");
         return;
@@ -3817,26 +3816,60 @@
         return;
       }
 
-      const { error } = await solicitarCodigoRecuperacion(email);
-
-      if (error) {
-        mostrarMensaje("recoveryMessage", error.message, "error");
-        return;
+      const boton = document.querySelector('#recoveryModal button[onclick="enviarRecuperacion()"]');
+      if (boton) {
+        boton.disabled = true;
+        boton.textContent = "Comprobando correo...";
       }
 
-      marcarEnvioRecuperacion(email);
-      requiereCodigoRecuperacion = true;
-      document.getElementById("recoveryOtpEmail").value = email;
-      document.getElementById("recoveryOtpCode").value = "";
-      document.getElementById("newPassword").value = "";
-      document.getElementById("newPasswordConfirm").value = "";
-      cerrarRecuperacion();
-      mostrarFormularioNuevaPassword();
-      mostrarMensaje(
-        "newPasswordMessage",
-        "Si el correo pertenece a una cuenta autorizada, recibirás un código de 8 dígitos. Introdúcelo aquí para establecer tu nueva contraseña.",
-        "success"
-      );
+      try {
+        const { error, data } = await solicitarCodigoRecuperacion(email);
+        if (error) {
+          mostrarMensaje("recoveryMessage", error.message, "error");
+          return;
+        }
+
+        if (data?.registered === false) {
+          mostrarMensaje("recoveryMessage", "Correo no válido o no registrado.", "error");
+          return;
+        }
+
+        if (data?.rateLimited === true || data?.sent === false) {
+          mostrarMensaje(
+            "recoveryMessage",
+            data?.message || "Ya se solicitó un código recientemente. Espera 5 minutos antes de intentarlo de nuevo.",
+            "error"
+          );
+          return;
+        }
+
+        if (data?.registered !== true || data?.sent !== true) {
+          mostrarMensaje("recoveryMessage", "No se pudo confirmar la solicitud. Inténtalo más tarde.", "error");
+          return;
+        }
+
+        marcarEnvioRecuperacion(email);
+        requiereCodigoRecuperacion = true;
+        document.getElementById("recoveryOtpEmail").value = email;
+        document.getElementById("recoveryOtpCode").value = "";
+        document.getElementById("newPassword").value = "";
+        document.getElementById("newPasswordConfirm").value = "";
+        cerrarRecuperacion();
+        mostrarFormularioNuevaPassword();
+        mostrarMensaje(
+          "newPasswordMessage",
+          "Se ha solicitado el código de recuperación. Revisa tu correo e introdúcelo aquí para establecer tu nueva contraseña.",
+          "success"
+        );
+      } catch (error) {
+        console.error("Error al solicitar recuperación:", error);
+        mostrarMensaje("recoveryMessage", "No se pudo procesar la solicitud. Inténtalo más tarde.", "error");
+      } finally {
+        if (boton) {
+          boton.disabled = false;
+          boton.textContent = "Enviar código";
+        }
+      }
     }
 
     /* ==================================================
@@ -3844,16 +3877,7 @@
     =================================================== */
 
     async function cambiarPassword() {
-
-      if (
-        !usuarioActual ||
-        !usuarioActual.email
-      ) {
-
-        return;
-
-      }
-
+      if (!usuarioActual || !usuarioActual.email) return;
 
       const espera = segundosEsperaRecuperacion(usuarioActual.email);
       if (espera > 0) {
@@ -3861,36 +3885,59 @@
         return;
       }
 
-      const confirmar =
-        confirm(
-          "Se enviará un código de recuperación a tu correo. ¿Continuar?"
+      if (!confirm("Se enviará un código de recuperación a tu correo. ¿Continuar?")) return;
+
+      const boton = document.querySelector('button[onclick="cambiarPassword()"]');
+      if (boton) {
+        boton.disabled = true;
+        boton.textContent = "Enviando código...";
+      }
+
+      try {
+        const email = usuarioActual.email.trim().toLowerCase();
+        const { error, data } = await solicitarCodigoRecuperacion(email);
+        if (error) {
+          mostrarMensaje("formMessage", error.message, "error");
+          return;
+        }
+
+        if (data?.rateLimited === true || data?.sent === false) {
+          mostrarMensaje(
+            "formMessage",
+            data?.message || "Ya se solicitó un código recientemente. Espera 5 minutos antes de intentarlo de nuevo.",
+            "error"
+          );
+          return;
+        }
+
+        if (data?.registered !== true || data?.sent !== true) {
+          mostrarMensaje("formMessage", "No se pudo confirmar el envío del código. Inténtalo más tarde.", "error");
+          return;
+        }
+
+        marcarEnvioRecuperacion(email);
+        requiereCodigoRecuperacion = true;
+        document.getElementById("recoveryOtpEmail").value = email;
+        document.getElementById("recoveryOtpCode").value = "";
+        document.getElementById("newPassword").value = "";
+        document.getElementById("newPasswordConfirm").value = "";
+        mostrarFormularioNuevaPassword();
+        mostrarMensaje(
+          "newPasswordMessage",
+          "Se ha solicitado el código de recuperación. Revisa tu correo e introdúcelo aquí para establecer tu nueva contraseña.",
+          "success"
         );
-
-
-      if (!confirmar) {
-        return;
+      } catch (error) {
+        console.error("Error al solicitar cambio de contraseña:", error);
+        mostrarMensaje("formMessage", "No se pudo procesar la solicitud. Inténtalo más tarde.", "error");
+      } finally {
+        if (boton) {
+          boton.disabled = false;
+          boton.textContent = "Cambiar contraseña";
+        }
       }
-
-
-      const { error } = await solicitarCodigoRecuperacion(usuarioActual.email);
-
-      if (error) {
-        mostrarMensaje("formMessage", error.message, "error");
-        return;
-      }
-
-      marcarEnvioRecuperacion(usuarioActual.email);
-      requiereCodigoRecuperacion = true;
-      document.getElementById("recoveryOtpEmail").value = usuarioActual.email;
-      document.getElementById("recoveryOtpCode").value = "";
-      mostrarFormularioNuevaPassword();
-      mostrarMensaje(
-        "newPasswordMessage",
-        "Si la cuenta está autorizada, recibirás un código de 8 dígitos. Escríbelo para establecer tu nueva contraseña.",
-        "success"
-      );
-
     }
+
 
 
     /* ==================================================
