@@ -1012,11 +1012,15 @@
         <label for="borrarProyecto">Proyecto</label>
         <select id="borrarProyecto"><option value="">Seleccionar proyecto</option></select>
       </div>
-      <p class="deliverables-help">Borrar un entregable lo elimina de la lista del proyecto y dejará de aparecer en el selector de registros de horas. Esta acción no se puede deshacer.</p>
+      <p class="deliverables-help">Puedes seleccionar varios entregables y eliminarlos juntos. Se quitarán de la lista del proyecto y dejarán de aparecer en el selector de horas. Esta acción no se puede deshacer.</p>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0">
+        <button type="button" class="btn-danger" id="btnBorrarEntregablesSeleccionados" disabled>Eliminar seleccionados (0)</button>
+        <span id="seleccionEntregablesInfo" class="deliverables-help" aria-live="polite">Selecciona un proyecto y marca los entregables.</span>
+      </div>
       <div class="deliverables-table-wrap">
         <table class="deliverables-table">
-          <thead><tr><th>Entregable</th><th>Acción</th></tr></thead>
-          <tbody id="listaEntregablesBorrar"><tr><td colspan="2">Selecciona un proyecto.</td></tr></tbody>
+          <thead><tr><th style="width:44px"><input type="checkbox" id="seleccionarTodosEntregables" aria-label="Seleccionar todos los entregables"></th><th>Entregable</th><th>Acción</th></tr></thead>
+          <tbody id="listaEntregablesBorrar"><tr><td colspan="3">Selecciona un proyecto.</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -1612,6 +1616,11 @@
         document.getElementById("btnCrearActividad")?.addEventListener("click", crearActividadDesdeApp);
         document.getElementById("btnImportarEntregables")?.addEventListener("click", importarEntregablesDesdeArchivo);
         document.getElementById("borrarProyecto")?.addEventListener("change", renderListaEntregablesBorrar);
+        document.getElementById("seleccionarTodosEntregables")?.addEventListener("change", event => {
+          document.querySelectorAll(".entregable-borrar-check").forEach(cb => { if (!cb.disabled) cb.checked = event.target.checked; });
+          actualizarContadorSeleccionEntregables();
+        });
+        document.getElementById("btnBorrarEntregablesSeleccionados")?.addEventListener("click", borrarEntregablesSeleccionados);
         document.getElementById("permisoProyecto")?.addEventListener("change", cargarPermisoSeleccionadoEnFormulario);
         document.getElementById("permisoUsuario")?.addEventListener("change", cargarPermisoSeleccionadoEnFormulario);
 
@@ -2350,16 +2359,46 @@
       }
     }
 
+    function actualizarContadorSeleccionEntregables() {
+      const checks = Array.from(document.querySelectorAll(".entregable-borrar-check"));
+      const selected = checks.filter(cb => cb.checked && !cb.disabled);
+      const btn = document.getElementById("btnBorrarEntregablesSeleccionados");
+      const info = document.getElementById("seleccionEntregablesInfo");
+      const selectAll = document.getElementById("seleccionarTodosEntregables");
+      if (btn) {
+        btn.disabled = selected.length === 0;
+        btn.textContent = `Eliminar seleccionados (${selected.length})`;
+      }
+      if (info) info.textContent = `${selected.length} seleccionado(s) de ${checks.filter(cb => !cb.disabled).length} disponible(s).`;
+      if (selectAll) {
+        const available = checks.filter(cb => !cb.disabled);
+        selectAll.disabled = available.length === 0;
+        selectAll.checked = available.length > 0 && selected.length === available.length;
+        selectAll.indeterminate = selected.length > 0 && selected.length < available.length;
+      }
+    }
+
     function renderListaEntregablesBorrar() {
       const body = document.getElementById("listaEntregablesBorrar");
       if (!body) return;
       const projectId = document.getElementById("borrarProyecto")?.value;
-      if (!projectId) { body.innerHTML = '<tr><td colspan="2">Selecciona un proyecto.</td></tr>'; return; }
+      const selectAll = document.getElementById("seleccionarTodosEntregables");
+      if (selectAll) { selectAll.checked = false; selectAll.indeterminate = false; selectAll.disabled = true; }
+      const btnBulk = document.getElementById("btnBorrarEntregablesSeleccionados");
+      if (btnBulk) { btnBulk.disabled = true; btnBulk.textContent = "Eliminar seleccionados (0)"; }
+      if (!projectId) { body.innerHTML = '<tr><td colspan="3">Selecciona un proyecto.</td></tr>'; actualizarContadorSeleccionEntregables(); return; }
       const items = entregables.filter(e => String(e.proyecto_id) === String(projectId) && e.activo !== false);
-      if (!items.length) { body.innerHTML = '<tr><td colspan="2">No hay entregables activos en este proyecto.</td></tr>'; return; }
+      if (!items.length) { body.innerHTML = '<tr><td colspan="3">No hay entregables activos en este proyecto.</td></tr>'; actualizarContadorSeleccionEntregables(); return; }
       body.innerHTML = "";
       items.forEach(item => {
         const tr = document.createElement("tr");
+        const tdCheck = document.createElement("td");
+        const check = document.createElement("input");
+        check.type = "checkbox"; check.className = "entregable-borrar-check"; check.dataset.id = String(item.id);
+        check.setAttribute("aria-label", "Seleccionar " + item.nombre);
+        check.disabled = !puedeBorrarProyecto(item.proyecto_id);
+        check.addEventListener("change", actualizarContadorSeleccionEntregables);
+        tdCheck.appendChild(check);
         const tdName = document.createElement("td"); tdName.textContent = item.nombre;
         const tdAction = document.createElement("td");
         const btn = document.createElement("button"); btn.type = "button"; btn.className = "btn-danger btn-small"; btn.textContent = "Borrar";
@@ -2373,8 +2412,37 @@
           actualizarEntregables();
           renderListaEntregablesBorrar();
         });
-        tdAction.appendChild(btn); tr.appendChild(tdName); tr.appendChild(tdAction); body.appendChild(tr);
+        tdAction.appendChild(btn); tr.appendChild(tdCheck); tr.appendChild(tdName); tr.appendChild(tdAction); body.appendChild(tr);
       });
+      actualizarContadorSeleccionEntregables();
+    }
+
+    async function borrarEntregablesSeleccionados() {
+      const projectId = document.getElementById("borrarProyecto")?.value;
+      const selectedChecks = Array.from(document.querySelectorAll(".entregable-borrar-check"))
+        .filter(cb => cb.checked && !cb.disabled);
+      const ids = selectedChecks.map(cb => cb.dataset.id).filter(Boolean);
+      if (!projectId || !ids.length) return;
+      if (!puedeBorrarProyecto(projectId)) { alert("No tienes permiso para borrar entregables de este proyecto."); return; }
+      const selectedItems = entregables.filter(e => ids.includes(String(e.id)) && String(e.proyecto_id) === String(projectId));
+      if (selectedItems.length !== ids.length) { alert("La selección cambió. Actualiza la lista e inténtalo de nuevo."); renderListaEntregablesBorrar(); return; }
+      const names = selectedItems.slice(0, 8).map(e => "• " + e.nombre).join("\n");
+      const extra = selectedItems.length > 8 ? `\n• y ${selectedItems.length - 8} más` : "";
+      if (!confirm(`¿Eliminar ${selectedItems.length} entregable(s) del proyecto seleccionado?\n\n${names}${extra}\n\nEsta acción no se puede deshacer.`)) return;
+      const btn = document.getElementById("btnBorrarEntregablesSeleccionados");
+      if (btn) { btn.disabled = true; btn.textContent = "Eliminando…"; }
+      const { error } = await supabaseClient.from("entregables").delete().in("id", ids).eq("proyecto_id", projectId);
+      if (error) {
+        console.error("Error eliminando entregables seleccionados:", error);
+        alert("No se pudieron eliminar los entregables seleccionados: " + error.message);
+        renderListaEntregablesBorrar();
+        return;
+      }
+      const idSet = new Set(ids.map(String));
+      entregables = entregables.filter(e => !(idSet.has(String(e.id)) && String(e.proyecto_id) === String(projectId)));
+      actualizarEntregables();
+      renderListaEntregablesBorrar();
+      alert(`Se eliminaron ${selectedItems.length} entregable(s).`);
     }
 
     async function cargarProyectos() {
