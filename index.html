@@ -7,6 +7,7 @@
   <title>Control de Horas AMP</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
   <style>
     * {
@@ -232,6 +233,51 @@
     .filter-button {
       height: 39px;
       white-space: nowrap;
+    }
+
+    /* =========================
+       GRÁFICAS
+    ========================== */
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .chart-card {
+      min-width: 0;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 16px;
+      background: #fff;
+    }
+
+    .chart-card h3 {
+      margin: 0 0 14px;
+      font-size: 16px;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 300px;
+      width: 100%;
+    }
+
+    .chart-note {
+      color: #6b7280;
+      font-size: 12px;
+      margin: 10px 0 0;
+    }
+
+    @media (max-width: 800px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+      .chart-wrap {
+        height: 260px;
+      }
     }
 
     /* =========================
@@ -1031,6 +1077,27 @@
 
     </div>
 
+  </section>
+
+  <!-- ==================================================
+       4. GRÁFICAS (RESPETAN LOS FILTROS DEL HISTORIAL)
+  =================================================== -->
+  <section class="card">
+    <h2>Gráficas de horas</h2>
+    <p class="chart-note" style="margin-top:-8px;margin-bottom:16px;">
+      Las dos gráficas se actualizan automáticamente con los filtros de fecha, proyecto, actividad y estado del historial.
+    </p>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>Distribución de horas por proyecto</h3>
+        <div class="chart-wrap"><canvas id="graficaCircular" aria-label="Gráfica circular de horas por proyecto"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Horas registradas por fecha</h3>
+        <div class="chart-wrap"><canvas id="graficaLineal" aria-label="Gráfica lineal de horas por fecha"></canvas></div>
+      </div>
+    </div>
+    <p id="mensajeGraficas" class="chart-note">Las gráficas mostrarán los registros que coincidan con los filtros.</p>
   </section>
 
 </main>
@@ -1972,6 +2039,116 @@
 
 
     /* ==================================================
+       GRÁFICAS DEL HISTORIAL
+    =================================================== */
+
+    let graficaCircularInstancia = null;
+    let graficaLinealInstancia = null;
+
+    function actualizarGraficas(datosFiltrados) {
+      const mensaje = document.getElementById("mensajeGraficas");
+      const datos = Array.isArray(datosFiltrados) ? datosFiltrados : [];
+      const porProyecto = {};
+      const porFecha = {};
+
+      datos.forEach(function(r) {
+        const horas = Number(r.horas || 0);
+        const nombreProyecto = String(r.proyecto || "Sin proyecto").trim() || "Sin proyecto";
+        const fecha = String(r.fecha || "").slice(0, 10);
+        porProyecto[nombreProyecto] = (porProyecto[nombreProyecto] || 0) + horas;
+        if (fecha) porFecha[fecha] = (porFecha[fecha] || 0) + horas;
+      });
+
+      const proyectosGrafica = Object.keys(porProyecto).sort(function(a, b) {
+        return porProyecto[b] - porProyecto[a];
+      });
+      const fechasGrafica = Object.keys(porFecha).sort();
+      const valoresProyecto = proyectosGrafica.map(function(nombre) {
+        return Number(porProyecto[nombre].toFixed(2));
+      });
+      const valoresFecha = fechasGrafica.map(function(fecha) {
+        return Number(porFecha[fecha].toFixed(2));
+      });
+      const etiquetasFecha = fechasGrafica.map(function(fecha) {
+        return formatearFecha(fecha);
+      });
+
+      if (typeof Chart === "undefined") {
+        if (mensaje) mensaje.textContent = "No se pudo cargar la librería de gráficas. Revisa tu conexión a internet y recarga la página.";
+        return;
+      }
+
+      const circular = document.getElementById("graficaCircular");
+      const lineal = document.getElementById("graficaLineal");
+      if (!circular || !lineal) return;
+
+      if (graficaCircularInstancia) graficaCircularInstancia.destroy();
+      if (graficaLinealInstancia) graficaLinealInstancia.destroy();
+
+      graficaCircularInstancia = new Chart(circular, {
+        type: "doughnut",
+        data: {
+          labels: proyectosGrafica,
+          datasets: [{
+            data: valoresProyecto,
+            backgroundColor: ["#2563eb", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4", "#f97316", "#64748b", "#ec4899", "#84cc16"],
+            borderColor: "#ffffff",
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "bottom" },
+            tooltip: { callbacks: { label: function(context) {
+              return context.label + ": " + Number(context.raw || 0).toLocaleString("es-MX", { maximumFractionDigits: 2 }) + " h";
+            } } }
+          }
+        }
+      });
+
+      graficaLinealInstancia = new Chart(lineal, {
+        type: "line",
+        data: {
+          labels: etiquetasFecha,
+          datasets: [{
+            label: "Horas",
+            data: valoresFecha,
+            borderColor: "#2563eb",
+            backgroundColor: "rgba(37, 99, 235, 0.14)",
+            fill: true,
+            tension: 0.25,
+            pointRadius: 3,
+            pointHoverRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { intersect: false, mode: "index" },
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: function(context) {
+              return Number(context.raw || 0).toLocaleString("es-MX", { maximumFractionDigits: 2 }) + " h";
+            } } }
+          },
+          scales: {
+            y: { beginAtZero: true, title: { display: true, text: "Horas" } },
+            x: { title: { display: true, text: "Fecha" } }
+          }
+        }
+      });
+
+      if (mensaje) {
+        mensaje.textContent = datos.length
+          ? "Mostrando " + datos.length + " registro(s) que coinciden con los filtros actuales."
+          : "No hay registros que coincidan con los filtros actuales.";
+      }
+    }
+
+
+    /* ==================================================
        MOSTRAR HISTORIAL
     =================================================== */
 
@@ -2035,7 +2212,7 @@
               ser posterior a la fecha "Hasta".
             </td>
           </tr>`;
-
+        actualizarGraficas([]);
         return;
 
       }
@@ -2139,7 +2316,7 @@
               con los filtros seleccionados.
             </td>
           </tr>`;
-
+        actualizarGraficas([]);
         return;
 
       }
@@ -2278,6 +2455,8 @@
 
         }
       );
+
+      actualizarGraficas(filtrados);
 
     }
 
