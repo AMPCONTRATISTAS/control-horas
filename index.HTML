@@ -1,0 +1,944 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AMP Control de Horas</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f5f8;color:#1f2937;font-family:Arial,sans-serif}
+header{background:#111827;color:white;padding:18px}
+.container{max-width:1400px;width:96%;margin:auto}
+header .container{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font-size:22px;margin:0}
+h2{font-size:20px;margin:0 0 18px}
+h3{font-size:16px;margin:0 0 16px}
+.card{background:white;border-radius:12px;padding:20px;margin:20px 0;box-shadow:0 2px 8px #0000000d}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.group{display:flex;flex-direction:column;min-width:0}
+.full{grid-column:1/-1}
+label{font-size:13px;font-weight:bold;margin-bottom:6px}
+input,select,textarea{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:7px;font-size:14px;background:white}
+textarea{min-height:80px;resize:vertical}
+button{border:0;border-radius:7px;padding:10px 14px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}
+.primary{background:#2563eb;color:white}
+.secondary{background:#64748b;color:white}
+.danger{background:#dc2626;color:white}
+.warning{background:#d97706;color:white}
+.small{padding:6px 9px;font-size:12px}
+.buttons{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.summary-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px;text-align:center;padding:18px}
+.summary-label{color:#64748b;font-size:13px;margin-bottom:8px}
+.summary-value{font-size:27px;font-weight:bold}
+.filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.table-wrap{overflow-x:auto}
+table{width:100%;min-width:1150px;border-collapse:collapse;font-size:13px}
+th,td{padding:9px;border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:top}
+th{background:#f1f5f9;white-space:nowrap}
+.actions{display:flex;gap:5px;flex-wrap:wrap}
+.status{display:inline-block;border-radius:15px;padding:4px 7px;font-size:11px;font-weight:bold;white-space:nowrap}
+.s0{background:#e5e7eb;color:#374151}
+.s1{background:#dbeafe;color:#1d4ed8}
+.s2{background:#fef3c7;color:#92400e}
+.s3{background:#dcfce7;color:#166534}
+.cumple{color:#15803d;font-weight:bold}
+.nocumple{color:#b91c1c;font-weight:bold}
+.pendiente{color:#a16207;font-weight:bold}
+.message{padding:10px;border-radius:7px;margin:10px 0;font-size:14px;overflow-wrap:anywhere}
+.success{background:#dcfce7;color:#166534}
+.error{background:#fee2e2;color:#991b1b}
+.info{background:#dbeafe;color:#1d4ed8}
+.empty{text-align:center;color:#64748b;padding:28px}
+.hidden{display:none!important}
+.charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:25px}
+.chart-card{border:1px solid #e2e8f0;border-radius:10px;padding:16px;min-width:0}
+.chart-area{height:300px;position:relative}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{background:white;border-radius:12px;padding:28px;width:min(420px,100%);box-shadow:0 4px 18px #00000012}
+.login-card h1{margin-bottom:22px;text-align:center}
+.login-card .group{margin-bottom:14px}
+.login-card button{width:100%}
+a{color:#2563eb;cursor:pointer}
+.modal{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;padding:20px;z-index:10}
+.modal-box{background:white;border-radius:12px;padding:24px;width:min(440px,100%)}
+@media(max-width:1000px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:800px){.charts{grid-template-columns:1fr}}
+@media(max-width:600px){.grid,.filters,.summary{grid-template-columns:1fr}.card{padding:14px}header .container{align-items:flex-start}}
+</style>
+</head>
+<body>
+
+<div id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <h1>AMP Control de Horas</h1>
+    <div id="loginMessage"></div>
+    <form id="loginForm">
+      <div class="group">
+        <label for="loginEmail">Correo empresarial</label>
+        <input id="loginEmail" type="email" autocomplete="username" required>
+      </div>
+      <div class="group">
+        <label for="loginPassword">Contraseña</label>
+        <input id="loginPassword" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="primary" id="loginButton" type="submit">Iniciar sesión</button>
+    </form>
+    <p style="text-align:center"><a id="forgotPassword" href="#">¿Olvidaste tu contraseña?</a></p>
+  </div>
+</div>
+
+<div id="appScreen" class="hidden">
+<header>
+  <div class="container">
+    <h1>AMP Control de Horas</h1>
+    <div>
+      <span id="userEmail" style="margin-right:10px"></span>
+      <button id="changePassword" class="secondary small" type="button">Cambiar contraseña</button>
+      <button id="logout" class="danger small" type="button">Cerrar sesión</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+<section class="card">
+  <h2>Resumen de horas</h2>
+  <div class="summary">
+    <div class="summary-card"><div class="summary-label">Hoy</div><div class="summary-value" id="sumToday">0 h</div></div>
+    <div class="summary-card"><div class="summary-label">Esta semana</div><div class="summary-value" id="sumWeek">0 h</div></div>
+    <div class="summary-card"><div class="summary-label">Este mes</div><div class="summary-value" id="sumMonth">0 h</div></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2 id="formTitle">Registrar horas</h2>
+  <div id="formMessage"></div>
+  <form id="hoursForm">
+    <div class="grid">
+      <div class="group"><label for="fecha">Fecha de trabajo</label><input type="date" id="fecha" required></div>
+      <div class="group"><label for="proyecto">Proyecto</label><select id="proyecto" required><option value="">Seleccionar</option></select></div>
+      <div class="group"><label for="actividad">Actividad</label><select id="actividad" required><option value="">Seleccionar</option></select></div>
+      <div class="group"><label for="entregable">Entregable</label><select id="entregable"><option value="">Sin entregable</option></select></div>
+      <div class="group"><label for="fechaInicio">Fecha de inicio</label><input type="date" id="fechaInicio"></div>
+      <div class="group"><label for="fechaVencimiento">Fecha de vencimiento</label><input type="date" id="fechaVencimiento"></div>
+      <div class="group">
+        <label for="horas">Horas</label>
+        <input type="number" id="horas" min="0.01" max="24" step="any" placeholder="Ej. 8 o 7.5" required>
+      </div>
+      <div class="group"><label for="porcentaje">Porcentaje completado</label><input type="number" id="porcentaje" min="0" max="100" step="1" value="0" required></div>
+      <div class="group"><label for="estado">Estado</label>
+        <select id="estado" required>
+          <option>NO INICIADO</option><option>EN CURSO</option><option>APLAZADO</option><option>TERMINADO</option>
+        </select>
+      </div>
+      <div class="group full">
+        <label for="notas">Notas (máximo 500 caracteres)</label>
+        <textarea id="notas" maxlength="500" placeholder="Notas adicionales..."></textarea>
+        <div id="notesCount" class="summary-label">0/500 caracteres</div>
+      </div>
+    </div>
+    <div class="buttons">
+      <button class="primary" id="saveButton" type="submit">Guardar horas</button>
+      <button class="secondary hidden" id="cancelEdit" type="button">Cancelar edición</button>
+    </div>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Historial de horas</h2>
+  <div class="filters">
+    <div class="group"><label for="desde">Desde</label><input type="date" id="desde"></div>
+    <div class="group"><label for="hasta">Hasta</label><input type="date" id="hasta"></div>
+    <div class="group"><label for="fProyecto">Proyecto</label><select id="fProyecto"><option value="">Todos los proyectos</option></select></div>
+    <div class="group"><label for="fActividad">Actividad</label><select id="fActividad"><option value="">Todas las actividades</option></select></div>
+    <div class="group"><label for="fEstado">Estado</label>
+      <select id="fEstado">
+        <option value="">Todos</option><option>NO INICIADO</option><option>EN CURSO</option><option>APLAZADO</option><option>TERMINADO</option>
+      </select>
+    </div>
+    <div class="group"><button id="clearFilters" class="secondary" type="button">Limpiar filtros</button></div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Semana</th><th>Fecha</th><th>Proyecto</th><th>Actividad</th><th>Entregable</th>
+        <th>Inicio</th><th>Vencimiento</th><th>Estado</th><th>Cumplimiento</th>
+        <th>Horas</th><th>%</th><th>Notas</th><th>Acciones</th>
+      </tr></thead>
+      <tbody id="hoursTable"><tr><td colspan="13" class="empty">Inicia sesión para ver tus registros.</td></tr></tbody>
+    </table>
+  </div>
+  <div class="charts">
+    <div class="chart-card"><h3>Distribución de horas por proyecto</h3><div class="chart-area"><canvas id="projectChart"></canvas></div><p id="projectChartEmpty" class="empty hidden">No hay datos para mostrar.</p></div>
+    <div class="chart-card"><h3>Horas registradas por día</h3><div class="chart-area"><canvas id="dayChart"></canvas></div><p id="dayChartEmpty" class="empty hidden">No hay datos para mostrar.</p></div>
+  </div>
+</section>
+</main>
+</div>
+
+<div id="recoveryModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <h2>Recuperar contraseña</h2>
+    <div id="recoveryMessage"></div>
+    <div class="group"><label for="recoveryEmail">Correo electrónico</label><input id="recoveryEmail" type="email"></div>
+    <div class="buttons"><button id="sendRecovery" class="primary" type="button">Enviar enlace</button><button id="closeRecovery" class="secondary" type="button">Cerrar</button></div>
+  </div>
+</div>
+
+<div id="newPasswordModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <h2>Establecer nueva contraseña</h2>
+    <div id="newPasswordMessage"></div>
+    <div class="group"><label for="newPassword">Nueva contraseña (mínimo 8 caracteres)</label><input id="newPassword" type="password" minlength="8" autocomplete="new-password"></div>
+    <div class="group" style="margin-top:12px"><label for="confirmPassword">Confirmar contraseña</label><input id="confirmPassword" type="password" minlength="8" autocomplete="new-password"></div>
+    <div class="buttons"><button id="saveNewPassword" class="primary" type="button">Guardar contraseña</button></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+const SUPABASE_URL = "https://sdgnadhsbihrayxlmcua.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Sc-EO6L9CCMEc_YhUnr-3g_V2Drx2Dh";
+const APP_URL = "https://ampcontratistas.github.io/control-horas/";
+
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let usuarioActual = null;
+let registros = [];
+let proyectos = [];
+let actividades = [];
+let entregables = [];
+let editandoId = null;
+let chartProyecto = null;
+let chartDia = null;
+let cargando = false;
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const hoy = fechaLocal();
+  $("fecha").value = hoy;
+  $("fechaInicio").value = hoy;
+
+  $("notas").addEventListener("input", actualizarContador);
+  $("hoursForm").addEventListener("submit", e => { e.preventDefault(); guardarHoras(); });
+  $("loginForm").addEventListener("submit", e => { e.preventDefault(); iniciarSesion(); });
+  $("proyecto").addEventListener("change", () => llenarEntregables($("proyecto").value));
+  $("cancelEdit").addEventListener("click", limpiarFormulario);
+  $("logout").addEventListener("click", cerrarSesion);
+  $("changePassword").addEventListener("click", solicitarCambioPassword);
+  $("forgotPassword").addEventListener("click", e => { e.preventDefault(); abrirRecuperacion(); });
+  $("sendRecovery").addEventListener("click", enviarRecuperacion);
+  $("closeRecovery").addEventListener("click", () => $("recoveryModal").classList.add("hidden"));
+  $("saveNewPassword").addEventListener("click", guardarNuevaPassword);
+  $("clearFilters").addEventListener("click", limpiarFiltros);
+  ["desde","hasta","fProyecto","fActividad","fEstado"].forEach(id => $(id).addEventListener("change", mostrarHoras));
+
+  actualizarContador();
+
+  db.auth.onAuthStateChange((event, session) => {
+    if (event === "PASSWORD_RECOVERY") $("newPasswordModal").classList.remove("hidden");
+    if (event === "SIGNED_OUT") limpiarSesionUI();
+    if (session && !usuarioActual) {
+      usuarioActual = session.user;
+      mostrarApp();
+      setTimeout(() => cargarDatos(), 0);
+    }
+  });
+
+  const {data,error} = await db.auth.getSession();
+  if (error) console.error(error);
+  if (data?.session && !usuarioActual) {
+    usuarioActual = data.session.user;
+    mostrarApp();
+    await cargarDatos();
+  }
+});
+
+function $(id) { return document.getElementById(id); }
+
+function fechaLocal() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+
+function limpiarTexto(v) { return String(v ?? "").replace(/\s+/g," ").trim(); }
+
+function mensaje(id,texto,tipo="info") {
+  const el = $(id);
+  el.replaceChildren();
+  const d = document.createElement("div");
+  d.className = `message ${tipo}`;
+  d.textContent = texto;
+  el.appendChild(d);
+}
+
+function mostrarApp() {
+  $("loginScreen").classList.add("hidden");
+  $("appScreen").classList.remove("hidden");
+  $("userEmail").textContent = usuarioActual?.email || "";
+}
+
+function limpiarSesionUI() {
+  usuarioActual = null;
+  registros = [];
+  editandoId = null;
+
+  if (chartProyecto) { chartProyecto.destroy(); chartProyecto = null; }
+  if (chartDia) { chartDia.destroy(); chartDia = null; }
+
+  $("appScreen").classList.add("hidden");
+  $("loginScreen").classList.remove("hidden");
+  $("loginPassword").value = "";
+  $("hoursTable").innerHTML = '<tr><td colspan="13" class="empty">Inicia sesión para ver tus registros.</td></tr>';
+}
+
+async function iniciarSesion() {
+  const boton = $("loginButton");
+  boton.disabled = true;
+
+  try {
+    const {data,error} = await db.auth.signInWithPassword({
+      email:$("loginEmail").value.trim(),
+      password:$("loginPassword").value
+    });
+
+    if (error) throw error;
+
+    usuarioActual = data.user;
+    mostrarApp();
+    await cargarDatos();
+  } catch (e) {
+    console.error(e);
+    mensaje("loginMessage","No se pudo iniciar sesión. Verifica el correo y la contraseña.","error");
+  } finally {
+    boton.disabled = false;
+  }
+}
+
+async function cerrarSesion() {
+  const {error} = await db.auth.signOut();
+  if (error) {
+    mensaje("formMessage","No se pudo cerrar sesión: "+error.message,"error");
+    return;
+  }
+  limpiarSesionUI();
+}
+
+async function cargarDatos() {
+  if (!usuarioActual || cargando) return;
+  cargando = true;
+
+  try {
+    await Promise.all([
+      cargarProyectos(),
+      cargarActividades(),
+      cargarEntregables(),
+      cargarHoras()
+    ]);
+
+    actualizarFiltros();
+    actualizarResumen();
+    mostrarHoras();
+  } finally {
+    cargando = false;
+  }
+}
+
+async function cargarProyectos() {
+  const {data,error} = await db.from("proyectos")
+    .select("*").eq("activo",true).order("nombre");
+
+  if (error) {
+    console.error("Proyectos:",error);
+    mensaje("formMessage","No se pudieron cargar proyectos: "+error.message,"error");
+    return;
+  }
+
+  proyectos = data || [];
+  const sel = $("proyecto");
+  sel.replaceChildren(new Option("Seleccionar proyecto",""));
+  proyectos.forEach(p => sel.add(new Option(p.nombre,p.nombre)));
+}
+
+async function cargarActividades() {
+  const {data,error} = await db.from("actividades")
+    .select("*").eq("activo",true).order("nombre");
+
+  if (error) {
+    console.error("Actividades:",error);
+    mensaje("formMessage","No se pudieron cargar actividades: "+error.message,"error");
+    return;
+  }
+
+  actividades = data || [];
+  const sel = $("actividad");
+  sel.replaceChildren(new Option("Seleccionar actividad",""));
+  actividades.forEach(a => sel.add(new Option(a.nombre,a.nombre)));
+}
+
+async function cargarEntregables() {
+  const {data,error} = await db.from("entregables")
+    .select("id,nombre,activo,proyecto_id,proyectos(nombre)")
+    .eq("activo",true).order("nombre");
+
+  if (error) {
+    console.error("Entregables:",error);
+    entregables = [];
+    return;
+  }
+
+  entregables = data || [];
+}
+
+async function cargarHoras() {
+  const {data,error} = await db.from("horas").select("*")
+    .eq("usuario_id",usuarioActual.id)
+    .order("fecha",{ascending:false})
+    .order("created_at",{ascending:false});
+
+  if (error) {
+    console.error("Horas:",error);
+    mensaje("formMessage","No se pudieron cargar registros: "+error.message,"error");
+    return;
+  }
+
+  registros = data || [];
+}
+
+function llenarEntregables(nombreProyecto, valor="") {
+  const sel = $("entregable");
+  sel.replaceChildren(new Option("Sin entregable",""));
+
+  const disponibles = entregables.filter(e =>
+    e.proyectos &&
+    limpiarTexto(e.proyectos.nombre) === limpiarTexto(nombreProyecto)
+  );
+
+  disponibles.forEach(e => sel.add(new Option(e.nombre,e.nombre)));
+
+  if (valor && !Array.from(sel.options).some(o => o.value === valor)) {
+    sel.add(new Option(valor+" (actual)",valor));
+  }
+
+  sel.value = valor || "";
+}
+
+function actualizarFiltros() {
+  const pPrev = $("fProyecto").value;
+  const aPrev = $("fActividad").value;
+
+  $("fProyecto").replaceChildren(new Option("Todos los proyectos",""));
+  $("fActividad").replaceChildren(new Option("Todas las actividades",""));
+
+  const ps = new Set(proyectos.map(p => limpiarTexto(p.nombre)));
+  const as = new Set(actividades.map(a => limpiarTexto(a.nombre)));
+
+  registros.forEach(r => {
+    if (limpiarTexto(r.proyecto)) ps.add(limpiarTexto(r.proyecto));
+    if (limpiarTexto(r.actividad)) as.add(limpiarTexto(r.actividad));
+  });
+
+  [...ps].filter(Boolean).sort().forEach(v => $("fProyecto").add(new Option(v,v)));
+  [...as].filter(Boolean).sort().forEach(v => $("fActividad").add(new Option(v,v)));
+
+  $("fProyecto").value = pPrev;
+  $("fActividad").value = aPrev;
+}
+
+function limpiarFiltros() {
+  ["desde","hasta","fProyecto","fActividad","fEstado"].forEach(id => $(id).value = "");
+  mostrarHoras();
+}
+
+function obtenerFiltrados() {
+  const desde = $("desde").value;
+  const hasta = $("hasta").value;
+  const p = $("fProyecto").value;
+  const a = $("fActividad").value;
+  const e = $("fEstado").value;
+
+  if (desde && hasta && desde > hasta) return [];
+
+  return registros.filter(r =>
+    (!desde || r.fecha >= desde) &&
+    (!hasta || r.fecha <= hasta) &&
+    (!p || limpiarTexto(r.proyecto) === p) &&
+    (!a || limpiarTexto(r.actividad) === a) &&
+    (!e || r.estado === e)
+  );
+}
+
+function mostrarHoras() {
+  const tbody = $("hoursTable");
+  const desde = $("desde").value;
+  const hasta = $("hasta").value;
+
+  if (desde && hasta && desde > hasta) {
+    tbody.innerHTML = '<tr><td colspan="13" class="empty">La fecha Desde no puede ser posterior a Hasta.</td></tr>';
+    actualizarGraficas([]);
+    return;
+  }
+
+  const lista = obtenerFiltrados();
+
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="13" class="empty">No hay registros que coincidan con los filtros.</td></tr>';
+    actualizarGraficas([]);
+    return;
+  }
+
+  tbody.replaceChildren();
+
+  lista.forEach(r => {
+    const tr = document.createElement("tr");
+
+    [
+      r.semana || semanaISO(r.fecha),
+      fechaBonita(r.fecha),
+      limpiarTexto(r.proyecto),
+      limpiarTexto(r.actividad),
+      limpiarTexto(r.entregable) || "Sin entregable",
+      fechaBonita(r.fecha_inicio),
+      fechaBonita(r.fecha_vencimiento)
+    ].forEach(v => {
+      const td = document.createElement("td");
+      td.textContent = v || "";
+      tr.appendChild(td);
+    });
+
+    const tdEstado = document.createElement("td");
+    const s = document.createElement("span");
+    s.className = "status " + ({"NO INICIADO":"s0","EN CURSO":"s1","APLAZADO":"s2","TERMINADO":"s3"}[r.estado] || "");
+    s.textContent = r.estado || "";
+    tdEstado.appendChild(s);
+    tr.appendChild(tdEstado);
+
+    const tdCumple = document.createElement("td");
+    const sc = document.createElement("span");
+    sc.className = ({"CUMPLE":"cumple","NO CUMPLE":"nocumple","PENDIENTE":"pendiente"}[r.cumple_objetivo] || "");
+    sc.textContent = r.cumple_objetivo || "";
+    tdCumple.appendChild(sc);
+    tr.appendChild(tdCumple);
+
+    [
+      formatearHoras(r.horas),
+      `${Number(r.porcentaje_completado || 0)}%`,
+      r.notas || ""
+    ].forEach((v,i) => {
+      const td = document.createElement("td");
+      td.textContent = v;
+      if (i === 2) td.style.whiteSpace = "pre-wrap";
+      tr.appendChild(td);
+    });
+
+    const td = document.createElement("td");
+    const acts = document.createElement("div");
+    acts.className = "actions";
+
+    const edit = document.createElement("button");
+    edit.className = "warning small";
+    edit.textContent = "Editar";
+    edit.type = "button";
+    edit.addEventListener("click", () => editarRegistro(r.id));
+
+    const del = document.createElement("button");
+    del.className = "danger small";
+    del.textContent = "Eliminar";
+    del.type = "button";
+    del.addEventListener("click", () => eliminarRegistro(r.id));
+
+    acts.append(edit,del);
+    td.appendChild(acts);
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+  });
+
+  actualizarGraficas(lista);
+}
+
+function formatearHoras(valor) {
+  const n = Number(valor || 0);
+  return n.toLocaleString("en-US", {
+    maximumFractionDigits: 2,
+    useGrouping: false
+  });
+}
+
+async function guardarHoras() {
+  if (!usuarioActual) {
+    mensaje("formMessage","La sesión no está activa. Inicia sesión de nuevo.","error");
+    return;
+  }
+
+  const fecha = $("fecha").value;
+  const proyecto = $("proyecto").value;
+  const actividad = $("actividad").value;
+  const entregable = $("entregable").value;
+  const fechaInicio = $("fechaInicio").value;
+  const fechaVencimiento = $("fechaVencimiento").value;
+  const horas = Number($("horas").value);
+  const porcentaje = Number($("porcentaje").value);
+  const estado = $("estado").value;
+  const notas = $("notas").value;
+
+  if (!fecha || !proyecto || !actividad) {
+    mensaje("formMessage","Completa fecha, proyecto y actividad.","error");
+    return;
+  }
+
+  if (!Number.isFinite(horas) || horas <= 0 || horas > 24) {
+    mensaje("formMessage","Las horas deben ser mayores a 0 y no superar 24.","error");
+    return;
+  }
+
+  if ($("porcentaje").value === "" || !Number.isFinite(porcentaje) || porcentaje < 0 || porcentaje > 100) {
+    mensaje("formMessage","El porcentaje debe estar entre 0 y 100.","error");
+    return;
+  }
+
+  if (notas.length > 500) {
+    mensaje("formMessage","Las notas no pueden superar 500 caracteres.","error");
+    return;
+  }
+
+  if (fechaInicio && fechaVencimiento && fechaInicio > fechaVencimiento) {
+    mensaje("formMessage","La fecha de inicio no puede ser posterior al vencimiento.","error");
+    return;
+  }
+
+  const registro = {
+    fecha,
+    proyecto,
+    actividad,
+    entregable:entregable || null,
+    horas,
+    notas:notas.trim() || null,
+    fecha_inicio:fechaInicio || null,
+    fecha_vencimiento:fechaVencimiento || null,
+    porcentaje_completado:porcentaje,
+    estado,
+    semana:semanaISO(fecha)
+  };
+
+  const btn = $("saveButton");
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = editandoId !== null ? "Actualizando..." : "Guardando...";
+
+  try {
+    let resultado;
+
+    if (editandoId !== null) {
+      resultado = await db.from("horas")
+        .update(registro)
+        .eq("id",editandoId)
+        .eq("usuario_id",usuarioActual.id);
+    } else {
+      resultado = await db.from("horas")
+        .insert({...registro,usuario_id:usuarioActual.id});
+    }
+
+    if (resultado.error) throw resultado.error;
+
+    mensaje("formMessage",editandoId !== null ? "Registro actualizado." : "Horas guardadas.","success");
+    limpiarFormulario();
+    await cargarHoras();
+    actualizarFiltros();
+    actualizarResumen();
+    mostrarHoras();
+  } catch (e) {
+    console.error("Guardar horas:",e);
+    mensaje("formMessage","Error al guardar: "+(e.message || "Error desconocido"),"error");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = original;
+  }
+}
+
+function editarRegistro(id) {
+  const r = registros.find(x => x.id === id);
+  if (!r) {
+    mensaje("formMessage","No se encontró el registro.","error");
+    return;
+  }
+
+  editandoId = id;
+  $("formTitle").textContent = "Editar registro";
+  $("fecha").value = r.fecha || "";
+  $("proyecto").value = r.proyecto || "";
+  llenarEntregables(r.proyecto || "",r.entregable || "");
+  $("actividad").value = r.actividad || "";
+  $("fechaInicio").value = r.fecha_inicio || "";
+  $("fechaVencimiento").value = r.fecha_vencimiento || "";
+
+  /* Se muestran enteros sin forzar decimales. */
+  $("horas").value = r.horas ?? "";
+
+  $("porcentaje").value = r.porcentaje_completado ?? 0;
+  $("estado").value = r.estado || "NO INICIADO";
+  $("notas").value = r.notas || "";
+  actualizarContador();
+
+  $("saveButton").textContent = "Actualizar registro";
+  $("cancelEdit").classList.remove("hidden");
+  $("formTitle").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function limpiarFormulario() {
+  editandoId = null;
+  $("formTitle").textContent = "Registrar horas";
+  $("fecha").value = fechaLocal();
+  $("proyecto").value = "";
+  $("actividad").value = "";
+  llenarEntregables("");
+  $("fechaInicio").value = fechaLocal();
+  $("fechaVencimiento").value = "";
+  $("horas").value = "";
+  $("porcentaje").value = "0";
+  $("estado").value = "NO INICIADO";
+  $("notas").value = "";
+  actualizarContador();
+  $("saveButton").textContent = "Guardar horas";
+  $("cancelEdit").classList.add("hidden");
+}
+
+async function eliminarRegistro(id) {
+  if (!confirm("¿Eliminar este registro? Esta acción no se puede deshacer.")) return;
+
+  try {
+    const {error} = await db.from("horas")
+      .delete()
+      .eq("id",id)
+      .eq("usuario_id",usuarioActual.id);
+
+    if (error) throw error;
+
+    await cargarHoras();
+    actualizarFiltros();
+    actualizarResumen();
+    mostrarHoras();
+    mensaje("formMessage","Registro eliminado.","success");
+  } catch (e) {
+    console.error(e);
+    mensaje("formMessage","No se pudo eliminar: "+e.message,"error");
+  }
+}
+
+function actualizarResumen() {
+  const hoy = fechaLocal();
+  const inicioSemana = inicioSemanaISO(hoy);
+  const inicioMes = hoy.slice(0,7)+"-01";
+  let h = 0, s = 0, m = 0;
+
+  registros.forEach(r => {
+    const n = Number(r.horas || 0);
+    if (r.fecha === hoy) h += n;
+    if (r.fecha >= inicioSemana && r.fecha <= hoy) s += n;
+    if (r.fecha >= inicioMes && r.fecha <= hoy) m += n;
+  });
+
+  $("sumToday").textContent = horasBonitas(h);
+  $("sumWeek").textContent = horasBonitas(s);
+  $("sumMonth").textContent = horasBonitas(m);
+}
+
+function semanaISO(fechaString) {
+  if (!fechaString) return "";
+  const d = new Date(fechaString+"T00:00:00Z");
+  const dia = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate()+4-dia);
+  const año = d.getUTCFullYear();
+  const inicio = new Date(Date.UTC(año,0,1));
+  const num = Math.ceil((((d-inicio)/86400000)+1)/7);
+  return String(año).slice(-2)+"S"+String(num).padStart(2,"0");
+}
+
+function inicioSemanaISO(fechaString) {
+  const d = new Date(fechaString+"T12:00:00");
+  const dia = d.getDay();
+  d.setDate(d.getDate()-(dia===0?6:dia-1));
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+
+function actualizarContador() {
+  $("notesCount").textContent = $("notas").value.length+"/500 caracteres";
+  $("notesCount").style.color = $("notas").value.length >= 480 ? "#b45309" : "#64748b";
+}
+
+function fechaBonita(fecha) {
+  if (!fecha) return "";
+  const p = String(fecha).slice(0,10).split("-");
+  return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : String(fecha);
+}
+
+function horasBonitas(n) {
+  return formatearHoras(n)+" h";
+}
+
+function actualizarGraficas(lista=obtenerFiltrados()) {
+  if (typeof Chart === "undefined") {
+    console.error("Chart.js no está cargado.");
+    return;
+  }
+
+  const vacio = lista.length === 0;
+  $("projectChart").classList.toggle("hidden",vacio);
+  $("dayChart").classList.toggle("hidden",vacio);
+  $("projectChartEmpty").classList.toggle("hidden",!vacio);
+  $("dayChartEmpty").classList.toggle("hidden",!vacio);
+
+  if (chartProyecto) { chartProyecto.destroy(); chartProyecto = null; }
+  if (chartDia) { chartDia.destroy(); chartDia = null; }
+  if (vacio) return;
+
+  const porProyecto = {};
+
+  lista.forEach(r => {
+    const p = limpiarTexto(r.proyecto) || "Sin proyecto";
+    porProyecto[p] = (porProyecto[p] || 0) + Number(r.horas || 0);
+  });
+
+  chartProyecto = new Chart($("projectChart"),{
+    type:"doughnut",
+    data:{
+      labels:Object.keys(porProyecto),
+      datasets:[{
+        data:Object.values(porProyecto).map(v=>Number(v.toFixed(2))),
+        backgroundColor:[
+          "#2563eb","#16a34a","#f59e0b","#9333ea","#0891b2",
+          "#e11d48","#64748b","#65a30d","#ea580c","#4f46e5",
+          "#0d9488","#be123c"
+        ],
+        borderColor:"#fff",
+        borderWidth:2
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{position:"bottom"},
+        tooltip:{
+          callbacks:{
+            label(c) {
+              const total = c.dataset.data.reduce((a,b)=>a+Number(b||0),0);
+              const val = Number(c.raw||0);
+              return `${c.label}: ${formatearHoras(val)} h (${total?(val/total*100).toFixed(1):"0.0"}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  const porDia = {};
+  lista.forEach(r => {
+    if (r.fecha) porDia[r.fecha] = (porDia[r.fecha] || 0) + Number(r.horas || 0);
+  });
+
+  const fechas = Object.keys(porDia).sort();
+
+  chartDia = new Chart($("dayChart"),{
+    type:"line",
+    data:{
+      labels:fechas.map(fechaBonita),
+      datasets:[{
+        label:"Horas",
+        data:fechas.map(f=>Number(porDia[f].toFixed(2))),
+        borderColor:"#2563eb",
+        backgroundColor:"rgba(37,99,235,.12)",
+        fill:true,
+        tension:.25,
+        pointRadius:3
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      interaction:{intersect:false,mode:"index"},
+      scales:{
+        y:{beginAtZero:true,title:{display:true,text:"Horas"}},
+        x:{title:{display:true,text:"Fecha"}}
+      },
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:c=>formatearHoras(c.raw)+" h"}}
+      }
+    }
+  });
+}
+
+function abrirRecuperacion() {
+  $("recoveryModal").classList.remove("hidden");
+  $("recoveryEmail").value = $("loginEmail").value.trim();
+  $("recoveryMessage").replaceChildren();
+}
+
+async function enviarRecuperacion() {
+  const email = $("recoveryEmail").value.trim();
+  if (!email) {
+    mensaje("recoveryMessage","Escribe tu correo.","error");
+    return;
+  }
+
+  try {
+    const {error} = await db.auth.resetPasswordForEmail(email,{redirectTo:APP_URL});
+    if (error) throw error;
+    mensaje("recoveryMessage","Si el correo está registrado, recibirás instrucciones para recuperar la contraseña.","success");
+  } catch (e) {
+    console.error(e);
+    mensaje("recoveryMessage","No se pudo enviar el enlace. Revisa la configuración de recuperación de Supabase.","error");
+  }
+}
+
+async function solicitarCambioPassword() {
+  if (!usuarioActual?.email) return;
+
+  if (!confirm("Se enviará un enlace para cambiar tu contraseña al correo registrado. ¿Continuar?")) return;
+
+  try {
+    const {error} = await db.auth.resetPasswordForEmail(usuarioActual.email,{redirectTo:APP_URL});
+    if (error) throw error;
+    mensaje("formMessage","Revisa tu correo para cambiar la contraseña.","success");
+  } catch (e) {
+    console.error(e);
+    mensaje("formMessage","No se pudo enviar el enlace: "+e.message,"error");
+  }
+}
+
+async function guardarNuevaPassword() {
+  const p = $("newPassword").value;
+  const c = $("confirmPassword").value;
+
+  if (p.length < 8) {
+    mensaje("newPasswordMessage","La contraseña debe tener al menos 8 caracteres.","error");
+    return;
+  }
+
+  if (p !== c) {
+    mensaje("newPasswordMessage","Las contraseñas no coinciden.","error");
+    return;
+  }
+
+  try {
+    const {error} = await db.auth.updateUser({password:p});
+    if (error) throw error;
+
+    mensaje("newPasswordMessage","Contraseña actualizada correctamente.","success");
+
+    setTimeout(() => {
+      $("newPasswordModal").classList.add("hidden");
+      $("newPassword").value = "";
+      $("confirmPassword").value = "";
+    },1500);
+  } catch (e) {
+    console.error(e);
+    mensaje("newPasswordMessage","No se pudo cambiar la contraseña: "+e.message,"error");
+  }
+}
+</script>
+</body>
+</html>
