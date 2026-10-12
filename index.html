@@ -826,6 +826,30 @@
       }
     }
 
+
+    /* Desplazamiento interno: historial ~15 registros, permisos ~8 registros. */
+    #contenedorHistorialHoras {
+      max-height: 640px;
+      overflow: auto;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+      border: 1px solid #e2e8f0;
+      border-radius: 9px;
+    }
+    #contenedorPermisosConfigurados {
+      max-height: 385px;
+      overflow: auto;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+    }
+    #contenedorHistorialHoras thead th,
+    #contenedorPermisosConfigurados thead th {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      background: #f1f5f9;
+    }
+
   </style>
 
 </head>
@@ -1269,7 +1293,7 @@
         <div class="form-group"><label for="filtroPermisoProyecto">Filtrar por proyecto</label><select id="filtroPermisoProyecto"><option value="">Todos los proyectos</option></select></div>
       </div>
       <div id="resumenPermisos" class="admin-list-summary"></div>
-      <div class="deliverables-table-wrap">
+      <div class="deliverables-table-wrap" id="contenedorPermisosConfigurados">
         <table class="deliverables-table">
           <thead><tr><th>Persona</th><th>Proyecto</th><th>Importar</th><th>Borrar</th><th>Acción</th></tr></thead>
           <tbody id="permisosEntregablesBody"><tr><td colspan="5">Cargando permisos…</td></tr></tbody>
@@ -1560,7 +1584,7 @@
          TABLA
     =================================================== -->
 
-    <div class="table-container">
+    <div class="table-container" id="contenedorHistorialHoras">
 
       <table>
 
