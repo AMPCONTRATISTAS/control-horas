@@ -546,7 +546,14 @@
 
     .deliverables-help { color: var(--text-muted, #64748b); font-size: .92rem; margin: 6px 0 14px; }
     .deliverables-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
-    .deliverables-table-wrap { overflow-x: auto; margin-top: 12px; }
+    .deliverables-table-wrap { overflow:auto; margin-top:12px; max-height:420px; border:1px solid #e2e8f0; border-radius:9px; }
+    .deliverables-table-wrap thead th { position:sticky; top:0; z-index:2; background:#f1f5f9; }
+    .admin-filter-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin:12px 0; }
+    .project-multi-list { max-height:215px; overflow-y:auto; border:1px solid #cbd5e1; border-radius:9px; padding:9px; background:#f8fafc; }
+    .project-multi-list label { display:flex; align-items:center; gap:8px; padding:6px; margin:0; font-weight:400; }
+    .project-multi-list input { width:auto; flex:none; }
+    .admin-list-summary { font-size:13px; color:#64748b; margin:6px 0; }
+
     .deliverables-table { width: 100%; border-collapse: collapse; }
     .deliverables-table th, .deliverables-table td { text-align: left; padding: 10px; border-bottom: 1px solid #e2e8f0; }
     .deliverables-table th { background: #f8fafc; }
@@ -1245,8 +1252,9 @@
           <select id="permisoUsuario"><option value="">Seleccionar persona</option></select>
         </div>
         <div class="form-group">
-          <label for="permisoProyecto">Proyecto</label>
-          <select id="permisoProyecto"><option value="">Seleccionar proyecto</option></select>
+          <label>Proyectos (selecciona varios)</label>
+          <div class="admin-filter-row" style="margin:0 0 7px"><button type="button" class="btn-secondary btn-small" id="permisoMarcarTodos">Seleccionar todos</button><button type="button" class="btn-secondary btn-small" id="permisoDesmarcarTodos">Limpiar selección</button></div>
+          <div id="permisoProyectosMultiple" class="project-multi-list" aria-label="Proyectos para asignar permisos"></div>
         </div>
       </div>
       <div class="deliverables-checks">
@@ -1256,6 +1264,11 @@
       <button type="button" class="btn-primary" id="guardarPermisoEntregables">Guardar permisos</button>
       <div id="permisosEntregablesMessage" class="deliverables-status" aria-live="polite"></div>
       <h3>Permisos configurados</h3>
+      <div class="admin-filter-row">
+        <div class="form-group"><label for="filtroPermisoPersona">Filtrar por persona</label><select id="filtroPermisoPersona"><option value="">Todas las personas</option></select></div>
+        <div class="form-group"><label for="filtroPermisoProyecto">Filtrar por proyecto</label><select id="filtroPermisoProyecto"><option value="">Todos los proyectos</option></select></div>
+      </div>
+      <div id="resumenPermisos" class="admin-list-summary"></div>
       <div class="deliverables-table-wrap">
         <table class="deliverables-table">
           <thead><tr><th>Persona</th><th>Proyecto</th><th>Importar</th><th>Borrar</th><th>Acción</th></tr></thead>
@@ -1301,6 +1314,8 @@
         <label for="borrarProyecto">Proyecto</label>
         <select id="borrarProyecto"><option value="">Seleccionar proyecto</option></select>
       </div>
+      <div class="admin-filter-row"><div class="form-group"><label for="filtroNombreEntregable">Buscar dentro del nombre</label><input id="filtroNombreEntregable" type="search" placeholder="Ej. DW, DW-0, DU-001" autocomplete="off"></div></div>
+      <div id="resumenEntregables" class="admin-list-summary"></div>
       <p class="deliverables-help">Puedes seleccionar varios entregables y eliminarlos juntos. Se quitarán de la lista del proyecto y dejarán de aparecer en el selector de horas. Esta acción no se puede deshacer.</p>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0">
         <button type="button" class="btn-danger" id="btnBorrarEntregablesSeleccionados" disabled>Eliminar seleccionados (0)</button>
@@ -1966,7 +1981,11 @@
           actualizarContadorSeleccionEntregables();
         });
         document.getElementById("btnBorrarEntregablesSeleccionados")?.addEventListener("click", borrarEntregablesSeleccionados);
-        document.getElementById("permisoProyecto")?.addEventListener("change", cargarPermisoSeleccionadoEnFormulario);
+        document.getElementById("filtroNombreEntregable")?.addEventListener("input", renderListaEntregablesBorrar);
+        document.getElementById("filtroPermisoPersona")?.addEventListener("change", renderPermisosEntregables);
+        document.getElementById("filtroPermisoProyecto")?.addEventListener("change", renderPermisosEntregables);
+        document.getElementById("permisoMarcarTodos")?.addEventListener("click", () => { document.querySelectorAll(".permiso-proyecto-check").forEach(c => c.checked = true); cargarPermisoSeleccionadoEnFormulario(); });
+        document.getElementById("permisoDesmarcarTodos")?.addEventListener("click", () => { document.querySelectorAll(".permiso-proyecto-check").forEach(c => c.checked = false); cargarPermisoSeleccionadoEnFormulario(); });
         document.getElementById("permisoUsuario")?.addEventListener("change", cargarPermisoSeleccionadoEnFormulario);
 
 
@@ -2556,7 +2575,7 @@
 
       if (admin) {
         await cargarEmpleadosParaPermisos();
-        poblarSelectProyectosEntregables("permisoProyecto", null);
+        prepararFiltrosPermisos();
         renderPermisosEntregables();
       }
       poblarSelectProyectosEntregables("importarProyecto", id => puedeImportarProyecto(id));
@@ -2592,15 +2611,53 @@
       });
     }
 
+    function prepararFiltrosPermisos() {
+      const multi = document.getElementById("permisoProyectosMultiple");
+      const chosen = new Set(Array.from(multi.querySelectorAll("input:checked")).map(x => x.value));
+      multi.innerHTML = "";
+      proyectos.forEach(p => {
+        const label = document.createElement("label");
+        const cb = document.createElement("input");
+        cb.type = "checkbox"; cb.className = "permiso-proyecto-check"; cb.value = String(p.id);
+        cb.checked = chosen.has(String(p.id));
+        cb.addEventListener("change", cargarPermisoSeleccionadoEnFormulario);
+        label.append(cb, document.createTextNode(p.nombre)); multi.appendChild(label);
+      });
+      const persona = document.getElementById("filtroPermisoPersona");
+      const personaAnterior = persona.value;
+      persona.innerHTML = '<option value="">Todas las personas</option>';
+      empleadosParaPermisos.forEach(e => {
+        const o = document.createElement("option"); o.value = e.usuario_id;
+        o.textContent = e.NOMBRE || e.usuario_id; persona.appendChild(o);
+      });
+      persona.value = personaAnterior;
+      const proy = document.getElementById("filtroPermisoProyecto");
+      const proyAnterior = proy.value;
+      proy.innerHTML = '<option value="">Todos los proyectos</option>';
+      proyectos.forEach(p => {
+        const o = document.createElement("option"); o.value = String(p.id);
+        o.textContent = p.nombre; proy.appendChild(o);
+      });
+      proy.value = proyAnterior;
+    }
+
     function renderPermisosEntregables() {
       const body = document.getElementById("permisosEntregablesBody");
       if (!body) return;
-      if (!permisosEntregables.length) {
-        body.innerHTML = '<tr><td colspan="5">Todavía no hay permisos configurados.</td></tr>';
+      const user = document.getElementById("filtroPermisoPersona")?.value || "";
+      const project = document.getElementById("filtroPermisoProyecto")?.value || "";
+      const visibles = permisosEntregables.filter(p =>
+        (!user || p.usuario_id === user) &&
+        (!project || String(p.proyecto_id) === project)
+      );
+      document.getElementById("resumenPermisos").textContent =
+        `${visibles.length} permiso(s) visible(s) de ${permisosEntregables.length} configurado(s). Desplázate dentro de la tabla para ver los demás.`;
+      body.innerHTML = "";
+      if (!visibles.length) {
+        body.innerHTML = '<tr><td colspan="5">No hay permisos que coincidan con los filtros.</td></tr>';
         return;
       }
-      body.innerHTML = "";
-      permisosEntregables.forEach(p => {
+      visibles.forEach(p => {
         const empleado = empleadosParaPermisos.find(e => e.usuario_id === p.usuario_id);
         const proyecto = proyectos.find(x => String(x.id) === String(p.proyecto_id));
         const tr = document.createElement("tr");
@@ -2619,34 +2676,50 @@
 
     function cargarPermisoSeleccionadoEnFormulario() {
       const userId = document.getElementById("permisoUsuario")?.value;
-      const projectId = document.getElementById("permisoProyecto")?.value;
-      const permiso = permisosEntregables.find(p => p.usuario_id === userId && String(p.proyecto_id) === String(projectId));
-      document.getElementById("permisoPuedeCargar").checked = !!permiso?.puede_cargar;
-      document.getElementById("permisoPuedeBorrar").checked = !!permiso?.puede_borrar;
+      const selected = Array.from(document.querySelectorAll(".permiso-proyecto-check:checked"));
+      const permisos = selected.map(c => permisosEntregables.find(p =>
+        p.usuario_id === userId && String(p.proyecto_id) === c.value));
+      // Con múltiples proyectos no sobrescribir la selección de permisos existente.
+      // Solo autocompletar si se eligió exactamente un proyecto.
+      if (selected.length === 1) {
+        document.getElementById("permisoPuedeCargar").checked = !!permisos[0]?.puede_cargar;
+        document.getElementById("permisoPuedeBorrar").checked = !!permisos[0]?.puede_borrar;
+      }
     }
 
     async function guardarPermisoEntregables() {
       if (!esAdminEntregables()) return;
       const userId = document.getElementById("permisoUsuario").value;
-      const projectIdString = document.getElementById("permisoProyecto").value;
+      const projectIds = Array.from(document.querySelectorAll(".permiso-proyecto-check:checked")).map(c => c.value);
       const puedeCargar = document.getElementById("permisoPuedeCargar").checked;
       const puedeBorrar = document.getElementById("permisoPuedeBorrar").checked;
-      if (!userId || !projectIdString) {
-        setMensajeEntregables("permisosEntregablesMessage", "Selecciona una persona y un proyecto.", "error"); return;
+      const boton = document.getElementById("guardarPermisoEntregables");
+      if (!userId || !projectIds.length) {
+        setMensajeEntregables("permisosEntregablesMessage", "Selecciona una persona y uno o más proyectos.", "error"); return;
       }
-      const proyecto = proyectos.find(p => String(p.id) === String(projectIdString));
-      if (!proyecto) { setMensajeEntregables("permisosEntregablesMessage", "Proyecto no válido.", "error"); return; }
-      if (!puedeCargar && !puedeBorrar) {
-        const { error } = await supabaseClient.from("permisos_entregables").delete().eq("usuario_id", userId).eq("proyecto_id", proyecto.id);
-        if (error) { setMensajeEntregables("permisosEntregablesMessage", "No se pudo quitar el permiso: " + error.message, "error"); return; }
-      } else {
-        const { error } = await supabaseClient.from("permisos_entregables").upsert({
-          usuario_id: userId, proyecto_id: proyecto.id, puede_cargar: puedeCargar, puede_borrar: puedeBorrar
-        }, { onConflict: "usuario_id,proyecto_id" });
-        if (error) { setMensajeEntregables("permisosEntregablesMessage", "No se pudo guardar el permiso: " + error.message, "error"); return; }
-      }
-      setMensajeEntregables("permisosEntregablesMessage", "Permisos actualizados.", "success");
-      await cargarPermisosYPrepararModuloEntregables();
+      if (!puedeCargar && !puedeBorrar && !confirm("Sin permisos marcados se revocarán los permisos de los proyectos seleccionados. ¿Continuar?")) return;
+      boton.disabled = true;
+      try {
+        let completados = 0;
+        for (const projectId of projectIds) {
+          const proyecto = proyectos.find(p => String(p.id) === projectId);
+          if (!proyecto) throw new Error("Proyecto no válido: " + projectId);
+          const query = !puedeCargar && !puedeBorrar
+            ? supabaseClient.from("permisos_entregables").delete().eq("usuario_id", userId).eq("proyecto_id", proyecto.id)
+            : supabaseClient.from("permisos_entregables").upsert({
+                usuario_id: userId, proyecto_id: proyecto.id,
+                puede_cargar: puedeCargar, puede_borrar: puedeBorrar
+              }, { onConflict: "usuario_id,proyecto_id" });
+          const { error } = await query;
+          if (error) throw new Error(`Se completaron ${completados} de ${projectIds.length} proyectos. ${error.message}`);
+          completados++;
+        }
+        await cargarPermisosYPrepararModuloEntregables();
+        setMensajeEntregables("permisosEntregablesMessage", `Permisos actualizados para ${completados} proyecto(s).`, "success");
+      } catch (err) {
+        setMensajeEntregables("permisosEntregablesMessage", "Error: " + err.message, "error");
+        await cargarPermisosYPrepararModuloEntregables();
+      } finally { boton.disabled = false; }
     }
 
     async function revocarPermisoEntregables(userId, projectId, nombre, nombreProyecto) {
@@ -2738,9 +2811,12 @@
       if (selectAll) { selectAll.checked = false; selectAll.indeterminate = false; selectAll.disabled = true; }
       const btnBulk = document.getElementById("btnBorrarEntregablesSeleccionados");
       if (btnBulk) { btnBulk.disabled = true; btnBulk.textContent = "Eliminar seleccionados (0)"; }
-      if (!projectId) { body.innerHTML = '<tr><td colspan="4">Selecciona un proyecto.</td></tr>'; actualizarContadorSeleccionEntregables(); return; }
-      const items = entregables.filter(e => String(e.proyecto_id) === String(projectId) && e.activo !== false);
-      if (!items.length) { body.innerHTML = '<tr><td colspan="4">No hay entregables activos en este proyecto.</td></tr>'; actualizarContadorSeleccionEntregables(); return; }
+      if (!projectId) { document.getElementById("resumenEntregables").textContent = "Selecciona un proyecto para buscar entregables."; body.innerHTML = '<tr><td colspan="4">Selecciona un proyecto.</td></tr>'; actualizarContadorSeleccionEntregables(); return; }
+      const texto = (document.getElementById("filtroNombreEntregable")?.value || "").trim().toLocaleLowerCase();
+      const todosProyecto = entregables.filter(e => String(e.proyecto_id) === String(projectId) && e.activo !== false);
+      const items = todosProyecto.filter(e => String(e.nombre || "").toLocaleLowerCase().includes(texto));
+      document.getElementById("resumenEntregables").textContent = `${items.length} coincidencia(s) de ${todosProyecto.length} entregable(s) del proyecto. La selección múltiple afecta solo a los resultados visibles.`;
+      if (!items.length) { body.innerHTML = '<tr><td colspan="4">No hay entregables que coincidan con el filtro.</td></tr>'; actualizarContadorSeleccionEntregables(); return; }
       body.innerHTML = "";
       items.forEach(item => {
         const tr = document.createElement("tr");
