@@ -852,7 +852,10 @@
 
   </style>
 
-<style>.ra-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin:16px 0}.ra-filters label{display:block}.ra-filters select{margin-top:6px}.ra-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0}.ra-kpis>div{padding:17px;border:1px solid #dbe3ed;border-radius:12px;background:#f8fafc}.ra-kpis small{display:block;color:#64748b}.ra-kpis strong{display:block;font-size:27px;color:#1d4ed8;margin-top:8px}.ra-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.ra-chart{height:300px;position:relative}.ra-table{min-width:800px}.ra-table tbody tr{cursor:pointer}.ra-table tbody tr:hover{background:#dbeafe}@media(max-width:750px){.ra-grid{grid-template-columns:1fr}.ra-kpis{grid-template-columns:repeat(2,1fr)}}</style></head>
+<style>.ra-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin:16px 0}.ra-filters label{display:block}.ra-filters select{margin-top:6px}.ra-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0}.ra-kpis>div{padding:17px;border:1px solid #dbe3ed;border-radius:12px;background:#f8fafc}.ra-kpis small{display:block;color:#64748b}.ra-kpis strong{display:block;font-size:27px;color:#1d4ed8;margin-top:8px}.ra-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.ra-chart{height:300px;position:relative}.ra-table{min-width:800px}.ra-table tbody tr{cursor:pointer}.ra-table tbody tr:hover{background:#dbeafe}@media(max-width:750px){.ra-grid{grid-template-columns:1fr}.ra-kpis{grid-template-columns:repeat(2,1fr)}}</style><style>
+.ip-toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin:15px 0}.ip-toolbar label{display:flex;flex-direction:column;gap:5px;min-width:140px;flex:1;font-size:13px;font-weight:600}.ip-toolbar select,.ip-toolbar input{padding:9px;border:1px solid #cbd5e1;border-radius:8px;width:100%;min-height:38px}.ip-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:18px 0}.ip-kpi{padding:15px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:12px}.ip-kpi small{display:block;color:#64748b}.ip-kpi strong{font-size:25px;display:block;margin-top:7px;color:#0f172a}.ip-kpi span{font-size:12px;color:#64748b}.ip-panels{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:14px}.ip-note{color:#475569;font-size:13px;line-height:1.6}
+</style>
+</head>
 
 <body>
 
@@ -962,10 +965,42 @@
   <nav id="mainTabs" class="main-tabs" aria-label="Secciones de la aplicación">
     <button type="button" id="tabMisHoras" class="main-tab-button active" aria-selected="true">Mis horas</button>
     <button type="button" id="tabAdministracion" class="main-tab-button" aria-selected="false" style="display:none">Administración / entregables</button>
+    <button type="button" id="tabIndicadores" class="main-tab-button" style="display:none">📈 Indicadores</button>
     <button type="button" id="tabResumenAdmin" class="main-tab-button" style="display:none">📊 Resumen de administrador</button>
      <button type="button" id="tabCalculadoraElectrica" class="main-tab-button" aria-selected="false">Calculadora eléctrica</button>
   </nav>
 
+  <section id="indicadoresCard" class="card tab-view-hidden">
+    <h2>📈 Indicadores de productividad · Ingeniería</h2>
+    <p id="ipEstado">Cargando indicadores autorizados...</p>
+    <div class="ip-toolbar">
+      <label>Proyecto<select id="ipProyecto"><option value="">Departamento completo</option></select></label>
+      <label>Período<select id="ipModo"><option value="total">Total histórico</option><option value="rango">Rango de meses</option><option value="mes">Mes individual</option></select></label>
+      <label>Desde<input type="month" id="ipDesde"></label><label>Hasta<input type="month" id="ipHasta"></label>
+      <button type="button" class="btn-primary" id="ipActualizar">Actualizar</button>
+      <button type="button" class="btn-secondary" id="ipExcel">Exportar Excel</button>
+    </div>
+    <div class="ip-kpis" id="ipKpis"></div>
+    <p id="ipNota" class="ip-note"></p>
+    <div class="ip-panels">
+      <div class="card"><h3>Consumo mensual por entregable del alcance (h)</h3><div style="height:280px"><canvas id="ipChartMes"></canvas></div></div>
+      <div class="card"><h3>Horas directas e indirectas por mes</h3><div style="height:280px"><canvas id="ipChartHoras"></canvas></div></div>
+    </div>
+    <h3>Detalle mensual · Meses seleccionados</h3>
+    <div class="table-container"><table class="ra-table"><thead><tr><th>Mes</th><th>Horas totales</th><th>Directas</th><th>Indirectas</th><th>Entregables trabajados</th><th>h / alcance</th><th>h / trabajado</th><th>Personas equivalentes</th></tr></thead><tbody id="ipMeses"></tbody></table></div>
+    <h3>Detalle por proyecto</h3>
+    <div class="table-container"><table class="ra-table"><thead><tr><th>Proyecto</th><th>Entregables únicos</th><th>Con horas</th><th>Horas directas</th><th>Horas indirectas</th><th>Total h</th><th>h / alcance</th><th>h / trabajado</th><th>Personas eq.</th><th>Primera captura</th><th>Última captura</th></tr></thead><tbody id="ipProyectos"></tbody></table></div>
+    <div id="ipAdmin" class="card" style="display:none;background:#f8fafc;margin-top:18px">
+      <h3>Administración de planificación y permisos</h3>
+      <p>Duración original y actualizada con historial de cambios. El alcance se toma del catálogo de entregables del proyecto.</p>
+      <div class="ip-toolbar"><label>Proyecto<select id="ipAdminProyecto"></select></label><label>Duración planificada (meses)<input type="number" id="ipDuracion" min="0.1" max="240" step="0.1" placeholder="Ej. 2.5"></label><label>Motivo del ajuste<input id="ipMotivo" maxlength="300" placeholder="Alcance inicial / adicional"></label><button class="btn-primary" type="button" id="ipGuardarDuracion">Guardar versión</button></div>
+      <div id="ipPlanActual"></div>
+      <h4>Historial de modificaciones</h4><div class="table-container"><table class="ra-table"><thead><tr><th>Fecha</th><th>Duración anterior</th><th>Nueva duración</th><th>Motivo</th></tr></thead><tbody id="ipHistorial"></tbody></table></div>
+      <h4>Permisos de indicadores por proyecto</h4>
+      <div class="ip-toolbar"><label>Empleado<select id="ipPermEmpleado"></select></label><label>Proyecto<select id="ipPermProyecto"></select></label><button class="btn-primary" type="button" id="ipConceder">Conceder</button><button class="btn-secondary" type="button" id="ipRevocar">Revocar</button></div>
+      <div id="ipPermEstado"></div>
+    </div>
+  </section>
   <section id="resumenAdminCard" class="card tab-view-hidden"><h2>📊 Resumen de administrador · Horas hombre de ingeniería</h2><div class="card" id="raPermisosPanel" style="display:none;background:#f1f5f9"><h3>Acceso exclusivo al resumen de horas</h3><p>Solo las cuentas maestras pueden conceder o revocar este acceso. No concede permisos de entregables.</p><div class="admin-filter-row"><select id="raNuevoRevisor"><option value="">Seleccionar empleado</option></select><button type="button" class="btn-primary" onclick="raGuardarRevisor(true)">Dar acceso al resumen</button></div><div id="raListaRevisores"></div></div><p id="raEstado" style="color:#64748b">Selecciona los filtros para analizar las horas del equipo.</p><div class="ra-filters"><label>Periodo<select id="raFiltroTipo"><option value="semana">Semana</option><option value="mes">Mes</option><option value="anio">Año</option></select></label><label id="raFiltroPeriodoLabel">Semana<select id="raSemana"></select></label><label>Persona<select id="raPersona"></select></label><label>Proyecto<select id="raProyecto"></select></label><label>Actividad<select id="raActividad"></select></label><label>Entregable<select id="raEntregable"></select></label><label>Cumple objetivo<select id="raCumple"></select></label></div><div class="buttons"><button type="button" class="btn-secondary" onclick="raLimpiar()">Limpiar filtros</button><button type="button" class="btn-primary" onclick="cargarResumenAdmin()">Actualizar datos</button><button type="button" class="btn-primary" onclick="raExportar()">Exportar Excel</button></div><div class="ra-kpis"><div><small>Horas registradas</small><strong id="raHoras">0</strong></div><div><small>Personas con captura</small><strong id="raActivos">0</strong></div><div><small>Sin captura (periodo)</small><strong id="raSin">0</strong></div><div><small>Registros</small><strong id="raRegistros">0</strong></div></div><div class="ra-grid"><div class="chart-card"><h3>Horas por proyecto</h3><div class="ra-chart"><canvas id="raChartProyecto"></canvas></div></div><div class="chart-card"><h3>Horas por semana</h3><div class="ra-chart"><canvas id="raChartSemana"></canvas></div></div><div class="chart-card"><h3>Distribución por proyecto</h3><div class="ra-chart"><canvas id="raChartDona"></canvas></div></div><div class="chart-card"><h3>Cumplimiento de objetivos</h3><div class="ra-chart"><canvas id="raChartCumple"></canvas></div></div></div><section class="card" style="margin-top:18px;background:#f8fafc"><h3>Auditoría de captura · Todos los empleados</h3><div class="ra-filters"><label>Periodo<select id="raPeriodoTipo"><option value="semana">Semana</option><option value="mes">Mes</option><option value="anio">Año</option></select></label><label id="raAuditoriaPeriodoLabel">Semana / mes / año<select id="raPeriodoValor"></select></label><label>Mostrar<select id="raEstadoCaptura"><option value="todos">Todos</option><option value="sin">Sin registros</option><option value="incumple">No alcanzaron el objetivo</option><option value="cumple">Cumplieron</option></select></label></div><p id="raObjetivoInfo" style="color:#475569"></p><div class="buttons"><button class="btn-primary" type="button" onclick="raCopiarSin()">Copiar nombres sin captura</button><button class="btn-secondary" type="button" onclick="raCopiarAuditoria()">Copiar tabla de horas</button><button class="btn-primary" type="button" onclick="raExportarAuditoria()">Exportar auditoría Excel</button></div><div class="table-container" style="max-height:450px;overflow:auto"><table class="ra-table"><thead><tr><th>Empleado</th><th>Periodo</th><th>Horas registradas</th><th>Vacaciones / permisos / asuetos (h)</th><th>Objetivo (h)</th><th>Diferencia</th><th>Resultado</th></tr></thead><tbody id="raAuditoriaBody"></tbody></table></div></section><h3>Control de captura por persona y semana</h3><div class="table-container" style="max-height:400px;overflow:auto"><table class="ra-table"><thead><tr><th>Persona</th><th>Semana</th><th>Horas</th><th>Registros</th><th>Estado</th></tr></thead><tbody id="raControl"></tbody></table></div><h3>Detalle de registros filtrados</h3><div class="table-container" style="max-height:460px;overflow:auto"><table class="ra-table"><thead><tr><th>Fecha</th><th>Persona</th><th>Semana</th><th>Proyecto</th><th>Actividad</th><th>Entregable</th><th>Horas</th><th>Objetivo</th></tr></thead><tbody id="raDetalle"></tbody></table></div></section>
    <!-- Módulo independiente: la calculadora vive en un iframe para aislar sus estilos y JavaScript de Control de Horas. -->
   <section id="calculadoraElectricaSection" class="card tab-view-hidden" aria-label="Calculadora eléctrica beta">
@@ -1944,6 +1979,7 @@
 
         document.getElementById("tabMisHoras")?.addEventListener("click", () => cambiarPestanaPrincipal("horas"));
         document.getElementById("tabAdministracion")?.addEventListener("click", () => cambiarPestanaPrincipal("admin"));
+        document.getElementById("tabIndicadores")?.addEventListener("click", () => cambiarPestanaPrincipal("indicadores"));
         document.getElementById("tabResumenAdmin")?.addEventListener("click", () => cambiarPestanaPrincipal("resumen"));
         document.getElementById("tabCalculadoraElectrica")?.addEventListener("click", () => cambiarPestanaPrincipal("calculadora"));
         const calculadoraFrame = document.getElementById("calculadoraElectricaFrame");
@@ -1954,6 +1990,7 @@
         }
         cambiarPestanaPrincipal("horas");
         actualizarPermisoResumen().catch(console.error);
+        ipPermiso().catch(console.error);
 
 
         /*
@@ -2092,6 +2129,7 @@
               usuarioActual = session.user;
               mostrarApp();
               actualizarPermisoResumen().catch(console.error);
+        ipPermiso().catch(console.error);
               // Ejecutar llamadas a Supabase fuera del callback de auth.
               setTimeout(function() {
                 cargarDatos();
@@ -2193,6 +2231,7 @@
 
         mostrarApp();
         await actualizarPermisoResumen();
+        await ipPermiso();
 
         await cargarDatos();
 
@@ -2279,6 +2318,7 @@
 
       mostrarApp();
       await actualizarPermisoResumen();
+        await ipPermiso();
 
       await cargarDatos();
 
@@ -2351,19 +2391,21 @@
       const admin = pestana === "admin" && puedeVerAdmin;
       const calculadora = pestana === "calculadora";
       const resumen = pestana === "resumen" && puedeVerResumenHoras;
+      const indicadores = pestana === "indicadores" && ipPuedeVer;
       const adminIds = new Set(["adminEntregablesCard", "adminGeneralCard"]);
       main.querySelectorAll(":scope > section.card").forEach(card => {
         const esSeccionAdmin = adminIds.has(card.id);
         const esCalculadora = card.id === "calculadoraElectricaSection";
+        if(card.id === "indicadoresCard") { card.classList.toggle("tab-view-hidden", !indicadores); return; }
         if(card.id === "resumenAdminCard") { card.classList.toggle("tab-view-hidden", !resumen); return; }
-        const ocultar = resumen ? true : calculadora ? !esCalculadora : admin ? (!esSeccionAdmin || esCalculadora) : (esSeccionAdmin || esCalculadora);
+        const ocultar = (resumen || indicadores) ? true : calculadora ? !esCalculadora : admin ? (!esSeccionAdmin || esCalculadora) : (esSeccionAdmin || esCalculadora);
         card.classList.toggle("tab-view-hidden", ocultar);
       });
       const btnHoras = document.getElementById("tabMisHoras");
       const btnAdmin = document.getElementById("tabAdministracion");
       const btnCalculadora = document.getElementById("tabCalculadoraElectrica");
-      btnHoras?.classList.toggle("active", !admin && !calculadora && !resumen);
-      btnHoras?.setAttribute("aria-selected", String(!admin && !calculadora && !resumen));
+      btnHoras?.classList.toggle("active", !admin && !calculadora && !resumen && !indicadores);
+      btnHoras?.setAttribute("aria-selected", String(!admin && !calculadora && !resumen && !indicadores));
       btnAdmin?.classList.toggle("active", admin);
       btnAdmin?.setAttribute("aria-selected", String(admin));
       btnCalculadora?.classList.toggle("active", calculadora);
@@ -2371,7 +2413,10 @@
       if (btnAdmin) btnAdmin.style.display = puedeVerAdmin ? "inline-flex" : "none";
       const btnResumen = document.getElementById("tabResumenAdmin");
       if(btnResumen){btnResumen.style.display=puedeVerResumenHoras?"inline-flex":"none";btnResumen.classList.toggle("active",resumen);}
+      const btnIndicadores=document.getElementById('tabIndicadores');
+      if(btnIndicadores){btnIndicadores.style.display=ipPuedeVer?'inline-flex':'none';btnIndicadores.classList.toggle('active',indicadores);}
       if(resumen) cargarResumenAdmin();
+      if(indicadores) ipCargar();
       if (admin && esAdminApp()) {
         prepararAdministracionGeneral().catch(err => console.error("Error preparando administración:", err));
       }
@@ -3932,6 +3977,10 @@
         document
           .getElementById("entregable")
           .value;
+      if (entregable && !["PLANOS","SUBMITTALS","MEMORIAS","AS BUILT"].includes(String(actividad).trim().toUpperCase())) {
+        alert("No se puede guardar el registro. Solo las actividades PLANOS, SUBMITTALS, MEMORIAS y AS BUILT pueden tener un entregable asociado. Cambia la actividad o deja el campo Entregable vacío.");
+        return;
+      }
 
 
       const fechaInicio =
@@ -4175,8 +4224,9 @@
 
         mostrarMensaje(
           "formMessage",
-          "Error al guardar: " +
-            resultado.error.message,
+          (String(resultado.error.message || "").includes("amp_horas_entregable_solo_actividades")
+            ? "No se puede guardar el registro. Solo las actividades PLANOS, SUBMITTALS, MEMORIAS y AS BUILT pueden tener un entregable asociado. Cambia la actividad o deja el campo Entregable vacío."
+            : "Error al guardar: " + resultado.error.message),
           "error"
         );
 
@@ -5450,5 +5500,34 @@ function raExportarAuditoria(){if(!raAuditoriaActual.length)return;let ws=XLSX.u
 raId('raFiltroTipo').addEventListener('change',()=>{raSeleccion={};raActualizarPeriodoPrincipal();});
 ['raPeriodoTipo','raEstadoCaptura','raPeriodoValor'].forEach(id=>raId(id).addEventListener('change',()=>id==='raPeriodoTipo'?raPeriodoOpciones():raAuditar()));
 document.querySelectorAll('.ra-filters select').forEach(el=>{if(['raSemana','raPersona','raProyecto','raActividad','raEntregable','raCumple'].includes(el.id))el.addEventListener('change',raCambiarFiltro);});raId('raControl').addEventListener('click',e=>{let tr=e.target.closest('tr[data-user]');if(!tr)return;raId('raPersona').value=tr.dataset.user;raId('raFiltroTipo').value='semana';raActualizarPeriodoPrincipal();raId('raSemana').value=tr.dataset.week;raSeleccion={};raActualizarFiltrosDependientes();raRender();});
-</script></body>
+</script>
+<script>
+/* Indicadores AMP: datos autorizados por RPC con control de acceso en servidor. */
+let ipPuedeVer=false,ipEsAdmin=false,ipDatos=[],ipCatalogo=[],ipProyectos=[],ipPlanes=[],ipHistoria=[],ipUsuarios=[],ipGraficas={},ipVista=[];
+const ipEl=id=>document.getElementById(id),ipNum=x=>Number(x)||0,ipFmt=(n,d=2)=>Number(n||0).toLocaleString('es-MX',{minimumFractionDigits:d,maximumFractionDigits:d});
+const ipClean=x=>String(x??'').trim(),ipUpper=x=>ipClean(x).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();
+const ipHtml=x=>ipClean(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ipTipo=r=>['PLANOS','SUBMITTALS','MEMORIAS','AS BUILT'].includes(ipUpper(r.actividad));
+const ipMes=r=>ipClean(r.fecha).slice(0,7);
+const ipHorasSemana=y=>y>=2030?40:y===2029?42:y===2028?44:y===2027?46:48;
+function ipCapacidadMes(m){const y=Number(m.slice(0,4)),mo=Number(m.slice(5,7));return ipHorasSemana(y)*new Date(y,mo,0).getDate()/7;}
+function ipMesesEntre(a,b){if(!a||!b||a>b)return [];let out=[],[y,m]=a.split('-').map(Number);for(let n=0;n<240&&`${y}-${String(m).padStart(2,'0')}`<=b;n++){out.push(`${y}-${String(m).padStart(2,'0')}`);if(++m>12){m=1;y++;}}return out;}
+async function ipPermiso(){if(!usuarioActual){ipPuedeVer=false;ipEsAdmin=false;ipEl('tabIndicadores').style.display='none';return;}try{const {data,error}=await supabaseClient.rpc('amp_indicadores_acceso');if(error)throw error;ipPuedeVer=!!data?.permitido;ipEsAdmin=!!data?.admin;}catch(e){ipPuedeVer=false;ipEsAdmin=false;console.warn('Indicadores sin permisos configurados:',e.message);}ipEl('tabIndicadores').style.display=ipPuedeVer?'inline-flex':'none';}
+async function ipCargar(){if(!ipPuedeVer)return;ipEl('ipEstado').textContent='Cargando datos y catálogo autorizados...';try{const {data,error}=await supabaseClient.rpc('amp_indicadores_datos');if(error)throw error;ipDatos=data?.horas||[];ipProyectos=data?.proyectos||[];ipCatalogo=data?.entregables||[];ipPlanes=data?.planes||[];ipHistoria=data?.historial||[];ipUsuarios=data?.usuarios||[];ipEsAdmin=!!data?.admin;ipEl('ipAdmin').style.display=ipEsAdmin?'block':'none';ipPoblar();ipRender();ipEl('ipEstado').textContent=`${ipDatos.length} capturas y ${ipCatalogo.length} entregables autorizados. Meta: 21 horas por entregable.`;}catch(e){ipEl('ipEstado').textContent='No se pudieron cargar indicadores: '+e.message+'. Ejecuta el SQL de instalación y comprueba los permisos.';}}
+function ipPoblar(){const proyectos=[...new Set([...ipProyectos,...ipCatalogo.map(x=>x.proyecto),...ipDatos.map(x=>x.proyecto),...ipPlanes.map(x=>x.proyecto)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));for(const id of ['ipProyecto','ipAdminProyecto','ipPermProyecto']){const el=ipEl(id),old=el.value;el.innerHTML=(id==='ipProyecto'&&ipEsAdmin?'<option value="">Departamento completo</option>':'')+proyectos.map(p=>`<option value="${ipHtml(p)}">${ipHtml(p)}</option>`).join('');if([...el.options].some(o=>o.value===old))el.value=old;}ipEl('ipPermEmpleado').innerHTML='<option value="">Seleccionar empleado</option>'+ipUsuarios.map(u=>`<option value="${ipHtml(u.id)}">${ipHtml(u.nombre)} · ${ipHtml(u.correo)}</option>`).join('');const meses=[...new Set(ipDatos.map(ipMes).filter(Boolean))].sort();if(meses.length){if(!ipEl('ipDesde').value)ipEl('ipDesde').value=meses[0];if(!ipEl('ipHasta').value)ipEl('ipHasta').value=meses[meses.length-1];}ipAdminRender();}
+function ipFiltrado(){const p=ipEl('ipProyecto').value,modo=ipEl('ipModo').value,a=ipEl('ipDesde').value,b=modo==='mes'?a:ipEl('ipHasta').value;const rows=ipDatos.filter(r=>(!p||r.proyecto===p)&&(modo==='total'||(ipMes(r)>=a&&ipMes(r)<=b)));const proy=[...new Set([...ipProyectos,...ipCatalogo.map(x=>x.proyecto),...ipDatos.map(x=>x.proyecto),...ipPlanes.map(x=>x.proyecto)].filter(x=>!p||x===p))];return {rows,proy,modo,a,b};}
+function ipStats(rows,proyecto,alcance,capacidad){const rr=rows.filter(r=>r.proyecto===proyecto),direct=rr.filter(r=>ipTipo(r)&&ipClean(r.entregable)),horas=rr.reduce((s,r)=>s+ipNum(r.horas),0),hDirect=direct.reduce((s,r)=>s+ipNum(r.horas),0),trabajados=new Set(direct.map(r=>ipUpper(r.entregable))).size,fechas=rr.map(r=>r.fecha).sort();return {proyecto,alcance,trabajados,horas,hDirect,indirect:horas-hDirect,alc:alcance?horas/alcance:null,trab:trabajados?horas/trabajados:null,fuerza:capacidad?horas/capacidad:null,primera:fechas[0]||'—',ultima:fechas[fechas.length-1]||'—'};}
+function ipKpi(label,value,sub=''){return `<div class="ip-kpi"><small>${ipHtml(label)}</small><strong>${ipHtml(value)}</strong><span>${ipHtml(sub)}</span></div>`;}
+function ipRender(){if(!ipPuedeVer)return;const {rows,proy,modo,a,b}=ipFiltrado();const allMonths=[...new Set(rows.map(ipMes).filter(Boolean))].sort();const months=modo==='total'?(allMonths.length?ipMesesEntre(allMonths[0],allMonths[allMonths.length-1]):[]):ipMesesEntre(a,b),capacity=months.reduce((s,m)=>s+ipCapacidadMes(m),0);const cat=ipCatalogo.filter(e=>proy.includes(e.proyecto));const stats=proy.map(p=>ipStats(rows,p,new Set(cat.filter(e=>e.proyecto===p).map(e=>ipUpper(e.nombre))).size,capacity));ipVista=stats;const hrs=stats.reduce((s,x)=>s+x.horas,0),dir=stats.reduce((s,x)=>s+x.hDirect,0),ind=hrs-dir,alc=stats.reduce((s,x)=>s+x.alcance,0),trab=stats.reduce((s,x)=>s+x.trabajados,0);const fte=capacity?hrs/capacity:null;const planHoras=alc*21;const allDates=rows.map(r=>r.fecha).sort();const planes=ipPlanes.filter(p=>proy.includes(p.proyecto));const need=planes.length===1&&ipNum(planes[0].meses_actuales)>0?planHoras/(ipNum(planes[0].meses_actuales)*208):null;ipEl('ipKpis').innerHTML=[ipKpi('Entregables del alcance',ipFmt(alc,0),'Únicos, sin duplicar emisiones'),ipKpi('Entregables trabajados',ipFmt(trab,0),'Suma por proyecto; no duplicados'),ipKpi('Horas totales',ipFmt(hrs)+' h','Meta del alcance: '+ipFmt(planHoras)+' h'),ipKpi('Consumo por alcance',alc?ipFmt(hrs/alc)+' h':'—','Horas totales / entregables del catálogo'),ipKpi('Consumo por trabajado',trab?ipFmt(hrs/trab)+' h':'—','Horas totales / entregables con capturas'),ipKpi('Tiempo indirecto',ipFmt(ind)+' h',hrs?ipFmt(ind/hrs*100)+'% del total':'Sin capturas'),ipKpi('Fuerza de trabajo equivalente',fte===null?'—':ipFmt(fte)+' personas','Promedio del período · jornada por año'),ipKpi('Consumo del presupuesto',planHoras?ipFmt(hrs/planHoras*100)+'%':'—','Meta 21 h × alcance'),ipKpi('Primera / última captura',allDates.length?allDates[0]+' / '+allDates[allDates.length-1]:'—','Fechas de las horas seleccionadas'),ipKpi('Personal objetivo planificado',need===null?'—':ipFmt(need)+' personas',planes.length===1?'Usa duración actualizada; aproximación 2026':'Disponible al seleccionar un proyecto')].join('');ipEl('ipNota').textContent='Las horas sin entregable, incluidas capturas PLANOS/SUBMITTALS/MEMORIAS/AS BUILT sin código, se clasifican como indirectas. Las revisiones del mismo código no duplican el alcance. El indicador mensual sobre alcance mide consumo de presupuesto, no entregables terminados. Los meses sin capturas muestran cero. La fuerza de trabajo equivale a horas capturadas / capacidad de jornada del período (sin descontar vacaciones ni festivos).';
+const meses=months.map(m=>{const rr=rows.filter(r=>ipMes(r)===m),tot=rr.reduce((s,r)=>s+ipNum(r.horas),0),dd=rr.filter(r=>ipTipo(r)&&ipClean(r.entregable)).reduce((s,r)=>s+ipNum(r.horas),0),tt=proy.reduce((s,p)=>s+new Set(rr.filter(r=>r.proyecto===p&&ipTipo(r)&&ipClean(r.entregable)).map(r=>ipUpper(r.entregable))).size,0);return {mes:m,total:tot,directo:dd,indirecto:tot-dd,trabajados:tt,alc:alc?tot/alc:null,trab:tt?tot/tt:null,fte:tot/ipCapacidadMes(m)};});ipEl('ipMeses').innerHTML=meses.map(m=>`<tr><td>${ipHtml(m.mes)}</td><td>${ipFmt(m.total)}</td><td>${ipFmt(m.directo)}</td><td>${ipFmt(m.indirecto)}</td><td>${m.trabajados}</td><td>${m.alc===null?'—':ipFmt(m.alc)}</td><td>${m.trab===null?'—':ipFmt(m.trab)}</td><td>${ipFmt(m.fte)}</td></tr>`).join('')||'<tr><td colspan="8">Sin capturas en el período</td></tr>';ipEl('ipProyectos').innerHTML=stats.map(x=>`<tr><td>${ipHtml(x.proyecto)}</td><td>${x.alcance}</td><td>${x.trabajados}</td><td>${ipFmt(x.hDirect)}</td><td>${ipFmt(x.indirect)}</td><td>${ipFmt(x.horas)}</td><td>${x.alc===null?'—':ipFmt(x.alc)}</td><td>${x.trab===null?'—':ipFmt(x.trab)}</td><td>${x.fuerza===null?'—':ipFmt(x.fuerza)}</td><td>${ipHtml(x.primera)}</td><td>${ipHtml(x.ultima)}</td></tr>`).join('')||'<tr><td colspan="11">Sin proyectos disponibles</td></tr>';
+if(typeof Chart!=='undefined'){for(const id of ['ipChartMes','ipChartHoras']){if(ipGraficas[id])ipGraficas[id].destroy();}ipGraficas.ipChartMes=new Chart(ipEl('ipChartMes'),{type:'line',data:{labels:meses.map(m=>m.mes),datasets:[{label:'h / entregable de alcance',data:meses.map(m=>m.alc),borderColor:'#2563eb',tension:.25},{label:'Meta 21 h (presupuesto total)',data:meses.map(()=>21),borderColor:'#dc2626',borderDash:[6,5],pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false}});ipGraficas.ipChartHoras=new Chart(ipEl('ipChartHoras'),{type:'bar',data:{labels:meses.map(m=>m.mes),datasets:[{label:'Directas',data:meses.map(m=>m.directo),backgroundColor:'#2563eb'},{label:'Indirectas',data:meses.map(m=>m.indirecto),backgroundColor:'#f59e0b'}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true},y:{stacked:true}}}});}}
+function ipAdminRender(){if(!ipEsAdmin)return;const p=ipEl('ipAdminProyecto').value,plan=ipPlanes.find(x=>x.proyecto===p),hist=ipHistoria.filter(x=>x.proyecto===p);ipEl('ipDuracion').value=plan?.meses_actuales??'';ipEl('ipPlanActual').textContent=plan?`Duración original: ${plan.meses_originales} meses · Actual: ${plan.meses_actuales} meses`:'Proyecto sin duración configurada.';ipEl('ipHistorial').innerHTML=hist.map(x=>`<tr><td>${ipHtml(x.fecha)}</td><td>${x.anterior??'—'}</td><td>${x.nueva}</td><td>${ipHtml(x.motivo)}</td></tr>`).join('')||'<tr><td colspan="4">Sin cambios registrados</td></tr>';}
+async function ipGuardar(){const p=ipEl('ipAdminProyecto').value,n=Number(ipEl('ipDuracion').value),motivo=ipEl('ipMotivo').value.trim();if(!p||!Number.isFinite(n)||n<=0||n>240)return alert('Selecciona un proyecto y una duración entre 0.1 y 240 meses.');if(!motivo)return alert('Escribe el motivo del cambio.');const {error}=await supabaseClient.rpc('amp_indicadores_guardar_plan',{p_proyecto:p,p_meses:n,p_motivo:motivo});if(error)return alert(error.message);ipEl('ipMotivo').value='';await ipCargar();}
+async function ipPermCambiar(conceder){const uid=ipEl('ipPermEmpleado').value,p=ipEl('ipPermProyecto').value;if(!uid||!p)return alert('Selecciona empleado y proyecto.');const {error}=await supabaseClient.rpc('amp_indicadores_permiso',{p_usuario:uid,p_proyecto:p,p_activo:conceder});ipEl('ipPermEstado').textContent=error?'Error: '+error.message:conceder?'Acceso concedido.':'Acceso revocado.';}
+function ipExportar(){if(typeof XLSX==='undefined')return alert('No se cargó Excel.');const wb=XLSX.utils.book_new(),ws=XLSX.utils.json_to_sheet(ipVista);XLSX.utils.book_append_sheet(wb,ws,'Indicadores');XLSX.writeFile(wb,'AMP_indicadores.xlsx');}
+document.addEventListener('DOMContentLoaded',()=>{const actividad=document.getElementById('actividad'),entregable=document.getElementById('entregable');
+if(actividad&&entregable){const validar=()=>{const permite=['PLANOS','SUBMITTALS','MEMORIAS','AS BUILT'].includes(ipUpper(actividad.value));if(!permite){entregable.value='';entregable.disabled=true;entregable.title='Solo PLANOS, SUBMITTALS, MEMORIAS y AS BUILT pueden tener entregable';}else{entregable.disabled=false;entregable.title='';}};actividad.addEventListener('change',validar);document.getElementById('proyecto')?.addEventListener('change',()=>setTimeout(validar,0));}
+ipEl('ipActualizar').addEventListener('click',ipRender);ipEl('ipProyecto').addEventListener('change',ipRender);ipEl('ipModo').addEventListener('change',()=>{const modo=ipEl('ipModo').value;ipEl('ipHasta').disabled=modo!=='rango';ipEl('ipDesde').disabled=modo==='total';ipRender();});ipEl('ipDesde').addEventListener('change',ipRender);ipEl('ipHasta').addEventListener('change',ipRender);ipEl('ipAdminProyecto').addEventListener('change',ipAdminRender);ipEl('ipGuardarDuracion').addEventListener('click',ipGuardar);ipEl('ipConceder').addEventListener('click',()=>ipPermCambiar(true));ipEl('ipRevocar').addEventListener('click',()=>ipPermCambiar(false));ipEl('ipExcel').addEventListener('click',ipExportar);});
+</script>
+</body>
 </html>
