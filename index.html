@@ -544,6 +544,7 @@
       }
     }
 
+    .amp-user-refresh{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:5px 0 10px}.amp-user-refresh span{font-size:12px;color:#64748b}
     .deliverables-help { color: var(--text-muted, #64748b); font-size: .92rem; margin: 6px 0 14px; }
     .deliverables-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
     .deliverables-table-wrap { overflow:auto; margin-top:12px; max-height:420px; border:1px solid #e2e8f0; border-radius:9px; }
@@ -1391,7 +1392,7 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
       <p class="deliverables-help">Selecciona a la persona, el proyecto y los permisos que tendrá. Los administradores de la app pueden modificar estas autorizaciones.</p>
       <div class="deliverables-grid">
         <div class="form-group">
-          <label for="permisoUsuario">Persona</label>
+          <label for="permisoUsuario">Persona</label><div class="amp-user-refresh"><button type="button" class="btn-secondary btn-small" id="ampActualizarPersonas">↻ Actualizar personas</button><span id="ampEstadoPersonas" role="status" aria-live="polite"></span></div>
           <select id="permisoUsuario"><option value="">Seleccionar persona</option></select>
         </div>
         <div class="form-group">
@@ -1483,7 +1484,7 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
     <div class="deliverables-grid">
       <div class="form-group">
         <h3>Dar de alta administrador</h3>
-        <label for="nuevoAdminUsuario">Usuario registrado</label>
+        <label for="nuevoAdminUsuario">Usuario registrado</label><div class="amp-user-refresh"><button type="button" class="btn-secondary btn-small" id="ampActualizarUsuariosAdmin">↻ Actualizar usuarios</button></div>
         <select id="nuevoAdminUsuario"><option value="">Seleccionar usuario</option></select>
         <button type="button" class="btn-primary" id="btnPromoverAdmin" style="margin-top:10px">Dar permisos de administrador</button>
         <div id="adminUsuariosMessage" class="deliverables-status" aria-live="polite"></div>
@@ -2747,31 +2748,60 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
       actualizarVisibilidadPestanaAdministracion();
     }
 
+    async function ampRefrescarPersonas() {
+      const estado = document.getElementById("ampEstadoPersonas");
+      if (estado) estado.textContent = "Consultando empleados...";
+      try {
+        await cargarEmpleadosParaPermisos();
+        prepararFiltrosPermisos();
+        renderPermisosEntregables();
+        const sel = document.getElementById("permisoUsuario");
+        if (estado) estado.textContent = `${empleadosParaPermisos.length} personas disponibles`;
+        if (document.getElementById("nuevoAdminUsuario")) {
+          const otro = document.getElementById("nuevoAdminUsuario");
+          const valor = otro.value;
+          otro.replaceChildren(new Option("Seleccionar usuario", ""));
+          empleadosParaPermisos.forEach(e => otro.add(new Option((e.NOMBRE || e.usuario_id) + " — " + e.usuario_id, e.usuario_id)));
+          if ([...otro.options].some(o => o.value === valor)) otro.value = valor;
+        }
+        if (!empleadosParaPermisos.length && estado) estado.textContent = "No hay personas visibles en EMPLEADOS. Comprueba sincronización con Auth y RLS.";
+      } catch (e) { if (estado) estado.textContent = "Error al actualizar: " + e.message; }
+    }
+    document.getElementById("ampActualizarPersonas")?.addEventListener("click", ampRefrescarPersonas);
+    document.getElementById("ampActualizarUsuariosAdmin")?.addEventListener("click", ampRefrescarPersonas);
+
     async function cargarEmpleadosParaPermisos() {
-      // En public."EMPLEADOS" la columna de identidad real es id, no usuario_id.
-      const { data, error } = await supabaseClient
-        .from("EMPLEADOS")
-        .select("id, NOMBRE")
-        .not("id", "is", null)
-        .order("NOMBRE");
-      if (error) {
-        console.error("No se pudieron cargar empleados para permisos:", error);
-        const mensaje = "No se pudo leer EMPLEADOS: " + (error.message || "error desconocido") + ". Revisa permisos SELECT y RLS.";
+      // Los selectores deben listar el catálogo de EMPLEADOS, no solo usuarios con horas.
+      const anterior = document.getElementById("permisoUsuario")?.value || "";
+      const filas = [];
+      let errorCarga = null;
+      for (let desde = 0; desde < 100000; desde += 1000) {
+        const { data, error } = await supabaseClient.from("EMPLEADOS")
+          .select("id, NOMBRE").not("id", "is", null)
+          .order("NOMBRE").range(desde, desde + 999);
+        if (error) { errorCarga = error; break; }
+        filas.push(...(data || []));
+        if (!data || data.length < 1000) break;
+      }
+      if (errorCarga) {
+        console.error("No se pudieron cargar empleados para permisos:", errorCarga);
+        const mensaje = "No se pudo leer EMPLEADOS: " + (errorCarga.message || "error desconocido") + ". Revisa RLS y sincronización de Auth.";
         setMensajeEntregables("permisosEntregablesMessage", mensaje, "error");
         setMensajeEntregables("adminUsuariosMessage", mensaje, "error");
-        empleadosParaPermisos = [];
+        document.getElementById("ampEstadoPersonas")?.replaceChildren(document.createTextNode(mensaje));
         return;
       }
-      // Normalizamos id a usuario_id para que los demás módulos mantengan su lógica.
-      empleadosParaPermisos = (data || []).map(e => ({ ...e, usuario_id: e.id })).filter(e => e.usuario_id);
+      const unicos = new Map();
+      filas.forEach(e => { if (e.id) unicos.set(String(e.id), { ...e, usuario_id: String(e.id) }); });
+      empleadosParaPermisos = [...unicos.values()];
       const select = document.getElementById("permisoUsuario");
-      select.innerHTML = '<option value="">Seleccionar persona</option>';
-      empleadosParaPermisos.forEach(e => {
-        const opt = document.createElement("option");
-        opt.value = e.usuario_id;
-        opt.textContent = (e.NOMBRE || e.nombre || e.usuario_id) + " — " + e.usuario_id;
-        select.appendChild(opt);
-      });
+      if (select) {
+        select.replaceChildren(new Option("Seleccionar persona", ""));
+        empleadosParaPermisos.forEach(e => select.add(new Option((e.NOMBRE || e.usuario_id) + " — " + e.usuario_id, e.usuario_id)));
+        if ([...select.options].some(o => o.value === anterior)) select.value = anterior;
+      }
+      const estado = document.getElementById("ampEstadoPersonas");
+      if (estado) estado.textContent = empleadosParaPermisos.length + " personas disponibles";
     }
 
     function prepararFiltrosPermisos() {
