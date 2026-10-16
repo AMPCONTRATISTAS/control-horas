@@ -2940,13 +2940,13 @@
         tdCheck.appendChild(check);
         const tdName = document.createElement("td"); tdName.textContent = item.nombre;
         const tdRename = document.createElement("td");
-        if (esAdminApp()) {
+        if (puedeBorrarProyecto(item.proyecto_id)) {
           const wrap = document.createElement("div"); wrap.style.display = "flex"; wrap.style.gap = "6px"; wrap.style.minWidth = "220px";
           const inputRename = document.createElement("input"); inputRename.type = "text"; inputRename.maxLength = 180; inputRename.value = item.nombre; inputRename.setAttribute("aria-label", "Nuevo nombre de " + item.nombre); inputRename.style.minWidth = "100px"; inputRename.style.width = "100%";
           const btnRename = document.createElement("button"); btnRename.type = "button"; btnRename.className = "btn-primary btn-small"; btnRename.textContent = "Guardar";
           btnRename.addEventListener("click", () => renombrarEntregableDesdeApp(item, inputRename));
           wrap.appendChild(inputRename); wrap.appendChild(btnRename); tdRename.appendChild(wrap);
-        } else { tdRename.textContent = "Solo administradores"; }
+        } else { tdRename.textContent = "Sin permiso para renombrar"; }
         const tdAction = document.createElement("td");
         const btn = document.createElement("button"); btn.type = "button"; btn.className = "btn-danger btn-small"; btn.textContent = "Borrar";
         btn.disabled = !puedeBorrarProyecto(item.proyecto_id);
@@ -3040,7 +3040,7 @@
       if (nombre === actual.nombre) { setMensajeEntregables("adminProyectoGestionMessage", "El nombre no cambió.", "info"); return; }
       if (!confirm(`¿Renombrar el proyecto “${actual.nombre}” a “${nombre}” y actualizar los registros históricos de horas?`)) return;
       const { data, error } = await supabaseClient.rpc("admin_renombrar_proyecto", { p_proyecto_id: String(id), p_nuevo_nombre: nombre });
-      if (error) { setMensajeEntregables("adminProyectoGestionMessage", "No se pudo renombrar: " + error.message + ". Verifica que hayas ejecutado el SQL complementario.", "error"); return; }
+      if (error) { setMensajeEntregables("adminProyectoGestionMessage", "No se pudo renombrar: " + error.message + ". Verifica que hayas ejecutado el SQL de permisos de renombrado.", "error"); return; }
       await recargarCatalogosTrasCambio();
       setMensajeEntregables("adminProyectoGestionMessage", "Proyecto renombrado. Se actualizaron los registros históricos relacionados.", "success");
     }
@@ -3086,14 +3086,14 @@
     }
 
     async function renombrarEntregableDesdeApp(item, input) {
-      if (!esAdminApp()) return;
+      if (!puedeBorrarProyecto(item.proyecto_id)) { alert("No tienes permiso para renombrar entregables de este proyecto."); return; }
       const nombre = String(input?.value || "").trim();
       if (!nombre) { alert("Escribe el nuevo nombre del entregable."); return; }
       if (nombre === String(item.nombre || "").trim()) { alert("El nombre no cambió."); return; }
       const duplicado = entregables.some(e => String(e.proyecto_id) === String(item.proyecto_id) && String(e.id) !== String(item.id) && String(e.nombre || "").trim().toLocaleLowerCase() === nombre.toLocaleLowerCase() && e.activo !== false);
       if (duplicado) { alert("Ya existe otro entregable con ese nombre en este proyecto."); return; }
       if (!confirm(`¿Renombrar “${item.nombre}” a “${nombre}” y actualizar los registros de horas de este proyecto?`)) return;
-      const { error } = await supabaseClient.rpc("admin_renombrar_entregable", { p_entregable_id: String(item.id), p_nuevo_nombre: nombre });
+      const { error } = await supabaseClient.rpc("amp_renombrar_entregable_permitido", { p_entregable_id: Number(item.id), p_nuevo_nombre: nombre });
       if (error) { alert("No se pudo renombrar el entregable: " + error.message + ". Verifica que hayas ejecutado el SQL complementario."); return; }
       await recargarCatalogosTrasCambio();
       renderListaEntregablesBorrar();
