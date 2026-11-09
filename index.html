@@ -851,6 +851,17 @@
       background: #f1f5f9;
     }
 
+    /* Configuración centralizada de entregables por actividad */
+    .amp-reglas-scroll{max-height:440px;overflow:auto;border:1px solid #e2e8f0;border-radius:9px;margin:12px 0}
+    .amp-reglas-scroll table{min-width:0;width:100%}
+    .amp-reglas-scroll thead th{position:sticky;top:0;z-index:2;background:#f1f5f9}
+    .amp-reglas-scroll input[type="checkbox"]{width:19px;height:19px;cursor:pointer;accent-color:#2563eb}
+    .amp-reglas-scroll label{display:flex;align-items:center;gap:10px;cursor:pointer;margin:0}
+    .amp-reglas-scroll .amp-regla-inactiva{opacity:.62}
+    #entregableGrupo.amp-sin-entregable{display:none!important}
+    .amp-regla-ayuda{font-size:12px;color:#64748b;margin:6px 0 0}
+    html[data-amp-theme="dark"] .amp-reglas-scroll{border-color:#334155}
+    html[data-amp-theme="dark"] .amp-reglas-scroll thead th{background:#25354a;color:#e2e8f0}
   </style>
 
 <style>.ra-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin:16px 0}.ra-filters label{display:block}.ra-filters select{margin-top:6px}.ra-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0}.ra-kpis>div{padding:17px;border:1px solid #dbe3ed;border-radius:12px;background:#f8fafc}.ra-kpis small{display:block;color:#64748b}.ra-kpis strong{display:block;font-size:27px;color:#1d4ed8;margin-top:8px}.ra-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.ra-chart{height:300px;position:relative}.ra-table{min-width:800px}.ra-table tbody tr{cursor:pointer}.ra-table tbody tr:hover{background:#dbeafe}@media(max-width:750px){.ra-grid{grid-template-columns:1fr}.ra-kpis{grid-template-columns:repeat(2,1fr)}}</style><style>
@@ -1222,7 +1233,7 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
         </div>
 
 
-        <div class="form-group">
+        <div class="form-group amp-sin-entregable" id="entregableGrupo">
 
           <label for="entregable">
             Entregable
@@ -1235,6 +1246,7 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
             </option>
 
           </select>
+          <small id="ayudaEntregable" class="amp-regla-ayuda">Selecciona un entregable del proyecto.</small>
 
         </div>
 
@@ -1385,6 +1397,31 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
 
   <section class="card hidden" id="adminEntregablesCard">
     <h2>Administrar entregables</h2>
+    <p class="deliverables-help">Configura qué actividades necesitan entregables y administra los entregables por proyecto.</p>
+
+    <!-- Solo administradores generales: las reglas se guardan para todos los usuarios en Supabase. -->
+    <div id="reglasEntregablesAdminPanel" class="hidden">
+      <h3>¿Qué actividades requieren entregable?</h3>
+      <p class="deliverables-help">Marca las actividades que deben mostrar y exigir el campo Entregable al registrar horas. Si una actividad está desmarcada, el campo se oculta y el registro se guarda sin entregable. Los cambios aplican a todos los empleados y no modifican sus registros anteriores.</p>
+      <div class="admin-filter-row">
+        <div class="form-group"><label for="buscarReglaActividad">Buscar actividad</label><input type="search" id="buscarReglaActividad" placeholder="Buscar por nombre..." autocomplete="off"></div>
+        <div class="form-group"><label for="filtrarReglaActividad">Mostrar</label><select id="filtrarReglaActividad"><option value="todas">Todas las actividades</option><option value="si">Requieren entregable</option><option value="no">No requieren entregable</option></select></div>
+      </div>
+      <div class="amp-reglas-scroll">
+        <table class="deliverables-table">
+          <thead><tr><th>Actividad</th><th style="width:210px">Requiere entregable</th><th style="width:105px">Estado</th></tr></thead>
+          <tbody id="reglasEntregablesBody"><tr><td colspan="3">Cargando actividades...</td></tr></tbody>
+        </table>
+      </div>
+      <div id="reglasEntregablesResumen" class="admin-list-summary"></div>
+      <div class="buttons">
+        <button type="button" class="btn-primary" id="btnGuardarReglasEntregables" disabled>Guardar cambios</button>
+        <button type="button" class="btn-secondary" id="btnRevertirReglasEntregables">Descartar cambios</button>
+      </div>
+      <div id="reglasEntregablesMensaje" class="deliverables-status" role="status" aria-live="polite"></div>
+      <hr style="margin:24px 0;border:0;border-top:1px solid #e2e8f0">
+    </div>
+
     <p class="deliverables-help">Importa hasta 500 entregables por archivo CSV o Excel (.xlsx). El archivo debe tener una sola columna llamada <strong>nombre</strong>. El proyecto se selecciona aquí; no agregues el proyecto al archivo.</p>
 
     <div id="adminPermisosPanel" class="hidden">
@@ -2033,6 +2070,9 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
     let proyectos = [];
 
     let actividades = [];
+    let reglasActividadesAdmin = [];
+    let reglasActividadesPendientes = new Map();
+    let reglasConfiguradasEnSupabase = false;
 
     let entregables = [];
     let permisosEntregables = [];
@@ -2112,6 +2152,21 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
           );
 
         document.getElementById("guardarPermisoEntregables")?.addEventListener("click", guardarPermisoEntregables);
+        document.getElementById("actividad")?.addEventListener("change", async () => {
+          aplicarReglaEntregable();
+          await refrescarReglasParaUsuario();
+        });
+        document.getElementById("buscarReglaActividad")?.addEventListener("input", renderReglasEntregablesAdmin);
+        document.getElementById("filtrarReglaActividad")?.addEventListener("change", renderReglasEntregablesAdmin);
+        document.getElementById("btnGuardarReglasEntregables")?.addEventListener("click", guardarReglasEntregablesAdmin);
+        document.getElementById("btnRevertirReglasEntregables")?.addEventListener("click", () => {
+          reglasActividadesPendientes = new Map(reglasActividadesAdmin.map(a => [String(a.id), a.requiere_entregable === true]));
+          setMensajeEntregables("reglasEntregablesMensaje", "Cambios sin guardar descartados.", "info");
+          renderReglasEntregablesAdmin();
+        });
+        window.addEventListener("focus", () => {
+          if (usuarioActual) refrescarReglasParaUsuario().catch(console.error);
+        });
         document.getElementById("btnPromoverAdmin")?.addEventListener("click", promoverAdministrador);
         document.getElementById("btnCrearProyecto")?.addEventListener("click", crearProyectoDesdeApp);
         document.getElementById("btnCrearActividad")?.addEventListener("click", crearActividadDesdeApp);
@@ -2198,6 +2253,9 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
               registros = [];
               permisosEntregables = [];
               administradoresApp = [];
+              actividades = [];
+              reglasActividadesAdmin = [];
+              reglasActividadesPendientes = new Map();
               document.getElementById("adminEntregablesCard")?.classList.add("hidden");
               document.getElementById("adminGeneralCard")?.classList.add("hidden");
               document
@@ -2502,6 +2560,7 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
       if(indicadores) ipCargar();
       if (admin && esAdminApp()) {
         prepararAdministracionGeneral().catch(err => console.error("Error preparando administración:", err));
+        cargarReglasEntregablesAdmin().catch(err => console.error("Error cargando reglas de entregables:", err));
       }
     }
 
@@ -2745,6 +2804,7 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
       poblarSelectProyectosEntregables("importarProyecto", id => puedeImportarProyecto(id));
       poblarSelectProyectosEntregables("borrarProyecto", id => puedeBorrarProyecto(id));
       renderListaEntregablesBorrar();
+      document.getElementById("reglasEntregablesAdminPanel")?.classList.toggle("hidden", !admin);
       actualizarVisibilidadPestanaAdministracion();
     }
 
@@ -3190,6 +3250,174 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
       renderListaEntregablesBorrar();
     }
 
+    /* ==================================================
+       REGLAS CENTRALES DE ENTREGABLES POR ACTIVIDAD
+       - Tabla: public.actividades.requiere_entregable
+       - Escritura: RPC con verificación de administrador en Supabase
+    =================================================== */
+
+    function normalizarNombreActividad(valor) {
+      return String(valor || "").trim().replace(/\s+/g, " ").toLocaleUpperCase("es-MX");
+    }
+
+    function actividadConfigurada(nombre) {
+      return actividades.find(a => normalizarNombreActividad(a.nombre) === normalizarNombreActividad(nombre));
+    }
+
+    // Conserva las cuatro actividades antiguas hasta que se aplique el SQL.
+    // Una vez aplicado, la base de datos decide todas las reglas.
+    function actividadRequiereEntregable(nombre) {
+      if (!nombre) return false;
+      const a = actividadConfigurada(nombre);
+      if (a && typeof a.requiere_entregable === "boolean") return a.requiere_entregable;
+      return ["PLANOS", "SUBMITTALS", "MEMORIAS", "AS BUILT"].includes(normalizarNombreActividad(nombre));
+    }
+
+    function aplicarReglaEntregable() {
+      const actividadSeleccionada = document.getElementById("actividad")?.value || "";
+      const grupo = document.getElementById("entregableGrupo");
+      const selector = document.getElementById("entregable");
+      if (!grupo || !selector) return;
+      const requerida = actividadRequiereEntregable(actividadSeleccionada);
+      grupo.classList.toggle("amp-sin-entregable", !requerida);
+      selector.disabled = !requerida;
+      selector.required = requerida;
+      if (!requerida) selector.value = "";
+      const ayuda = document.getElementById("ayudaEntregable");
+      if (ayuda) ayuda.textContent = requerida
+        ? "Obligatorio: selecciona un entregable del proyecto."
+        : "";
+      if (requerida && !document.getElementById("proyecto")?.value) {
+        if (ayuda) ayuda.textContent = "Selecciona un proyecto y después su entregable.";
+      }
+    }
+
+    async function refrescarReglasParaUsuario() {
+      if (!usuarioActual) return;
+      const { data, error } = await supabaseClient.from("actividades")
+        .select("id, nombre, requiere_entregable")
+        .eq("activo", true);
+      if (error) {
+        // No borrar datos ni habilitar opciones inseguras ante un fallo de red.
+        console.warn("No se pudieron refrescar las reglas:", error.message);
+        return;
+      }
+      reglasConfiguradasEnSupabase = true;
+      const porId = new Map((data || []).map(a => [String(a.id), a]));
+      actividades.forEach(a => {
+        const fresca = porId.get(String(a.id));
+        if (fresca) a.requiere_entregable = fresca.requiere_entregable === true;
+      });
+      aplicarReglaEntregable();
+    }
+
+    async function cargarReglasEntregablesAdmin() {
+      if (!esAdminApp()) return;
+      const panel = document.getElementById("reglasEntregablesAdminPanel");
+      if (panel) panel.classList.remove("hidden");
+      const { data, error } = await supabaseClient.from("actividades")
+        .select("id, nombre, activo, requiere_entregable")
+        .order("nombre");
+      if (error) {
+        reglasConfiguradasEnSupabase = false;
+        reglasActividadesAdmin = [];
+        setMensajeEntregables("reglasEntregablesMensaje",
+          "No se pudo consultar la configuración. Ejecuta el archivo SQL adjunto en Supabase y vuelve a entrar. Detalle: " + error.message, "error");
+        renderReglasEntregablesAdmin();
+        return;
+      }
+      reglasConfiguradasEnSupabase = true;
+      reglasActividadesAdmin = data || [];
+      reglasActividadesPendientes = new Map(reglasActividadesAdmin.map(a => [String(a.id), a.requiere_entregable === true]));
+      setMensajeEntregables("reglasEntregablesMensaje", "", "");
+      renderReglasEntregablesAdmin();
+    }
+
+    function renderReglasEntregablesAdmin() {
+      const tbody = document.getElementById("reglasEntregablesBody");
+      if (!tbody) return;
+      const filtro = document.getElementById("filtrarReglaActividad")?.value || "todas";
+      const buscar = normalizarNombreActividad(document.getElementById("buscarReglaActividad")?.value);
+      const items = reglasActividadesAdmin.filter(a => {
+        const activo = reglasActividadesPendientes.get(String(a.id)) === true;
+        return normalizarNombreActividad(a.nombre).includes(buscar) &&
+          (filtro === "todas" || (filtro === "si" ? activo : !activo));
+      });
+      tbody.replaceChildren();
+      if (!items.length) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 3;
+        td.textContent = reglasConfiguradasEnSupabase ? "No hay actividades con ese filtro." : "Configuración pendiente de Supabase.";
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+      }
+      for (const a of items) {
+        const tr = document.createElement("tr");
+        if (a.activo === false) tr.classList.add("amp-regla-inactiva");
+        const nombre = document.createElement("td");
+        nombre.textContent = a.nombre;
+        const seleccion = document.createElement("td");
+        const label = document.createElement("label");
+        const check = document.createElement("input");
+        check.type = "checkbox";
+        check.checked = reglasActividadesPendientes.get(String(a.id)) === true;
+        check.setAttribute("aria-label", "Requiere entregable: " + a.nombre);
+        const texto = document.createElement("span");
+        texto.textContent = check.checked ? "Sí" : "No";
+        check.addEventListener("change", () => {
+          reglasActividadesPendientes.set(String(a.id), check.checked);
+          texto.textContent = check.checked ? "Sí" : "No";
+          actualizarResumenReglasAdmin();
+          if ((document.getElementById("filtrarReglaActividad")?.value || "todas") !== "todas") renderReglasEntregablesAdmin();
+        });
+        label.append(check, texto);
+        seleccion.appendChild(label);
+        const status = document.createElement("td");
+        status.textContent = a.activo === false ? "Inactiva" : "Activa";
+        tr.append(nombre, seleccion, status);
+        tbody.appendChild(tr);
+      }
+      actualizarResumenReglasAdmin();
+    }
+
+    function actualizarResumenReglasAdmin() {
+      const total = reglasActividadesAdmin.length;
+      const si = reglasActividadesAdmin.filter(a => reglasActividadesPendientes.get(String(a.id)) === true).length;
+      const cambios = reglasActividadesAdmin.filter(a =>
+        (a.requiere_entregable === true) !== (reglasActividadesPendientes.get(String(a.id)) === true));
+      const resumen = document.getElementById("reglasEntregablesResumen");
+      if (resumen) resumen.textContent = `${total} actividades · ${si} requieren entregable · ${total - si} no requieren · ${cambios.length} cambios sin guardar`;
+      const boton = document.getElementById("btnGuardarReglasEntregables");
+      if (boton) {
+        boton.disabled = !esAdminApp() || !reglasConfiguradasEnSupabase || cambios.length === 0;
+        boton.textContent = cambios.length ? `Guardar cambios (${cambios.length})` : "Guardar cambios";
+      }
+    }
+
+    async function guardarReglasEntregablesAdmin() {
+      if (!esAdminApp() || !reglasConfiguradasEnSupabase) return;
+      const modificaciones = reglasActividadesAdmin
+        .filter(a => (a.requiere_entregable === true) !== (reglasActividadesPendientes.get(String(a.id)) === true))
+        .map(a => ({ id: String(a.id), requiere_entregable: reglasActividadesPendientes.get(String(a.id)) === true }));
+      if (!modificaciones.length) return;
+      const boton = document.getElementById("btnGuardarReglasEntregables");
+      boton.disabled = true;
+      setMensajeEntregables("reglasEntregablesMensaje", "Guardando cambios en Supabase...", "info");
+      try {
+        const { error } = await supabaseClient.rpc("amp_entregables_reglas_guardar", { p_reglas: modificaciones });
+        if (error) throw error;
+        await cargarActividades();
+        await cargarReglasEntregablesAdmin();
+        aplicarReglaEntregable();
+        setMensajeEntregables("reglasEntregablesMensaje", "Configuración guardada. Se aplicará a todos los usuarios cuando consulten o registren horas; no altera el historial.", "success");
+      } catch (error) {
+        setMensajeEntregables("reglasEntregablesMensaje", "No se pudieron guardar los cambios: " + error.message, "error");
+      } finally {
+        actualizarResumenReglasAdmin();
+      }
+    }
+
     async function cargarProyectos() {
 
       const {
@@ -3289,7 +3517,8 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
         document.getElementById(
           "actividad"
         );
-
+      const valorAnterior = select.value;
+      reglasConfiguradasEnSupabase = actividades.every(a => typeof a.requiere_entregable === "boolean");
 
       select.innerHTML =
         `<option value="">
@@ -3317,7 +3546,9 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
 
         }
       );
+      if ([...select.options].some(o => o.value === valorAnterior)) select.value = valorAnterior;
       actualizarSelectoresGestionCatalogos();
+      aplicarReglaEntregable();
 
     }
 
@@ -3453,6 +3684,7 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
 
 
       if (!proyectoNombre) {
+        aplicarReglaEntregable();
         return;
       }
 
@@ -3489,6 +3721,7 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
 
           }
         );
+      aplicarReglaEntregable();
 
     }
 
@@ -4082,16 +4315,30 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
       // Normalizar valores del catálogo: algunos nombres antiguos incluyen saltos de línea.
       const actividadSeleccionada = document.getElementById("actividad").value;
       const actividadLimpia = String(actividadSeleccionada || "").trim().replace(/\s+/g, " ");
-      const actividad = ["PLANOS", "SUBMITTALS", "MEMORIAS", "AS BUILT"].includes(actividadLimpia.toUpperCase())
-        ? actividadLimpia.toUpperCase() : actividadLimpia;
+      const actividad = actividadLimpia;
 
-
-      const entregable =
-        document
-          .getElementById("entregable")
-          .value;
-      if (entregable && !["PLANOS","SUBMITTALS","MEMORIAS","AS BUILT"].includes(String(actividad).trim().toUpperCase())) {
-        alert("No se puede guardar el registro. Solo las actividades PLANOS, SUBMITTALS, MEMORIAS y AS BUILT pueden tener un entregable asociado. Cambia la actividad o deja el campo Entregable vacío.");
+      // Se consulta la regla vigente antes de guardar, incluso si otro
+      // administrador cambió la configuración mientras la sesión seguía abierta.
+      let requiereEntregable = actividadRequiereEntregable(actividad);
+      if (actividad) {
+        const catalogo = actividadConfigurada(actividad);
+        if (catalogo) {
+          const { data: reglaVigente, error: errorRegla } = await supabaseClient
+            .from("actividades").select("requiere_entregable")
+            .eq("id", catalogo.id).maybeSingle();
+          if (errorRegla || !reglaVigente || typeof reglaVigente.requiere_entregable !== "boolean") {
+            mostrarMensaje("formMessage", "No se pudo confirmar la configuración de esta actividad en Supabase. Verifica que el SQL esté instalado y vuelve a intentar.", "error");
+            return;
+          }
+          requiereEntregable = reglaVigente.requiere_entregable;
+          catalogo.requiere_entregable = requiereEntregable;
+        }
+      }
+      aplicarReglaEntregable();
+      const entregable = requiereEntregable ? document.getElementById("entregable").value : "";
+      if (requiereEntregable && !entregable) {
+        mostrarMensaje("formMessage", "La actividad seleccionada requiere un entregable. Selecciona uno del proyecto antes de guardar.", "error");
+        document.getElementById("entregable").focus();
         return;
       }
 
@@ -4337,9 +4584,8 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
 
         mostrarMensaje(
           "formMessage",
-          (String(resultado.error.message || "").includes("amp_horas_entregable_solo_actividades")
-            ? "No se puede guardar el registro. Solo las actividades PLANOS, SUBMITTALS, MEMORIAS y AS BUILT pueden tener un entregable asociado. Cambia la actividad o deja el campo Entregable vacío."
-            : "Error al guardar: " + resultado.error.message),
+          "Error al guardar: " + resultado.error.message +
+          (/entregable/i.test(resultado.error.message || "") ? " Revisa las reglas de entregables configuradas para esta actividad." : ""),
           "error"
         );
 
@@ -4425,10 +4671,11 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
           registro.actividad || "";
 
 
+      aplicarReglaEntregable();
       document
         .getElementById("entregable")
         .value =
-          registro.entregable || "";
+          actividadRequiereEntregable(registro.actividad) ? (registro.entregable || "") : "";
 
 
       document
@@ -4512,7 +4759,8 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
       actualizarEntregables(registro.proyecto || "");
 
       document.getElementById("actividad").value = registro.actividad || "";
-      document.getElementById("entregable").value = registro.entregable || "";
+      aplicarReglaEntregable();
+      document.getElementById("entregable").value = actividadRequiereEntregable(registro.actividad) ? (registro.entregable || "") : "";
       document.getElementById("fechaInicio").value = registro.fecha_inicio || "";
       document.getElementById("fechaVencimiento").value = registro.fecha_vencimiento || "";
       document.getElementById("horas").value = registro.horas ?? "";
@@ -4694,6 +4942,7 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
           "";
 
       actualizarContadorNotas();
+      aplicarReglaEntregable();
 
       document
         .getElementById("btnGuardar")
@@ -5707,8 +5956,7 @@ function ipAdminRender(){if(!ipEsAdmin)return;const p=ipEl('ipAdminProyecto').va
 async function ipGuardar(){const p=ipEl('ipAdminProyecto').value,n=Number(ipEl('ipDuracion').value),motivo=ipEl('ipMotivo').value.trim();if(!p||!Number.isFinite(n)||n<=0||n>240)return alert('Selecciona un proyecto y una duración entre 0.1 y 240 meses.');if(!motivo)return alert('Escribe el motivo del cambio.');const {error}=await supabaseClient.rpc('amp_indicadores_guardar_plan',{p_proyecto:p,p_meses:n,p_motivo:motivo});if(error)return alert(error.message);ipEl('ipMotivo').value='';await ipCargar();}
 async function ipPermCambiar(conceder){const uid=ipEl('ipPermEmpleado').value,p=ipEl('ipPermProyecto').value;if(!uid||!p)return alert('Selecciona empleado y proyecto.');const {error}=await supabaseClient.rpc('amp_indicadores_permiso',{p_usuario:uid,p_proyecto:p,p_activo:conceder});ipEl('ipPermEstado').textContent=error?'Error: '+error.message:conceder?'Acceso concedido.':'Acceso revocado.';}
 function ipExportar(){if(typeof XLSX==='undefined')return alert('No se cargó Excel.');const wb=XLSX.utils.book_new(),ws=XLSX.utils.json_to_sheet(ipVista);XLSX.utils.book_append_sheet(wb,ws,'Indicadores');XLSX.writeFile(wb,'AMP_indicadores.xlsx');}
-document.addEventListener('DOMContentLoaded',()=>{const actividad=document.getElementById('actividad'),entregable=document.getElementById('entregable');
-if(actividad&&entregable){const validar=()=>{const permite=['PLANOS','SUBMITTALS','MEMORIAS','AS BUILT'].includes(String(actividad.value||'').trim().replace(/\s+/g,' ').toUpperCase());if(!permite){entregable.value='';entregable.disabled=true;entregable.title='Solo PLANOS, SUBMITTALS, MEMORIAS y AS BUILT pueden tener entregable';}else{entregable.disabled=false;entregable.title='';}};actividad.addEventListener('change',validar);document.getElementById('proyecto')?.addEventListener('change',()=>setTimeout(validar,0));}
+ document.addEventListener('DOMContentLoaded',()=>{
 ipEl('ipInformeMes').addEventListener('change',ipInformeRender);ipEl('ipInformeTipo').addEventListener('change',ipInformeTipoCambiar);ipEl('ipInformeProyecto').addEventListener('change',ipInformeRender);ipEl('ipInformeTodos').addEventListener('click',()=>{[...ipEl('ipInformeProyecto').options].forEach(o=>o.selected=true);ipInformeRender();});ipEl('ipCopiarInforme').addEventListener('click',async()=>{const t=ipEl('ipCopiarInforme').dataset.texto||'';try{await navigator.clipboard.writeText(t);alert('Resumen copiado.');}catch(e){window.prompt('Copia el resumen:',t);}});ipEl('ipProyectos').addEventListener('click',e=>{const tr=e.target.closest('tr[data-proyecto]');if(!tr)return;const p=tr.dataset.proyecto;ipEl('ipProyecto').value=p;[...ipEl('ipInformeProyecto').options].forEach(o=>o.selected=o.value===p);ipRender();ipEl('ipProyecto').scrollIntoView({behavior:'smooth',block:'center'});});ipEl('ipActualizar').addEventListener('click',ipRender);ipEl('ipGraficaTipo').addEventListener('change',ipRender);ipEl('ipConfigProyecto').addEventListener('change',ipConfigRender);ipEl('ipConfigDesde').addEventListener('change',ipConfigRender);ipEl('ipExclusionDesde').addEventListener('change',ipConfigRender);ipEl('ipConfigMetodo').addEventListener('change',ipConfigListaRender);ipEl('ipConfigBuscar').addEventListener('input',ipConfigListaRender);ipEl('ipConfigLista').addEventListener('change',e=>{const n=e.target.dataset.nombre;if(!n)return;if(e.target.checked)ipConfigSeleccion.add(n);else ipConfigSeleccion.delete(n);ipConfigListaRender();});ipEl('ipConfigGuardar').addEventListener('click',ipConfigGuardar);ipEl('ipExclusionGuardar').addEventListener('click',ipExclusionGuardar);ipEl('ipProyecto').addEventListener('change',()=>{[...ipEl('ipInformeProyecto').options].forEach(o=>o.selected=!ipEl('ipProyecto').value||o.value===ipEl('ipProyecto').value);ipRender();});ipEl('ipModo').addEventListener('change',()=>{const modo=ipEl('ipModo').value;ipEl('ipHasta').disabled=modo!=='rango';ipEl('ipDesde').disabled=modo==='total';ipRender();});ipEl('ipDesde').addEventListener('change',ipRender);ipEl('ipHasta').addEventListener('change',ipRender);ipEl('ipAdminProyecto').addEventListener('change',ipAdminRender);ipEl('ipGuardarDuracion').addEventListener('click',ipGuardar);ipEl('ipConceder').addEventListener('click',()=>ipPermCambiar(true));ipEl('ipRevocar').addEventListener('click',()=>ipPermCambiar(false));ipEl('ipExcel').addEventListener('click',ipExportar);});
 </script>
 
