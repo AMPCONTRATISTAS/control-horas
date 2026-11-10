@@ -947,6 +947,12 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
 <style>
 
 /* Selector de proyectos accesible, con búsqueda y selección por casillas. */
+.amp-meta-periodo-ayuda{margin:4px 0 10px;font-size:13px;color:#64748b}
+html[data-amp-theme="dark"] .amp-meta-periodo-ayuda{color:#b6c5df}
+.amp-meta-proyectos-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+#ampMetaExcelProyectos{min-height:36px;padding:8px 12px;font-size:13px}
+@media(max-width:700px){.amp-meta-proyectos-actions{width:100%;justify-content:space-between}}
+
 .ip-multi-wrap{position:relative;min-width:260px;flex:1.45;align-self:flex-end}
 .ip-multi-label{display:block;font-size:14px;font-weight:700;margin-bottom:6px}
 .ip-multi-trigger{width:100%;min-height:43px;padding:10px 12px;text-align:left;border:1px solid #94a3b8;border-radius:8px;background:#fff;color:#0f172a;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:15px;font-weight:600}
@@ -1108,6 +1114,112 @@ html[data-amp-theme="dark"] .amp-meta-status:not(.ok):not(.over),html[data-amp-t
 }
 @media(max-width:600px){.amp-meta-heading{flex-direction:column}.amp-meta-goal-tag{align-self:flex-start}.amp-meta-filters{grid-template-columns:1fr}.amp-meta-project-mount,.amp-meta-refrescar{grid-column:1}.amp-meta-hero{padding:18px;grid-template-columns:1fr}.amp-meta-hero-aside{align-items:flex-start;text-align:left}.amp-meta-smallcards{grid-template-columns:1fr}.amp-meta-smallcard{min-height:80px;padding:14px}.amp-meta-primary-value{font-size:48px}.amp-meta-table{font-size:14px}}
 </style>
+<style>
+/* AMP: etapas de ingeniería y presupuesto de 21 h por entregable. */
+.amp-hitos{border:1px solid #cfdbeb;border-radius:12px;padding:16px;margin:8px 0 18px;background:#f8fafc}
+.amp-hitos-title{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.amp-hitos h3{margin:0;font-size:18px}
+.amp-hitos small,.amp-hitos-help{color:#475569;font-size:13px;line-height:1.55}
+.amp-hitos-steps{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.amp-hitos-step{display:flex;gap:5px;align-items:center;padding:7px 10px;border:1px solid #cbd5e1;border-radius:20px;font-size:13px;background:#fff}
+.amp-hitos-step strong{font-weight:800;color:#1d4ed8}
+.amp-hitos-overview{font-size:13px;margin:9px 0;color:#475569;line-height:1.55}
+.amp-hitos-config{margin:10px 0;border-top:1px solid #cbd5e1;padding-top:12px}
+.amp-hitos-config>summary{cursor:pointer;font-size:15px;font-weight:800;color:#1d4ed8;padding:5px 0}
+.amp-hitos-form{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:12px;margin:12px 0}
+.amp-hitos-form label{display:flex;flex-direction:column;gap:5px;font-size:14px;margin:0}
+.amp-hitos-form select,.amp-hitos-form input{min-height:45px;font-size:15px}
+.amp-hitos-form .amp-hitos-reason{grid-column:1/-1}
+.amp-hitos-preview{margin:10px 0;padding:12px;border-radius:9px;border:1px solid #bfdbfe;background:#eff6ff;color:#1e3a8a;font-size:14px;line-height:1.6}
+.amp-hitos-actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px}
+.amp-hitos-actions button{min-height:44px}
+.amp-hitos-history{font-size:12px;margin-top:12px;color:#64748b}
+.amp-hitos-history summary{cursor:pointer;font-weight:700;padding:6px 0}
+.amp-hitos-history table{min-width:650px}
+.amp-hitos-warning{color:#9a3412!important}
+.amp-hitos-metrics{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 15px}
+.amp-hitos-metrics span{font-size:13px;padding:8px 10px;border-radius:8px;background:#eef3fb;border:1px solid #d7e3f3;color:#334155}
+.amp-hitos-metrics strong{color:#172554}
+.amp-meta-table:not(.amp-meta-detail-table){min-width:1250px}
+.amp-meta-detail-table{min-width:1450px}
+html[data-amp-theme="dark"] .amp-hitos{background:#192538;border-color:#334155}
+html[data-amp-theme="dark"] .amp-hitos-step{background:#101a2a;border-color:#475569;color:#e2e8f0}
+html[data-amp-theme="dark"] .amp-hitos-step strong{color:#93c5fd}
+html[data-amp-theme="dark"] .amp-hitos small,html[data-amp-theme="dark"] .amp-hitos-help,html[data-amp-theme="dark"] .amp-hitos-overview{color:#bac8da}
+html[data-amp-theme="dark"] .amp-hitos-config{border-color:#334155}
+html[data-amp-theme="dark"] .amp-hitos-config>summary{color:#93c5fd}
+html[data-amp-theme="dark"] .amp-hitos-preview{background:#1e3a5f;color:#bfdbfe;border-color:#3b82f6}
+html[data-amp-theme="dark"] .amp-hitos-metrics span{background:#25354a;color:#cbd5e1;border-color:#334155}
+html[data-amp-theme="dark"] .amp-hitos-metrics strong{color:#f8fafc}
+html[data-amp-theme="dark"] .amp-hitos-warning{color:#fdba74!important}
+@media(max-width:900px){.amp-hitos-form{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.amp-hitos-form{grid-template-columns:1fr}.amp-hitos-steps{display:grid;grid-template-columns:1fr 1fr}.amp-hitos-step{font-size:12px}.amp-hitos{padding:12px}}
+/* En móviles, los encabezados de las nuevas columnas son visibles en tarjetas. */
+@media(max-width:700px){
+.amp-meta-table:not(.amp-meta-detail-table) td:nth-child(7)::before{content:'Etapa actual'}
+.amp-meta-table:not(.amp-meta-detail-table) td:nth-child(8)::before{content:'Previas asumidas / entregable'}
+.amp-meta-table:not(.amp-meta-detail-table) td:nth-child(9)::before{content:'Horas reales acumuladas / entregable'}
+.amp-meta-table:not(.amp-meta-detail-table) td:nth-child(10)::before{content:'Consumo equivalente / entregable'}
+.amp-meta-table:not(.amp-meta-detail-table) td:nth-child(11)::before{content:'Disponible / entregable'}
+.amp-meta-table:not(.amp-meta-detail-table) td:nth-child(12)::before{content:'Vs. 21 h'}
+.amp-meta-detail-table td:nth-child(7)::before{content:'Etapas previas asumidas'}
+.amp-meta-detail-table td:nth-child(8)::before{content:'Real acumulado'}
+.amp-meta-detail-table td:nth-child(9)::before{content:'Consumo equivalente'}
+.amp-meta-detail-table td:nth-child(10)::before{content:'Disponible'}
+.amp-meta-detail-table td:nth-child(11)::before{content:'Vs. 21 h'}
+}
+</style>
+
+<style>
+
+/* AMP: presupuesto GLOBAL y etapa al final de Indicadores. */
+.amp-meta-page>.amp-hitos{margin:30px 0 4px;border-top:4px solid #2563eb}
+.amp-hitos-global{margin:15px 0 18px;padding:15px;border:1px solid #bfd5f7;border-radius:10px;background:#fff}
+.amp-hitos-global>summary{cursor:pointer;color:#1d4ed8;font-size:16px;font-weight:800;padding:6px 0}
+.amp-presupuesto-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0}
+.amp-presupuesto-grid label{display:flex;flex-direction:column;gap:7px;margin:0;font-size:14px;font-weight:700}
+.amp-presupuesto-grid input{min-height:48px;font-size:19px;font-weight:700;width:100%;max-width:none}
+.amp-presupuesto-total{display:inline-block;border-radius:9px;padding:10px 15px;background:#eaf4ff;color:#1d4ed8;font-weight:800;font-size:16px;margin:1px 0 12px}
+.amp-presupuesto-total.error{color:#991b1b;background:#fee2e2}
+.amp-presupuesto-motivo{display:flex;flex-direction:column;gap:6px;margin:0 0 14px;max-width:700px}
+.amp-presupuesto-motivo input{min-height:44px;font-size:15px}
+.amp-presupuesto-historial{min-width:680px}
+.amp-hitos-global .amp-hitos-actions{margin-top:8px}
+html[data-amp-theme="dark"] .amp-hitos-global{background:#101a2a;border-color:#475569}
+html[data-amp-theme="dark"] .amp-hitos-global>summary{color:#93c5fd}
+html[data-amp-theme="dark"] .amp-presupuesto-total{background:#1e3a5f;color:#bfdbfe}
+html[data-amp-theme="dark"] .amp-presupuesto-total.error{background:#4c1d25;color:#fecaca}
+@media(max-width:840px){.amp-presupuesto-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.amp-presupuesto-grid{grid-template-columns:1fr 1fr;gap:9px}.amp-presupuesto-grid input{font-size:17px}.amp-hitos-global{padding:11px}}
+
+/* AMP: actualización masiva de etapas por Excel */
+.amp-lote{margin:18px 0 2px;border:1px solid #bfdbfe;background:#f8fbff;border-radius:12px;padding:17px}
+.amp-lote h4{font-size:16px;margin:0 0 8px;color:#1e3a8a}
+.amp-lote p{margin:6px 0 13px;color:#475569;font-size:13px;line-height:1.55}
+.amp-lote-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.amp-lote-bar button{min-height:42px}
+.amp-lote-file{display:block;max-width:360px;min-height:42px;font-size:13px!important;padding:8px!important}
+.amp-lote-state{font-size:13px;line-height:1.5;white-space:pre-line;margin:12px 0;color:#1e3a8a}
+.amp-lote-table{max-height:350px;overflow:auto;border:1px solid #cbd5e1;border-radius:8px;margin-top:9px}
+.amp-lote-table table{min-width:760px!important;width:100%;font-size:13px}
+.amp-lote-table thead th{position:sticky;top:0;z-index:2;background:#dbeafe;color:#1e3a8a}
+.amp-lote-table td{overflow-wrap:anywhere}
+.amp-lote-errors{background:#fff1f2;padding:9px;border-radius:8px;color:#991b1b;font-size:13px;margin:10px 0}
+.amp-lote-warn{background:#fffbeb;padding:9px;border-radius:8px;color:#92400e;font-size:13px;margin:10px 0}
+.amp-lote-stats{font-size:13px;font-weight:600;margin-top:10px}
+.amp-lote-actions{margin-top:13px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.amp-lote-badge{font-size:12px;border-radius:15px;padding:4px 8px;background:#e2e8f0;color:#0f172a}
+.amp-lote-badge.change{background:#dbeafe;color:#1e40af}
+.amp-lote-badge.danger{background:#fef3c7;color:#92400e}
+html[data-amp-theme="dark"] .amp-lote{background:#172234;border-color:#334155}
+html[data-amp-theme="dark"] .amp-lote h4,html[data-amp-theme="dark"] .amp-lote-state{color:#bfdbfe}
+html[data-amp-theme="dark"] .amp-lote p{color:#cbd5e1}
+html[data-amp-theme="dark"] .amp-lote-table{border-color:#334155}
+html[data-amp-theme="dark"] .amp-lote-table thead th{background:#25354a;color:#bfdbfe}
+html[data-amp-theme="dark"] .amp-lote-warn{background:#713f12;color:#fef3c7}
+html[data-amp-theme="dark"] .amp-lote-errors{background:#4c1d25;color:#fecaca}
+@media(max-width:700px){.amp-lote{padding:12px}.amp-lote-bar>*{max-width:100%}.amp-lote-bar button{flex:1}}
+</style>
 </head>
 
 <body>
@@ -1246,13 +1358,14 @@ html[data-amp-theme="dark"] .amp-meta-status:not(.ok):not(.over),html[data-amp-t
       </label>
       <button type="button" class="btn-secondary amp-meta-refrescar" id="ampMetaActualizar" title="Volver a consultar Supabase">Actualizar datos</button>
     </div>
-    <div id="ampMetaEmpty" class="amp-meta-empty" hidden></div>
+      <p id="ampMetaPeriodoProyectos" class="amp-meta-periodo-ayuda" aria-live="polite"></p>
+      <div id="ampMetaEmpty" class="amp-meta-empty" hidden></div>
     <div class="amp-meta-results" id="ampMetaResults">
       <div class="amp-meta-hero" aria-live="polite">
         <div>
-          <div class="amp-meta-eyebrow">PROMEDIO SEGÚN CAPTURAS</div>
+          <div class="amp-meta-eyebrow">CONSUMO ACUMULADO POR ENTREGABLE · SEGÚN ETAPA</div>
           <div class="amp-meta-primary-value" id="ampMetaPromedio">—</div>
-          <div class="amp-meta-primary-caption">horas distribuidas por entregable trabajado</div>
+          <div class="amp-meta-primary-caption">horas equivalentes en proyectos con etapa configurada: anteriores asumidas + capturas reales acumuladas</div>
         </div>
         <div class="amp-meta-hero-aside">
           <span class="amp-meta-status" id="ampMetaEstado">Sin datos</span>
@@ -1264,20 +1377,20 @@ html[data-amp-theme="dark"] .amp-meta-status:not(.ok):not(.over),html[data-amp-t
         </div>
       </div>
       <div class="amp-meta-smallcards">
-        <div class="amp-meta-smallcard"><span>Horas registradas válidas</span><strong id="ampMetaHoras">0 h</strong></div>
-        <div class="amp-meta-smallcard"><span>Entregables trabajados</span><strong id="ampMetaEntregables">0</strong></div>
+        <div class="amp-meta-smallcard"><span>Horas registradas válidas del período</span><strong id="ampMetaHoras">0 h</strong></div>
+        <div class="amp-meta-smallcard"><span>Entregables con etapa configurada</span><strong id="ampMetaEntregables">0</strong></div>
         <div class="amp-meta-smallcard"><span>Personas diferentes</span><strong id="ampMetaPersonas">—</strong></div>
       </div>
       <div class="amp-meta-breakdown" id="ampMetaDesglose" aria-live="polite"></div>
       <p class="amp-meta-personas-aviso" id="ampMetaPersonasAviso" hidden></p>
-      <div class="amp-meta-table-heading"><h3>Promedio por proyecto</h3><span id="ampMetaContador">—</span></div>
+      <div class="amp-meta-table-heading"><h3>Promedio por proyecto</h3><div class="amp-meta-proyectos-actions"><span id="ampMetaContador">—</span><button type="button" class="btn-secondary" id="ampMetaExcelProyectos" title="Exportar tabla de proyectos con el período y filtros actuales">Exportar proyectos a Excel</button></div></div>
       <div class="amp-meta-table-wrap">
         <table class="amp-meta-table">
-          <thead><tr><th>Proyecto</th><th>Horas</th><th>Directas</th><th>Indirectas</th><th>Entregables</th><th>Personas</th><th>Promedio</th><th>Vs. meta</th></tr></thead>
-          <tbody id="ampMetaFilas"><tr><td colspan="8">Selecciona un período para consultar el promedio.</td></tr></tbody>
+          <thead><tr><th>Proyecto</th><th>Horas del período</th><th>Directas</th><th>Indirectas</th><th>Entregables del proyecto</th><th>Personas</th><th>Etapa actual</th><th>Previas asumidas / plano</th><th>Real acumulado / plano</th><th>Consumo equivalente / plano</th><th>Disponible / plano</th><th>Vs. 21 h</th></tr></thead>
+          <tbody id="ampMetaFilas"><tr><td colspan="12">Selecciona un período para consultar el promedio.</td></tr></tbody>
         </table>
       </div>
-      <p id="ampMetaNota" class="amp-meta-note">Las horas directas se conservan en el entregable. Las indirectas se reparten por igual entre los entregables trabajados del proyecto y período.</p>
+      <p id="ampMetaNota" class="amp-meta-note">Las horas directas permanecen en cada entregable. Las horas indirectas se reparten entre el alcance completo. El consumo presupuestario añade únicamente las etapas anteriores no capturadas; las horas reales se acumulan desde la fecha de inicio del control.</p>
       <details class="amp-meta-detalle" id="ampMetaDetalle">
         <summary>Ver horas distribuidas por cada entregable</summary>
         <div class="amp-meta-detalle-tools">
@@ -1286,11 +1399,11 @@ html[data-amp-theme="dark"] .amp-meta-status:not(.ok):not(.over),html[data-amp-t
         </div>
         <div class="amp-meta-table-wrap amp-meta-detalle-scroll">
           <table class="amp-meta-table amp-meta-detail-table">
-            <thead><tr><th>Proyecto</th><th>Entregable</th><th>Personas que registraron horas</th><th>Horas directas</th><th>Indirectas asignadas</th><th>Total</th><th>Vs. 21 h</th></tr></thead>
-            <tbody id="ampMetaDetalleFilas"><tr><td colspan="7">Selecciona un período.</td></tr></tbody>
+            <thead><tr><th>Proyecto</th><th>Entregable</th><th>Personas que registraron horas</th><th>Directas período</th><th>Indirectas período</th><th>Total período</th><th>Previas asumidas</th><th>Real acumulado</th><th>Consumo equivalente</th><th>Disponible</th><th>Vs. 21 h</th></tr></thead>
+            <tbody id="ampMetaDetalleFilas"><tr><td colspan="11">Selecciona un período.</td></tr></tbody>
           </table>
         </div>
-        <p class="amp-meta-note">La columna de personas muestra únicamente quién registró <strong>horas directas</strong> en cada entregable. Las juntas, llamadas y demás horas indirectas se distribuyen para el cálculo, pero no se atribuyen como capturas directas a esas personas. Este informe no modifica los registros originales de Supabase.</p>
+        <p class="amp-meta-note">La columna de personas muestra únicamente quién registró <strong>horas directas en el período</strong>. Las indirectas se reparten entre todo el catálogo. La columna <strong>Real acumulado</strong> incluye capturas desde la fecha de inicio del control hasta el final del período seleccionado. <strong>Previas asumidas</strong> representa horas presupuestarias de revisiones no capturadas, no horas registradas. No modifica Supabase ni duplica capturas.</p>
       </details>
     </div>
     <details class="amp-meta-advanced" id="ampMetaAvanzado">
@@ -1320,11 +1433,11 @@ html[data-amp-theme="dark"] .amp-meta-status:not(.ok):not(.over),html[data-amp-t
             <label for="ipInformeBuscar" class="ip-multi-search-label">Buscar proyecto</label>
             <input type="search" id="ipInformeBuscar" placeholder="Escribe para buscar…" autocomplete="off" aria-label="Buscar proyectos del informe">
             <div class="ip-multi-actions">
-              <button type="button" id="ipInformeTodos">Todos</button>
+              <button type="button" id="ipInformeTodos">Todos los del período</button>
               <button type="button" id="ipInformeVisibles">Seleccionar visibles</button>
               <button type="button" id="ipInformeLimpiar">Limpiar</button>
             </div>
-            <div id="ipInformeLista" class="ip-multi-list" role="group" aria-label="Proyectos disponibles"></div>
+            <div id="ipInformeLista" class="ip-multi-list" role="group" aria-label="Proyectos con horas registradas en el período"></div>
             <div class="ip-multi-footer"><span id="ipInformeContador">0 proyectos seleccionados</span><button type="button" id="ipInformeCerrar">Listo</button></div>
           </div>
         </div>
@@ -1366,6 +1479,72 @@ html[data-amp-theme="dark"] .amp-meta-status:not(.ok):not(.over),html[data-amp-t
     </div>
       </div>
     </details>
+    <section class="amp-hitos" aria-label="Etapas y presupuesto de proyecto">
+      <div class="amp-hitos-title"><h3>Etapa y presupuesto de cada proyecto</h3><small>Meta total: 21 h por entregable</small></div>
+      <div class="amp-hitos-steps" aria-label="Presupuesto por hitos">
+        <span class="amp-hitos-step">Revisión 1 <strong id="ampEtapasPasoR1">8 h</strong></span>
+        <span class="amp-hitos-step">Revisión 2 <strong id="ampEtapasPasoR2">6 h</strong></span>
+        <span class="amp-hitos-step">Revisión 3 <strong id="ampEtapasPasoR3">4 h</strong></span>
+        <span class="amp-hitos-step">As Built <strong id="ampEtapasPasoASBUILT">3 h</strong></span>
+      </div>
+      <div class="amp-hitos-metrics" id="ampHitosMetricas" aria-live="polite"></div>
+      <p class="amp-hitos-overview" id="ampHitosEstado">Consultando las etapas de los proyectos...</p>
+      <details class="amp-hitos-global" id="ampEtapasGlobalConfig" hidden>
+        <summary>Editar horas generales de cada revisión · Todos los proyectos</summary>
+        <p class="amp-hitos-help">Establece un único reparto para <strong>todos los proyectos</strong>, incluso los que ya tienen etapas guardadas. El total permanece en <strong>21 h por entregable</strong>. Al cambiar R1, R2 o R3 se ajusta automáticamente el remanente de As Built. El cambio recalcula el presupuesto, pero <strong>no modifica las horas capturadas</strong>.</p>
+        <div class="amp-presupuesto-grid">
+          <label for="ampPresupuestoR1">Revisión 1 (h)<input type="number" id="ampPresupuestoR1" min="0" max="21" step="0.01" value="8" inputmode="decimal"></label>
+          <label for="ampPresupuestoR2">Revisión 2 (h)<input type="number" id="ampPresupuestoR2" min="0" max="21" step="0.01" value="6" inputmode="decimal"></label>
+          <label for="ampPresupuestoR3">Revisión 3 (h)<input type="number" id="ampPresupuestoR3" min="0" max="21" step="0.01" value="4" inputmode="decimal"></label>
+          <label for="ampPresupuestoASBUILT">As Built (h)<input type="number" id="ampPresupuestoASBUILT" min="0" max="21" step="0.01" value="3" inputmode="decimal"></label>
+        </div>
+        <div class="amp-presupuesto-total" id="ampPresupuestoTotal" role="status" aria-live="polite">Total: 21 h de 21 h por entregable</div>
+        <label class="amp-presupuesto-motivo" for="ampPresupuestoMotivo">Motivo del cambio (para el historial)
+          <input id="ampPresupuestoMotivo" type="text" maxlength="250" placeholder="Ej. R1 requiere 9 h por entregable">
+        </label>
+        <div class="amp-hitos-actions"><button type="button" class="btn-primary" id="ampPresupuestoGuardar" disabled>Guardar presupuesto global en Supabase</button><button type="button" class="btn-secondary" id="ampPresupuestoReponer">Recuperar reparto guardado</button></div>
+        <p class="amp-hitos-help" id="ampPresupuestoEstado" role="status" aria-live="polite">Conectando presupuesto general...</p>
+        <details class="amp-hitos-history"><summary>Ver historial del presupuesto global</summary><div class="table-container"><table class="amp-presupuesto-historial"><thead><tr><th>Fecha</th><th>R1</th><th>R2</th><th>R3</th><th>As Built</th><th>Motivo</th></tr></thead><tbody id="ampPresupuestoHistorial"><tr><td colspan="6">Sin cambios.</td></tr></tbody></table></div></details>
+      </details>
+      <details class="amp-hitos-config" id="ampHitosConfig" hidden>
+        <summary>Configurar o avanzar la etapa de un proyecto (administradores)</summary>
+        <p class="amp-hitos-help">La <strong>etapa inicial del control</strong> determina las revisiones anteriores que se dan por consumidas. Al avanzar de revisión conserva la misma etapa inicial, para no contar dos veces las horas ya registradas.</p>
+        <div class="amp-hitos-form">
+          <label>Proyecto<select id="ampHitosProyecto"></select></label>
+          <label>Etapa inicial del control<select id="ampHitosInicio"><option value="R1">Revisión 1</option><option value="R2">Revisión 2</option><option value="R3">Revisión 3</option><option value="ASBUILT">As Built</option></select></label>
+          <label>Etapa actual<select id="ampHitosActual"><option value="R1">Revisión 1</option><option value="R2">Revisión 2</option><option value="R3">Revisión 3</option><option value="ASBUILT">As Built</option></select></label>
+          <label>Fecha inicio de captura contabilizada<input type="date" id="ampHitosFecha" required></label>
+          <label class="amp-hitos-reason">Motivo / observación (opcional)<input type="text" id="ampHitosMotivo" maxlength="250" placeholder="Ej. El proyecto empezó a registrar horas en revisión 2"></label>
+        </div>
+        <div class="amp-hitos-preview" id="ampHitosPrevista" aria-live="polite"></div>
+        <div class="amp-hitos-actions"><button type="button" class="btn-primary" id="ampHitosGuardar">Guardar etapa en Supabase</button><small id="ampHitosGuardado" role="status"></small></div>
+
+        <section class="amp-lote" id="ampLotePanel" aria-label="Actualizar etapas desde Excel">
+          <h4>Actualizar etapas de varios proyectos con Excel</h4>
+          <p><strong>1.</strong> Descarga la lista completa de proyectos. <strong>2.</strong> Edita las etapas y fechas en Excel. <strong>3.</strong> Sube el archivo para revisar los cambios antes de guardarlos. Las filas sin cambios se omiten automáticamente.</p>
+          <div class="amp-lote-bar">
+            <button type="button" class="btn-primary" id="ampLoteDescargar">1. Descargar proyectos a Excel</button>
+            <label for="ampLoteArchivo" style="font-weight:600;margin:0">2. Seleccionar Excel (.xlsx)
+              <input class="amp-lote-file" id="ampLoteArchivo" type="file" accept=".xlsx,.xls" aria-describedby="ampLoteEstado">
+            </label>
+          </div>
+          <p>En Excel usa <strong>R1, R2, R3 o ASBUILT</strong>. La columna <strong>Etapa inicial</strong> define las horas anteriores asumidas; <strong>Etapa actual</strong> indica dónde va el proyecto. No cambies la etapa inicial al avanzar, salvo que realmente necesites ajustar el preconsumo.</p>
+          <div class="amp-lote-state" id="ampLoteEstado" role="status" aria-live="polite">Descarga el listado para editarlo.</div>
+          <div class="amp-lote-errors" id="ampLoteErrores" hidden></div>
+          <div class="amp-lote-warn" id="ampLoteAdvertencia" hidden></div>
+          <div id="ampLotePrevia" hidden>
+            <div class="amp-lote-stats" id="ampLoteConteo"></div>
+            <div class="amp-lote-table"><table><thead><tr><th>Proyecto</th><th>Etapa inicial</th><th>Etapa actual</th><th>Inicio de control</th><th>Tipo de cambio</th></tr></thead><tbody id="ampLoteFilas"></tbody></table></div>
+            <div class="amp-lote-actions">
+              <button type="button" class="btn-primary" id="ampLoteGuardar" disabled>3. Confirmar y guardar cambios</button>
+              <button type="button" class="btn-secondary" id="ampLoteCancelar">Cancelar importación</button>
+            </div>
+          </div>
+        </section>
+
+        <details class="amp-hitos-history"><summary>Ver historial de cambios de esta etapa</summary><div class="table-container"><table><thead><tr><th>Fecha del cambio</th><th>Inicio</th><th>Actual</th><th>Capturas desde</th><th>Motivo</th></tr></thead><tbody id="ampHitosHistorial"><tr><td colspan="5">Sin cambios registrados.</td></tr></tbody></table></div></details>
+      </details>
+    </section>
   </section>
   <section id="resumenAdminCard" class="card tab-view-hidden"><h2>📊 Resumen de administrador · Horas hombre de ingeniería</h2><div class="card" id="raPermisosPanel" style="display:none;background:#f1f5f9"><h3>Acceso exclusivo al resumen de horas</h3><p>Solo las cuentas maestras pueden conceder o revocar este acceso. No concede permisos de entregables.</p><div class="admin-filter-row"><select id="raNuevoRevisor"><option value="">Seleccionar empleado</option></select><button type="button" class="btn-primary" onclick="raGuardarRevisor(true)">Dar acceso al resumen</button></div><div id="raListaRevisores"></div></div><p id="raEstado" style="color:#64748b">Selecciona los filtros para analizar las horas del equipo.</p><div class="ra-filters"><label>Periodo<select id="raFiltroTipo"><option value="semana">Semana</option><option value="mes">Mes</option><option value="anio">Año</option></select></label><label id="raFiltroPeriodoLabel">Semana<select id="raSemana"></select></label><label>Persona<select id="raPersona"></select></label><label>Proyecto<select id="raProyecto"></select></label><label>Actividad<select id="raActividad"></select></label><label>Entregable<select id="raEntregable"></select></label><label>Cumple objetivo<select id="raCumple"></select></label></div><div class="buttons"><button type="button" class="btn-secondary" onclick="raLimpiar()">Limpiar filtros</button><button type="button" class="btn-primary" onclick="cargarResumenAdmin()">Actualizar datos</button><button type="button" class="btn-primary" onclick="raExportar()">Exportar Excel</button></div><div class="ra-kpis"><div><small>Horas registradas</small><strong id="raHoras">0</strong></div><div><small>Personas con captura</small><strong id="raActivos">0</strong></div><div><small>Sin captura (periodo)</small><strong id="raSin">0</strong></div><div><small>Asignaciones registradas</small><strong id="raRegistros">0</strong></div></div><div class="ra-grid"><div class="chart-card"><h3>Horas por proyecto</h3><div class="ra-chart"><canvas id="raChartProyecto"></canvas></div></div><div class="chart-card"><h3>Horas por semana</h3><div class="ra-chart"><canvas id="raChartSemana"></canvas></div></div><div class="chart-card"><h3>Distribución por proyecto</h3><div class="ra-chart"><canvas id="raChartDona"></canvas></div></div><div class="chart-card"><h3>Cumplimiento de objetivos</h3><div class="ra-chart"><canvas id="raChartCumple"></canvas></div></div><div class="chart-card" style="grid-column:1/-1"><h3>Horas registradas por persona</h3><p class="chart-note">Incluye empleados activos sin captura. Usa los filtros superiores; pulsa una barra para seleccionar a la persona.</p><div class="ra-chart" id="raPersonaChartWrap" style="height:440px"><canvas id="raChartPersona"></canvas></div></div></div><section class="card" style="margin-top:18px;background:#f8fafc"><h3>Auditoría de captura · Todos los empleados</h3><div class="ra-filters"><label>Periodo<select id="raPeriodoTipo"><option value="semana">Semana</option><option value="mes">Mes</option><option value="anio">Año</option></select></label><label id="raAuditoriaPeriodoLabel">Semana / mes / año<select id="raPeriodoValor"></select></label><label>Mostrar<select id="raEstadoCaptura"><option value="todos">Todos</option><option value="sin">Sin registros</option><option value="incumple">No alcanzaron el objetivo</option><option value="cumple">Cumplieron</option></select></label></div><p id="raObjetivoInfo" style="color:#475569"></p><div class="buttons"><button class="btn-primary" type="button" onclick="raCopiarSin()">Copiar nombres sin captura</button><button class="btn-secondary" type="button" onclick="raCopiarAuditoria()">Copiar tabla de horas</button><button class="btn-primary" type="button" onclick="raExportarAuditoria()">Exportar auditoría Excel</button></div><div class="table-container" style="max-height:450px;overflow:auto"><table class="ra-table"><thead><tr><th>Empleado</th><th>Periodo</th><th>Horas registradas</th><th>Vacaciones / permisos / asuetos (h)</th><th>Objetivo (h)</th><th>Diferencia</th><th>Resultado</th></tr></thead><tbody id="raAuditoriaBody"></tbody></table></div></section><h3>Horas acumuladas por entregable</h3><p class="chart-note">Las capturas múltiples se reparten en registros individuales. Aquí se suman las horas reales de cada entregable sin multiplicarlas. Respeta los filtros de persona, proyecto y período.</p><div class="table-container" style="max-height:430px;overflow:auto"><table class="ra-table"><thead><tr><th>Proyecto</th><th>Entregable</th><th>Asignaciones</th><th>Horas acumuladas</th></tr></thead><tbody id="raEntregablesAcumulados"></tbody></table></div><h3>Control de captura por persona y semana</h3><div class="table-container" style="max-height:400px;overflow:auto"><table class="ra-table"><thead><tr><th>Persona</th><th>Semana</th><th>Horas</th><th>Asignaciones</th><th>Estado</th></tr></thead><tbody id="raControl"></tbody></table></div><h3>Detalle de registros filtrados</h3><div class="table-container" style="max-height:460px;overflow:auto"><table class="ra-table"><thead><tr><th>Fecha</th><th>Persona</th><th>Semana</th><th>Proyecto</th><th>Actividad</th><th>Entregable</th><th>Horas</th><th>Objetivo</th></tr></thead><tbody id="raDetalle"></tbody></table></div></section>
    <!-- Módulo independiente: la calculadora vive en un iframe para aislar sus estilos y JavaScript de Control de Horas. -->
@@ -6364,7 +6543,7 @@ const ipHorasSemana=y=>y>=2030?40:y===2029?42:y===2028?44:y===2027?46:48;
 function ipCapacidadMes(m){const y=Number(m.slice(0,4)),mo=Number(m.slice(5,7));return ipHorasSemana(y)*new Date(y,mo,0).getDate()/7;}
 function ipMesesEntre(a,b){if(!a||!b||a>b)return [];let out=[],[y,m]=a.split('-').map(Number);for(let n=0;n<240&&`${y}-${String(m).padStart(2,'0')}`<=b;n++){out.push(`${y}-${String(m).padStart(2,'0')}`);if(++m>12){m=1;y++;}}return out;}
 async function ipPermiso(){if(!usuarioActual){ipPuedeVer=false;ipEsAdmin=false;ipEl('tabIndicadores').style.display='none';return;}try{const {data,error}=await supabaseClient.rpc('amp_indicadores_acceso');if(error)throw error;ipPuedeVer=!!data?.permitido;ipEsAdmin=!!data?.admin;}catch(e){ipPuedeVer=false;ipEsAdmin=false;console.warn('Indicadores sin permisos configurados:',e.message);}ipEl('tabIndicadores').style.display=ipPuedeVer?'inline-flex':'none';}
-async function ipCargar(){if(!ipPuedeVer)return;ipEl('ipEstado').textContent='Cargando datos y catálogo autorizados...';try{const {data,error}=await supabaseClient.rpc('amp_indicadores_datos');if(error)throw error;ipDatos=data?.horas||[];ipProyectos=data?.proyectos||[];ipCatalogo=data?.entregables||[];ipPlanes=data?.planes||[];ipHistoria=data?.historial||[];ipUsuarios=data?.usuarios||[];ipEsAdmin=!!data?.admin;ipEl('ipAdmin').style.display=ipEsAdmin?'block':'none';if(typeof window.ampMetaCargarPersonas==='function')await window.ampMetaCargarPersonas();await ipCargarCriterios();ipPoblar();ipRender();ipEl('ipEstado').textContent=`${ipDatos.length} capturas y ${ipCatalogo.length} entregables autorizados. Meta: 21 horas por entregable.`;}catch(e){ipEl('ipEstado').textContent='No se pudieron cargar indicadores: '+e.message+'. Ejecuta el SQL de instalación y comprueba los permisos.';}}
+async function ipCargar(){if(!ipPuedeVer)return;ipEl('ipEstado').textContent='Cargando datos y catálogo autorizados...';try{const {data,error}=await supabaseClient.rpc('amp_indicadores_datos');if(error)throw error;ipDatos=data?.horas||[];ipProyectos=data?.proyectos||[];ipCatalogo=data?.entregables||[];ipPlanes=data?.planes||[];ipHistoria=data?.historial||[];ipUsuarios=data?.usuarios||[];ipEsAdmin=!!data?.admin;ipEl('ipAdmin').style.display=ipEsAdmin?'block':'none';if(typeof window.ampMetaCargarPersonas==='function')await window.ampMetaCargarPersonas();await ipCargarCriterios();if(typeof window.ampHitosGlobalCargar==='function')await window.ampHitosGlobalCargar();if(typeof window.ampHitosCargar==='function')await window.ampHitosCargar();ipPoblar();ipRender();ipEl('ipEstado').textContent=`${ipDatos.length} capturas y ${ipCatalogo.length} entregables autorizados. Meta: 21 horas por entregable.`;}catch(e){ipEl('ipEstado').textContent='No se pudieron cargar indicadores: '+e.message+'. Ejecuta el SQL de instalación y comprueba los permisos.';}}
 
 /* Selector visual sincronizado con la selección múltiple nativa que usan los indicadores. */
 let ipInformePoblado=false;
@@ -6372,14 +6551,14 @@ function ipInformeActualizarSelector(){
   const select=ipEl('ipInformeProyecto'),opciones=[...select.options],
         seleccionadas=opciones.filter(o=>o.selected),boton=ipEl('ipInformeProyectoTexto'),
         contador=ipEl('ipInformeContador'),busca=ipUpper(ipEl('ipInformeBuscar').value);
-  boton.textContent=!opciones.length?'No hay proyectos':!seleccionadas.length?'Ningún proyecto seleccionado':
-    seleccionadas.length===opciones.length?`Todos los proyectos (${opciones.length})`:
+  boton.textContent=!opciones.length?'No hay proyectos con horas en este período':!seleccionadas.length?'Ningún proyecto seleccionado':
+    seleccionadas.length===opciones.length?`Todos con horas en el período (${opciones.length})`:
     seleccionadas.length===1?seleccionadas[0].textContent:`${seleccionadas.length} proyectos seleccionados`;
   contador.textContent=`${seleccionadas.length} de ${opciones.length} proyectos seleccionados`;
   const visibles=opciones.filter(o=>ipUpper(o.textContent).includes(busca));
   const lista=ipEl('ipInformeLista'),scroll=lista.scrollTop;
   lista.innerHTML=visibles.length?visibles.map(o=>`<label class="ip-multi-option"><input type="checkbox" data-proyecto="${ipHtml(o.value)}" ${o.selected?'checked':''}><span>${ipHtml(o.textContent)}</span></label>`).join(''):
-    '<div class="ip-multi-empty">No hay proyectos que coincidan con la búsqueda.</div>';
+    '<div class="ip-multi-empty">No hay proyectos con horas que coincidan con la búsqueda.</div>';
   lista.scrollTop=scroll;
 }
 function ipInformeAplicarSeleccion(modo){
@@ -6477,7 +6656,402 @@ ipEl('ipCopiarInforme').addEventListener('click',async()=>{const t=ipEl('ipCopia
   }
   const datosPersonas={rows:null,error:null};
   let desgloseActual=[];
+  let resumenProyectosActual=[];
   let detallePersonasDisponible=false;
+  const ETAPAS=[{id:'R1',nombre:'Revisión 1',horas:8,previas:0},{id:'R2',nombre:'Revisión 2',horas:6,previas:8},{id:'R3',nombre:'Revisión 3',horas:4,previas:14},{id:'ASBUILT',nombre:'As Built',horas:3,previas:18}];
+  const fase=x=>ETAPAS.find(e=>e.id===x)||ETAPAS[0];
+  const presupuestoGlobalPorDefecto={r1:8,r2:6,r3:4,asbuilt:3};
+  let presupuestoGlobalGuardado={...presupuestoGlobalPorDefecto};
+  let presupuestoGlobalConectado=false, presupuestoGlobalError='',presupuestoGlobalHistorial=[];
+  function repartirPresupuestoGlobal(reglas){
+    let previo=0;
+    for(const e of ETAPAS){const h=Number(reglas[e.id.toLowerCase()]);e.horas=h;e.previas=previo;previo=Number((previo+h).toFixed(2));}
+    for(const e of ETAPAS){const label=$('ampEtapasPaso'+e.id);if(label)label.textContent=fmt(e.horas,e.horas%1?2:0)+' h';}
+    const estado=$('ampHitosEstado');
+    if(estado&&presupuestoGlobalConectado)estado.dataset.reglaGlobal='activa';
+  }
+  function valoresPresupuestoFormulario(){
+    const valores={};
+    for(const e of ETAPAS){const el=$('ampPresupuesto'+e.id),v=el?.value?.trim();
+      valores[e.id.toLowerCase()]=v===''?NaN:Number(v);
+    }
+    return valores;
+  }
+  function totalPresupuesto(v){return Object.values(v).reduce((a,b)=>a+b,0);}
+  function presupuestoValido(v){return Object.values(v).length===4&&Object.values(v).every(x=>Number.isFinite(x)&&x>=0&&x<=21&&Math.abs(Math.round(x*100)-x*100)<0.000001)&&Math.abs(totalPresupuesto(v)-META_HORAS)<0.001;}
+  function llenarPresupuestoFormulario(){
+    for(const e of ETAPAS){const input=$('ampPresupuesto'+e.id);if(input)input.value=presupuestoGlobalGuardado[e.id.toLowerCase()];}
+    const motivo=$('ampPresupuestoMotivo');if(motivo)motivo.value='';
+    actualizarPreviaPresupuesto();
+  }
+  function actualizarPreviaPresupuesto(evento){
+    const id=evento?.target?.id;
+    // Primeras tres etapas: ajustar As Built al tiempo que queda de las 21 h.
+    if(['ampPresupuestoR1','ampPresupuestoR2','ampPresupuestoR3'].includes(id)){
+      const vals=['R1','R2','R3'].map(k=>$('ampPresupuesto'+k).value.trim()).map(x=>x===''?NaN:Number(x));
+      if(vals.every(Number.isFinite)){
+        const resto=Number((META_HORAS-vals.reduce((a,b)=>a+b,0)).toFixed(2));
+        if(resto>=0&&resto<=META_HORAS)$('ampPresupuestoASBUILT').value=resto;
+      }
+    }
+    const v=valoresPresupuestoFormulario(),total=totalPresupuesto(v),valido=presupuestoValido(v);
+    const txt=$('ampPresupuestoTotal');
+    if(txt){txt.classList.toggle('error',!valido);txt.textContent=valido?'✓ Total: 21.00 de 21.00 h por entregable':(Number.isFinite(total)?'Total: '+fmt(total)+' de 21.00 h. Ajusta el reparto para sumar 21.':'Introduce valores válidos en las cuatro revisiones.');}
+    const btn=$('ampPresupuestoGuardar');
+    if(btn)btn.disabled=!valido||!presupuestoGlobalConectado||!ipEsAdmin;
+  }
+  function pintarHistorialPresupuesto(){
+    const el=$('ampPresupuestoHistorial');if(!el)return;
+    el.innerHTML=presupuestoGlobalHistorial.slice(0,30).map(r=>'<tr><td>'+escapeHtml(r.actualizado_en?new Date(r.actualizado_en).toLocaleString('es-MX'):'')+'</td><td>'+fmt(r.r1)+' h</td><td>'+fmt(r.r2)+' h</td><td>'+fmt(r.r3)+' h</td><td>'+fmt(r.asbuilt)+' h</td><td>'+escapeHtml(r.motivo||'')+'</td></tr>').join('')||'<tr><td colspan="6">Todavía no hay cambios registrados.</td></tr>';
+  }
+  async function cargarPresupuestoGlobal(){
+    presupuestoGlobalConectado=false;presupuestoGlobalError='';presupuestoGlobalHistorial=[];
+    try{
+      const {data,error}=await supabaseClient.rpc('amp_presupuesto_etapas_leer');
+      if(error)throw error;
+      const v=data?.configuracion;
+      if(!v||!presupuestoValido({r1:Number(v.r1),r2:Number(v.r2),r3:Number(v.r3),asbuilt:Number(v.asbuilt)}))throw new Error('La configuración global no tiene cuatro etapas válidas que sumen 21 h.');
+      presupuestoGlobalGuardado={r1:Number(v.r1),r2:Number(v.r2),r3:Number(v.r3),asbuilt:Number(v.asbuilt)};
+      presupuestoGlobalHistorial=Array.isArray(data.historial)?data.historial:[];
+      presupuestoGlobalConectado=true;
+    }catch(err){
+      presupuestoGlobalError=err?.message||String(err);
+      presupuestoGlobalGuardado={...presupuestoGlobalPorDefecto};
+      console.warn('Presupuesto global: sin conexión SQL, usando 8/6/4/3 h:',presupuestoGlobalError);
+    }
+    repartirPresupuestoGlobal(presupuestoGlobalGuardado);llenarPresupuestoFormulario();pintarHistorialPresupuesto();
+    const status=$('ampPresupuestoEstado');
+    if(status)status.textContent=presupuestoGlobalConectado?'Presupuesto global sincronizado con Supabase. Los cambios se aplican a todos los proyectos, incluidas etapas existentes.':('No se pudo leer el presupuesto global en Supabase. Se muestran los valores iniciales 8/6/4/3 sin permitir guardar. Ejecuta el SQL nuevo. Detalle: '+presupuestoGlobalError);
+    actualizarUIEtapas();
+  }
+  window.ampHitosGlobalCargar=cargarPresupuestoGlobal;
+  async function guardarPresupuestoGlobal(){
+    if(!ipEsAdmin||!presupuestoGlobalConectado)return alert('Esta configuración requiere acceso de administrador y el SQL global instalado.');
+    const v=valoresPresupuestoFormulario();if(!presupuestoValido(v))return alert('Las cuatro etapas deben sumar exactamente 21 horas y tener valores válidos.');
+    if(!confirm('¿Aplicar el nuevo presupuesto de '+fmt(v.r1)+' / '+fmt(v.r2)+' / '+fmt(v.r3)+' / '+fmt(v.asbuilt)+' horas a TODOS los proyectos? Esto recalcula las etapas anteriores asumidas, incluso de proyectos históricos. No modifica las capturas de horas.'))return;
+    const btn=$('ampPresupuestoGuardar'),status=$('ampPresupuestoEstado');btn.disabled=true;status.textContent='Guardando reparto general...';
+    try{
+      const {error}=await supabaseClient.rpc('amp_presupuesto_etapas_guardar',{
+        p_r1:v.r1,p_r2:v.r2,p_r3:v.r3,p_asbuilt:v.asbuilt,p_motivo:$('ampPresupuestoMotivo').value.trim()
+      });
+      if(error)throw error;
+      await cargarPresupuestoGlobal();
+      pintarPreviaEtapas();if(typeof ampMetaRender==='function')ampMetaRender();
+      status.textContent='✓ Presupuesto global guardado. Se recalcularon los indicadores con las nuevas horas.';
+    }catch(err){status.textContent='No se pudo guardar: '+(err?.message||err);alert(status.textContent);}
+    finally{actualizarPreviaPresupuesto();}
+  }
+
+  const fasesMap=new Map();
+  let fasesHistorial=[],fasesConectadas=false,fasesError='',fasesProyectoFormulario='';
+  function fechaUltima(tipo,fecha){
+    if(tipo==='total')return '9999-12-31';
+    if(tipo==='anio')return fecha+'-12-31';
+    if(tipo==='mes'){
+      const [y,m]=fecha.split('-').map(Number);
+      return `${y}-${String(m).padStart(2,'0')}-${String(new Date(y,m,0).getDate()).padStart(2,'0')}`;
+    }
+    if(tipo==='semana'&&/^\d{4}-W\d{2}$/.test(fecha)){
+      const [y,w]=fecha.split('-W').map(Number),d=new Date(Date.UTC(y,0,4));
+      d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7+(w-1)*7+6);
+      return d.toISOString().slice(0,10);
+    }
+    return '';
+  }
+  function primeraCaptura(nombre){
+    const fechas=(typeof ipDatos==='undefined'?[]:ipDatos).filter(r=>key(r.proyecto)===key(nombre)).map(r=>texto(r.fecha).slice(0,10)).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).sort();
+    return fechas[0]||new Date().toISOString().slice(0,10);
+  }
+  function normalizarConfig(p){
+    return fasesMap.get(key(p))||null;
+  }
+  function noExcluidaHistorica(r){
+    const mes=texto(r.fecha).slice(0,7),ex=typeof ipExclusionVigente==='function'?ipExclusionVigente(mes):{proyectos:[],actividades:[]};
+    return !(ex.proyectos||[]).some(x=>key(x)===key(r.proyecto))&&!(ex.actividades||[]).some(x=>key(x)===key(r.actividad));
+  }
+  function evaluarEtapa(p,cierre){
+    const cfg=normalizarConfig(p.nombre),inicio=cfg?.fecha_inicio_control||primeraCaptura(p.nombre),base=cfg?fase(cfg.etapa_inicio).previas:0;
+    const antes=Boolean(cfg&&cierre<inicio);
+    const historicos=typeof ipDatos==='undefined'?[]:ipDatos.filter(r=>key(r.proyecto)===key(p.nombre)&&texto(r.fecha).slice(0,10)>=inicio&&texto(r.fecha).slice(0,10)<=cierre&&noExcluidaHistorica(r));
+    const mapa=repartir(historicos,[p.nombre]).get(key(p.nombre));
+    const n=p.entregables.size;
+    const reales=n?(mapa.horas-mapa.pendientes):0;
+    const promedioReal=n?reales/n:null;
+    const equivalente=n&&!antes&&cfg?base+(promedioReal||0):null;
+    const disponible=equivalente===null?null:21-equivalente;
+    return {config:cfg,inicio,base,reales,promedioReal,equivalente,disponible,
+      totalBase:n*base,totalEquivalente:equivalente===null?0:equivalente*n,antes,
+      fin:cierre,entregables:mapa.entregables};
+  }
+  async function cargarEtapas(){
+    fasesMap.clear();fasesHistorial=[];fasesConectadas=false;fasesError='';
+    try{
+      const {data,error}=await supabaseClient.rpc('amp_etapas_proyecto_leer');
+      if(error)throw error;
+      if(!data||!Array.isArray(data.configuraciones))throw new Error('Respuesta inválida del servidor.');
+      for(const row of data.configuraciones)fasesMap.set(key(row.proyecto),row);
+      fasesHistorial=Array.isArray(data.historial)?data.historial:[];
+      fasesConectadas=true;
+    }catch(e){fasesError=e?.message||String(e);console.warn('Configurar etapas requiere SQL AMP:',fasesError);}
+    actualizarUIEtapas();
+  }
+  window.ampHitosCargar=cargarEtapas;
+  function actualizarUIEtapas(){
+    const config=$('ampHitosConfig'),estado=$('ampHitosEstado');if(!config||!estado)return;
+    const admin=typeof ipEsAdmin!=='undefined'&&ipEsAdmin;
+    config.hidden=!admin;const presupuestoConfig=$('ampEtapasGlobalConfig');if(presupuestoConfig)presupuestoConfig.hidden=!admin;
+    const activos=[...$('ipInformeProyecto')?.selectedOptions||[]].map(o=>o.value);
+    const sin=activos.filter(p=>!normalizarConfig(p));
+    if(!fasesConectadas){estado.textContent='⚠ Configuración de etapas pendiente: ejecuta AMP_Etapas_Proyecto_Supabase.sql en Supabase. '+(fasesError?'Detalle: '+fasesError:'');estado.classList.add('amp-hitos-warning');}
+    else if(sin.length){estado.textContent='Etapas sin configurar: '+sin.join(', ')+'. Mientras no se configuren, se calcula sin consumo previo asumido.';estado.classList.add('amp-hitos-warning');}
+    else{estado.textContent='Presupuesto de etapas conectado. Las horas anteriores a la etapa inicial se toman como consumidas; no se insertan horas ficticias.';estado.classList.remove('amp-hitos-warning');}
+    if(admin){
+      const sel=$('ampHitosProyecto'),prev=sel.value;
+      const nombres=[...new Set([...(typeof ipProyectos!=='undefined'?ipProyectos:[]).filter(x=>typeof x==='string'),
+        ...(typeof ipDatos!=='undefined'?ipDatos:[]).map(x=>x.proyecto),
+        ...(typeof ipCatalogo!=='undefined'?ipCatalogo:[]).map(x=>x.proyecto)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+      const iguales=sel.options.length===nombres.length&&[...sel.options].every((o,i)=>o.value===nombres[i]);
+      if(!iguales)sel.innerHTML=nombres.map(p=>'<option value="'+escapeHtml(p)+'">'+escapeHtml(p)+'</option>').join('');
+      if(nombres.includes(prev))sel.value=prev;
+      if(sel.value!==fasesProyectoFormulario)rellenarFormularioEtapas();
+    }
+  }
+  function rellenarFormularioEtapas(){
+    const proyecto=$('ampHitosProyecto')?.value;if(!proyecto)return;
+    fasesProyectoFormulario=proyecto;
+    const cfg=normalizarConfig(proyecto);
+    $('ampHitosInicio').value=cfg?.etapa_inicio||'R1';
+    $('ampHitosActual').value=cfg?.etapa_actual||cfg?.etapa_inicio||'R1';
+    $('ampHitosFecha').value=cfg?.fecha_inicio_control||primeraCaptura(proyecto);
+    $('ampHitosMotivo').value='';
+    pintarPreviaEtapas();
+    const historial=fasesHistorial.filter(x=>key(x.proyecto)===key(proyecto)).slice(0,30);
+    $('ampHitosHistorial').innerHTML=historial.map(x=>'<tr><td>'+escapeHtml(new Date(x.cambiado_en).toLocaleString('es-MX'))+'</td><td>'+escapeHtml(fase(x.etapa_inicio).nombre)+'</td><td>'+escapeHtml(fase(x.etapa_actual).nombre)+'</td><td>'+escapeHtml(x.fecha_inicio_control)+'</td><td>'+escapeHtml(x.motivo)+'</td></tr>').join('')||'<tr><td colspan="5">Aún sin cambios registrados.</td></tr>';
+    $('ampHitosGuardado').textContent=cfg?'Último ajuste guardado: '+texto(cfg.actualizado_en).slice(0,10):'Proyecto sin configurar';
+  }
+  function pintarPreviaEtapas(){
+    const inicial=fase($('ampHitosInicio').value),actual=fase($('ampHitosActual').value),permitido=ETAPAS.indexOf(actual)>=ETAPAS.indexOf(inicial),previas=inicial.previas,resto=21-previas;
+    $('ampHitosPrevista').innerHTML='<strong>Plan global:</strong> '+ETAPAS.map(e=>fmt(e.horas,e.horas%1?2:0)+' h ('+escapeHtml(e.nombre)+')').join(' + ')+' = '+META_HORAS+' h por entregable.<br>'+(!permitido?'<strong>La etapa actual no puede ser anterior a la inicial.</strong>':
+      'Si el control inicia en <strong>'+escapeHtml(inicial.nombre)+'</strong>, las revisiones anteriores cuentan como <strong>'+previas+' h ya consumidas</strong> por entregable. Restan <strong>'+resto+' h</strong> para las etapas desde '+escapeHtml(inicial.nombre)+'. La etapa actual es <strong>'+escapeHtml(actual.nombre)+'</strong> (presupuesto propio de '+actual.horas+' h).<br>Las horas <strong>reales</strong> registradas desde la fecha indicada se SUMAN a ese preconsumo, sin duplicar capturas.');
+    $('ampHitosGuardar').disabled=!permitido||!fasesConectadas;
+  }
+  async function guardarEtapa(){
+    if(!fasesConectadas)return alert('Primero ejecuta el SQL de etapas en Supabase.');
+    const proyecto=$('ampHitosProyecto').value,inicio=$('ampHitosInicio').value,actual=$('ampHitosActual').value,fecha=$('ampHitosFecha').value,motivo=$('ampHitosMotivo').value.trim();
+    if(!proyecto||!/^\d{4}-\d{2}-\d{2}$/.test(fecha))return alert('Selecciona un proyecto y una fecha de inicio.');
+    if(ETAPAS.findIndex(e=>e.id===actual)<ETAPAS.findIndex(e=>e.id===inicio))return alert('La etapa actual no puede estar antes de la etapa inicial.');
+    const previo=normalizarConfig(proyecto);
+    if(previo&&(previo.etapa_inicio!==inicio||previo.fecha_inicio_control!==fecha)){
+      if(!confirm('ATENCIÓN: vas a cambiar la etapa inicial o la fecha de comienzo del seguimiento. Esto recalculará el preconsumo y las horas históricas del proyecto. ¿Confirmas?'))return;
+    }
+    const btn=$('ampHitosGuardar');btn.disabled=true;$('ampHitosGuardado').textContent='Guardando configuración...';
+    try{
+      const {error}=await supabaseClient.rpc('amp_etapas_proyecto_guardar',{p_proyecto:proyecto,p_etapa_inicio:inicio,p_etapa_actual:actual,p_fecha_inicio_control:fecha,p_motivo:motivo});
+      if(error)throw error;
+      await cargarEtapas();rellenarFormularioEtapas();ampMetaRender();
+      $('ampHitosGuardado').textContent='✓ Guardado en Supabase';
+    }catch(e){$('ampHitosGuardado').textContent='No se pudo guardar: '+e.message;alert('Error al guardar etapa: '+e.message);}
+    finally{pintarPreviaEtapas();}
+  }
+
+  // AMP | Excel masivo de etapas. Reutiliza la RPC de guardado existente y sus permisos.
+  // Las capturas de horas no se tocan. El envío es secuencial: puede haber éxito parcial si falla la red.
+  const ampLote={filas:[],cambios:[],errores:[],guardando:false};
+  function ampLoteProyectos(){
+    const todos=[...(typeof ipProyectos!=='undefined'&&Array.isArray(ipProyectos)?ipProyectos:[]),
+      ...(typeof ipDatos!=='undefined'&&Array.isArray(ipDatos)?ipDatos.map(x=>x.proyecto):[]),
+      ...(typeof ipCatalogo!=='undefined'&&Array.isArray(ipCatalogo)?ipCatalogo.map(x=>x.proyecto):[]),
+      ...[...fasesMap.values()].map(x=>x.proyecto)];
+    const map=new Map();
+    for(const nombre of todos){if(typeof nombre==='string'&&texto(nombre)&&!map.has(key(nombre)))map.set(key(nombre),texto(nombre));}
+    return [...map.values()].sort((a,b)=>a.localeCompare(b,'es'));
+  }
+  function ampLoteEstado(msg){const el=$('ampLoteEstado');if(el)el.textContent=msg;}
+  function ampLoteFecha(v){
+    if(v instanceof Date&&!isNaN(v))return `${v.getFullYear()}-${String(v.getMonth()+1).padStart(2,'0')}-${String(v.getDate()).padStart(2,'0')}`;
+    if(typeof v==='number'&&typeof XLSX!=='undefined'){
+      const f=XLSX.SSF.parse_date_code(v);
+      if(f)return `${f.y}-${String(f.m).padStart(2,'0')}-${String(f.d).padStart(2,'0')}`;
+    }
+    const t=texto(v);
+    if(/^\d{4}-\d{2}-\d{2}$/.test(t))return t;
+    const local=t.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+    if(local)return `${local[3]}-${local[2].padStart(2,'0')}-${local[1].padStart(2,'0')}`;
+    return t;
+  }
+  function ampLoteFechaValida(s){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(s))return false;
+    const d=new Date(s+'T12:00:00Z');return !isNaN(d)&&d.toISOString().slice(0,10)===s;
+  }
+  function ampLoteEtapa(v){
+    const t=key(v).replace(/[\s_\-\.]+/g,'');
+    return ({'1':'R1','R1':'R1','REVISION1':'R1',
+      '2':'R2','R2':'R2','REVISION2':'R2',
+      '3':'R3','R3':'R3','REVISION3':'R3',
+      '4':'ASBUILT','R4':'ASBUILT','ASBUILT':'ASBUILT','ASBUILT4':'ASBUILT'})[t]||'';
+  }
+  function ampLoteFirma(c){return JSON.stringify([c?.etapa_inicio||'',c?.etapa_actual||'',texto(c?.fecha_inicio_control),texto(c?.motivo)]);}
+  function ampLoteDescargar(){
+    if(typeof ipEsAdmin==='undefined'||!ipEsAdmin)return alert('Solo administradores pueden exportar configuraciones de etapas.');
+    if(!fasesConectadas)return alert('Primero conecta la configuración de etapas de Supabase.');
+    if(typeof XLSX==='undefined')return alert('No se cargó la biblioteca de Excel; revisa la conexión a internet.');
+    const proyectos=ampLoteProyectos();if(!proyectos.length)return alert('Todavía no se cargó la lista de proyectos.');
+    const tabla=[['Proyecto','Etapa inicial','Etapa actual','Fecha inicio control','Motivo','Acción','Estado anterior (solo consulta)','Preconsumo (h/plano)','Disponible inicial (h/plano)']];
+    for(const p of proyectos){
+      const c=normalizarConfig(p),faseInicio=c?.etapa_inicio||'',anterior=faseInicio?fase(faseInicio).previas:0;
+      tabla.push([p,faseInicio,c?.etapa_actual||'',c?.fecha_inicio_control||primeraCaptura(p),c?.motivo||'',
+        'AUTO',c?fase(c.etapa_actual).nombre:'SIN CONFIGURAR',c?anterior:'',c?21-anterior:'']);
+    }
+    const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(tabla);
+    ws['!cols']=[{wch:32},{wch:17},{wch:17},{wch:22},{wch:42},{wch:16},{wch:28},{wch:25},{wch:29}];
+    ws['!autofilter']={ref:'A1:I'+tabla.length};
+    // Evita cambios de formato de las fechas en las exportaciones nuevas.
+    for(let i=2;i<=tabla.length;i++){const c=ws['D'+i];if(c){c.t='s';c.v=texto(tabla[i-1][3]);c.z='@';}}
+    XLSX.utils.book_append_sheet(wb,ws,'Etapas');
+    const guia=XLSX.utils.aoa_to_sheet([
+      ['CONTROL DE HORAS AMP | ACTUALIZACIÓN MASIVA DE ETAPAS'],
+      ['Columna','Uso'],
+      ['Proyecto','No cambies el nombre del proyecto: sirve para identificarlo en Supabase.'],
+      ['Etapa inicial','R1=0 h previas; R2=8 h previas; R3=14 h previas; ASBUILT=18 h previas.'],
+      ['Etapa actual','R1, R2, R3 o ASBUILT. Debe ser igual o posterior a la etapa inicial.'],
+      ['Fecha inicio control','Fecha YYYY-MM-DD desde la cual se suman las horas reales cargadas.'],
+      ['Motivo','Descripción opcional que quedará en el historial del proyecto.'],
+      ['Acción','AUTO: solo guarda las filas modificadas. OMITIR: nunca guarda la fila. ACTUALIZAR: fuerza guardar la fila.'],
+      ['Estado anterior y horas','Columnas de consulta; no son necesarias para importar.'],
+      ['IMPORTANTE','Si avanza de R2 a R3, NO cambies la etapa inicial R2: evita duplicar el descuento de horas.'],
+      ['PROTECCIÓN','Se mostrará una vista previa antes de escribir; solamente un administrador autorizado puede guardar.'],
+      ['HISTORIAL','Cada proyecto actualizado genera su registro de auditoría usando el mismo método del formulario individual.'],
+      ['PERMISOS','No desactives la autenticación ni compartas credenciales de Supabase dentro del archivo.']
+    ]);
+    guia['!cols']=[{wch:30},{wch:102}];
+    XLSX.utils.book_append_sheet(wb,guia,'Instrucciones');
+    XLSX.writeFile(wb,'AMP_etapas_todos_los_proyectos.xlsx');
+    ampLoteEstado('Excel generado con '+proyectos.length+' proyectos. Edita etapas y súbelo para previsualizar los cambios.');
+  }
+  function ampLoteRestablecer(mensaje){
+    ampLote.filas=[];ampLote.cambios=[];ampLote.errores=[];
+    if($('ampLotePrevia'))$('ampLotePrevia').hidden=true;
+    if($('ampLoteErrores')){$('ampLoteErrores').hidden=true;$('ampLoteErrores').textContent='';}
+    if($('ampLoteAdvertencia')){$('ampLoteAdvertencia').hidden=true;$('ampLoteAdvertencia').textContent='';}
+    if($('ampLoteArchivo'))$('ampLoteArchivo').value='';
+    if($('ampLoteGuardar'))$('ampLoteGuardar').disabled=true;
+    ampLoteEstado(mensaje||'Descarga la lista de proyectos y edita las etapas que necesites.');
+  }
+  function ampLoteValidar(filas){
+    const errores=[],cambios=[],conocidos=new Map(ampLoteProyectos().map(n=>[key(n),n]));
+    const encontrados=new Set();let sinCambio=0,omitidos=0,riesgos=0;
+    for(const f of filas){
+      const linea=f.linea,nombre=texto(f.proyecto),accion=key(f.accion||'AUTO');
+      if(!nombre)continue;
+      if(accion==='OMITIR'){omitidos++;continue;}
+      if(!['AUTO','ACTUALIZAR'].includes(accion)){errores.push('Fila '+linea+': acción inválida (AUTO, OMITIR o ACTUALIZAR).');continue;}
+      const k=key(nombre);
+      if(encontrados.has(k)){errores.push('Fila '+linea+': proyecto duplicado «'+nombre+'».');continue;}
+      encontrados.add(k);
+      const oficial=conocidos.get(k);if(!oficial){errores.push('Fila '+linea+': proyecto «'+nombre+'» desconocido o no cargado.');continue;}
+      const previo=normalizarConfig(oficial),inicio=ampLoteEtapa(f.inicio),actual=ampLoteEtapa(f.actual),fecha=ampLoteFecha(f.fecha),motivo=texto(f.motivo).slice(0,250);
+      if(!texto(f.inicio)&&!texto(f.actual)&&!previo&&accion==='AUTO'){sinCambio++;continue;}
+      if(!inicio||!actual){errores.push('Fila '+linea+' ('+oficial+'): debes indicar ambas etapas (R1, R2, R3 o ASBUILT).');continue;}
+      if(ETAPAS.findIndex(x=>x.id===actual)<ETAPAS.findIndex(x=>x.id===inicio)){
+        errores.push('Fila '+linea+' ('+oficial+'): la etapa actual no puede ser anterior a la inicial.');continue;
+      }
+      if(!ampLoteFechaValida(fecha)){errores.push('Fila '+linea+' ('+oficial+'): fecha inválida; usa YYYY-MM-DD.');continue;}
+      const nuevo={etapa_inicio:inicio,etapa_actual:actual,fecha_inicio_control:fecha,motivo};
+      if(accion==='AUTO'&&ampLoteFirma(previo)===ampLoteFirma(nuevo)){sinCambio++;continue;}
+      const riesgo=!!previo&&(previo.etapa_inicio!==inicio||texto(previo.fecha_inicio_control)!==fecha);
+      if(riesgo)riesgos++;
+      cambios.push({linea,proyecto:oficial,...nuevo,riesgo,baseVersion:ampLoteFirma(previo),
+        descripcion:!previo?'Configuración inicial':riesgo?'RECALCULA PRECONSUMO':previo.etapa_actual!==actual?'Avance de etapa':'Actualización de motivo'});
+    }
+    return {errores,cambios,sinCambio,omitidos,riesgos};
+  }
+  function ampLotePintarPrevia(){
+    const el=$('ampLotePrevia'),r=ampLoteValidar(ampLote.filas);ampLote.cambios=r.cambios;ampLote.errores=r.errores;
+    const error=$('ampLoteErrores');error.hidden=!r.errores.length;
+    error.textContent=r.errores.length?'Errores encontrados (deben corregirse en Excel y volver a cargar):\n'+r.errores.slice(0,18).join('\n')+(r.errores.length>18?'\n… y '+(r.errores.length-18)+' más.':''):'';
+    const alerta=$('ampLoteAdvertencia');alerta.hidden=!r.riesgos;
+    alerta.textContent=r.riesgos?'Atención: '+r.riesgos+' proyecto(s) cambiarán la etapa inicial o la fecha de comienzo. Esto recalcula las horas ya asumidas y el histórico de presupuesto. Revisa cuidadosamente antes de confirmar.':'';
+    el.hidden=false;
+    $('ampLoteConteo').textContent=`${r.cambios.length} proyecto(s) a guardar · ${r.sinCambio} sin cambios · ${r.omitidos} omitidos · ${r.errores.length} errores.`;
+    $('ampLoteFilas').innerHTML=r.cambios.slice(0,250).map(x=>'<tr><td><strong>'+escapeHtml(x.proyecto)+'</strong></td><td>'+escapeHtml(fase(x.etapa_inicio).nombre)+'</td><td>'+escapeHtml(fase(x.etapa_actual).nombre)+'</td><td>'+escapeHtml(x.fecha_inicio_control)+'</td><td><span class="amp-lote-badge'+(x.riesgo?' danger':' change')+'">'+escapeHtml(x.descripcion)+'</span></td></tr>').join('')||'<tr><td colspan="5">Ningún proyecto requiere cambios.</td></tr>';
+    $('ampLoteGuardar').disabled=!!r.errores.length||!r.cambios.length||!fasesConectadas||ampLote.guardando;
+    ampLoteEstado('Archivo revisado. '+r.cambios.length+' cambio(s) detectado(s). Ninguna configuración se ha guardado todavía.');
+  }
+  async function ampLoteLeerArchivo(file){
+    ampLoteRestablecer('Leyendo archivo Excel...');
+    if(!file)return;
+    if(typeof ipEsAdmin==='undefined'||!ipEsAdmin)return ampLoteEstado('Solo administradores pueden importar etapas.');
+    if(!fasesConectadas)return ampLoteEstado('No se pudo conectar a la configuración de etapas de Supabase.');
+    if(typeof XLSX==='undefined')return ampLoteEstado('No se cargó la biblioteca de Excel.');
+    if(file.size>5*1024*1024)return ampLoteEstado('Archivo demasiado grande (máximo 5 MB).');
+    try{
+      const wb=XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:true});
+      const hoja=wb.Sheets['Etapas']||wb.Sheets[wb.SheetNames[0]];
+      if(!hoja)throw new Error('El archivo no contiene hojas.');
+      const matriz=XLSX.utils.sheet_to_json(hoja,{header:1,defval:'',raw:true});
+      const index=(matriz[0]||[]).map(v=>key(v));
+      const n={proyecto:index.indexOf('PROYECTO'),inicio:index.indexOf('ETAPA INICIAL'),actual:index.indexOf('ETAPA ACTUAL'),fecha:index.indexOf('FECHA INICIO CONTROL'),motivo:index.indexOf('MOTIVO'),accion:index.indexOf('ACCION')};
+      if([n.proyecto,n.inicio,n.actual,n.fecha].some(v=>v<0))throw new Error('Faltan encabezados: Proyecto, Etapa inicial, Etapa actual y Fecha inicio control. Descarga la plantilla desde AMP.');
+      if(matriz.length>1501)throw new Error('El Excel tiene demasiadas filas (máximo 1500 proyectos).');
+      ampLote.filas=matriz.slice(1).map((r,i)=>({linea:i+2,proyecto:r[n.proyecto],inicio:r[n.inicio],actual:r[n.actual],fecha:r[n.fecha],motivo:n.motivo>=0?r[n.motivo]:'',accion:n.accion>=0?r[n.accion]:'AUTO'})).filter(x=>texto(x.proyecto));
+      if(!ampLote.filas.length)throw new Error('No se encontraron proyectos en la hoja.');
+      ampLotePintarPrevia();
+    }catch(e){ampLoteRestablecer('No se pudo leer el Excel: '+(e?.message||e));}
+  }
+  async function ampLoteGuardar(){
+    if(ampLote.guardando||!ampLote.cambios.length||ampLote.errores.length)return;
+    if(!fasesConectadas||!ipEsAdmin)return alert('No tienes permiso para guardar etapas.');
+    const cambios=[...ampLote.cambios];
+    const peligros=cambios.filter(x=>x.riesgo).length;
+    if(!confirm('¿Guardar '+cambios.length+' proyecto(s) en Supabase?'+(peligros?'\nATENCIÓN: '+peligros+' cambiarán preconsumo o fecha inicial.':'')+'\nSe mantendrá un historial de cambios y no se tocarán los registros de horas.'))return;
+    ampLote.guardando=true;$('ampLoteGuardar').disabled=true;$('ampLoteCancelar').disabled=true;
+    let ok=0,fallidos=[];
+    try{
+      // Releer justo antes del envío para no pisar cambios recientes hechos por otro administrador.
+      const leido=await supabaseClient.rpc('amp_etapas_proyecto_leer');
+      if(leido.error)throw leido.error;
+      const actual=new Map((leido.data?.configuraciones||[]).map(c=>[key(c.proyecto),c]));
+      for(const item of cambios){
+        if(ampLoteFirma(actual.get(key(item.proyecto)))!==item.baseVersion)
+          throw new Error('La configuración de «'+item.proyecto+'» cambió en Supabase desde la vista previa. Vuelve a cargar el archivo para revisarla.');
+      }
+      for(let i=0;i<cambios.length;i++){
+        const x=cambios[i];ampLoteEstado('Guardando '+(i+1)+' de '+cambios.length+': '+x.proyecto+'…');
+        try{
+          const respuesta=await supabaseClient.rpc('amp_etapas_proyecto_guardar',{
+            p_proyecto:x.proyecto,p_etapa_inicio:x.etapa_inicio,p_etapa_actual:x.etapa_actual,
+            p_fecha_inicio_control:x.fecha_inicio_control,p_motivo:x.motivo
+          });
+          if(respuesta.error)throw respuesta.error;
+          ok++;
+        }catch(e){fallidos.push(x.proyecto+': '+(e?.message||e));}
+      }
+      await cargarEtapas();rellenarFormularioEtapas();if(typeof ampMetaRender==='function')ampMetaRender();
+      ampLoteEstado('Guardado finalizado: '+ok+' de '+cambios.length+' proyecto(s) actualizados.'+(fallidos.length?' '+fallidos.length+' fallaron; revisa errores y vuelve a descargar el Excel.':''));
+      $('ampLoteErrores').hidden=!fallidos.length;
+      $('ampLoteErrores').textContent=fallidos.length?'No guardados:\n'+fallidos.join('\n'):'';
+      ampLote.filas=[];ampLote.cambios=[];$('ampLotePrevia').hidden=true;$('ampLoteArchivo').value='';
+    }catch(e){
+      ampLoteEstado('Guardado detenido: '+(e?.message||e)+' No se han modificado las horas.');
+    }finally{ampLote.guardando=false;$('ampLoteCancelar').disabled=false;$('ampLoteGuardar').disabled=!ampLote.cambios.length;}
+  }
+  document.addEventListener('DOMContentLoaded',()=>{
+    $('ampLoteDescargar')?.addEventListener('click',ampLoteDescargar);
+    $('ampLoteArchivo')?.addEventListener('change',e=>ampLoteLeerArchivo(e.target.files?.[0]));
+    $('ampLoteGuardar')?.addEventListener('click',ampLoteGuardar);
+    $('ampLoteCancelar')?.addEventListener('click',()=>ampLoteRestablecer());
+  });
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    $('ampHitosProyecto')?.addEventListener('change',rellenarFormularioEtapas);
+    $('ampHitosInicio')?.addEventListener('change',pintarPreviaEtapas);
+    $('ampHitosActual')?.addEventListener('change',pintarPreviaEtapas);
+    $('ampHitosFecha')?.addEventListener('change',pintarPreviaEtapas);
+    $('ampHitosGuardar')?.addEventListener('click',guardarEtapa);
+    for(const e of ETAPAS)$('ampPresupuesto'+e.id)?.addEventListener('input',actualizarPreviaPresupuesto);
+    $('ampPresupuestoReponer')?.addEventListener('click',llenarPresupuestoFormulario);
+    $('ampPresupuestoGuardar')?.addEventListener('click',guardarPresupuestoGlobal);
+  });
   const resolverNombre=(uid,propuesto)=>{
     const id=texto(uid);
     if(texto(propuesto))return texto(propuesto);
@@ -6500,9 +7074,55 @@ ipEl('ipCopiarInforme').addEventListener('click',async()=>{const t=ipEl('ipCopia
     }catch(e){datosPersonas.error=e?.message||String(e);console.warn('Faltan identificadores de empleados en indicadores:',datosPersonas.error);}
   };
   function periodoValido(tipo,fecha){return tipo==='total'||(tipo==='anio'?/^\d{4}$/:tipo==='semana'?/^\d{4}-W\d{2}$/:/^\d{4}-\d{2}$/).test(fecha);}
+  // Los filtros muestran solamente proyectos con HORAS registradas en el período elegido.
+  // Se respeta una selección parcial si sus proyectos siguen teniendo horas; cuando ninguno
+  // coincide con el nuevo período, se eligen automáticamente todos los proyectos disponibles.
+  let ultimoFiltroSelector='';
+  function actualizarProyectosDelPeriodo(){
+    const selector=$('ipInformeProyecto'),tipo=$('ampMetaTipo')?.value||'mes',fecha=$('ampMetaFecha')?.value||'';
+    if(!selector||typeof ipDatos==='undefined'||!Array.isArray(ipDatos))return;
+    const valido=periodoValido(tipo,fecha),activos=new Map();
+    if(valido)for(const r of ipDatos){
+      const h=Number(r.horas),nombre=texto(r.proyecto);
+      if(nombre&&Number.isFinite(h)&&h>0&&(tipo==='total'||ipPeriodoIncluye(r,tipo,fecha))){
+        const id=key(nombre);if(!activos.has(id))activos.set(id,{nombre,horas:0});activos.get(id).horas+=h;
+      }
+    }
+    const nombres=[...activos.values()].sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
+    const periodo=tipo+'|'+fecha+'|'+ipDatos.length;
+    const anteriores=[...selector.options],anterioresElegidos=new Set(anteriores.filter(o=>o.selected).map(o=>key(o.value)));
+    const anteriorTodos=anteriores.length>0&&anteriores.every(o=>o.selected);
+    const actual=anteriores.map(o=>key(o.value)).join('|'),siguiente=nombres.map(o=>key(o.nombre)).join('|');
+    const cambioPeriodo=periodo!==ultimoFiltroSelector;
+    if(!cambioPeriodo&&actual===siguiente)return;
+    const mantenerTodos=cambioPeriodo&&(anteriorTodos||!anteriores.length);
+    const interseccion=nombres.some(o=>anterioresElegidos.has(key(o.nombre)));
+    selector.innerHTML=nombres.map(p=>'<option value="'+escapeHtml(p.nombre)+'">'+escapeHtml(p.nombre)+'</option>').join('');
+    [...selector.options].forEach(o=>o.selected=mantenerTodos||anterioresElegidos.has(key(o.value))||(cambioPeriodo&&!interseccion));
+    ultimoFiltroSelector=periodo;
+    if(typeof ipInformeActualizarSelector==='function')ipInformeActualizarSelector();
+    const advertencia=$('ampMetaPeriodoProyectos');
+    if(advertencia)advertencia.textContent=nombres.length?nombres.length+' proyecto'+(nombres.length===1?'':'s')+' con horas registradas en el período. Solo estos pueden seleccionarse.':'No hay proyectos con horas registradas en este período.';
+  }
+  window.ampMetaActualizarProyectos=actualizarProyectosDelPeriodo;
+  // El alcance es el catálogo completo disponible más entregables históricos del proyecto.
+  // No depende de qué entregables recibieron horas directas durante el mes elegido.
+  function obtenerAlcanceCompleto(nombre){
+    const mapa=new Map(),alta=codigo=>{if(entregableOk(codigo)&&!mapa.has(key(codigo)))mapa.set(key(codigo),texto(codigo));};
+    if(typeof ipCatalogo!=='undefined'&&Array.isArray(ipCatalogo))
+      for(const e of ipCatalogo)if(key(e.proyecto)===key(nombre))alta(e.nombre);
+    if(typeof ipDatos!=='undefined'&&Array.isArray(ipDatos))
+      for(const r of ipDatos)if(key(r.proyecto)===key(nombre)&&esDirecta(r))alta(r.entregable);
+    return mapa;
+  }
+
   // Separa las horas por proyecto. Las horas indirectas nunca se multiplican.
   function repartir(rows,proyectos){
-    const salida=new Map(proyectos.map(nombre=>[key(nombre),{nombre,horas:0,directas:0,indirectas:0,pendientes:0,entregables:new Map(),capturas:0,personas:new Set()}]));
+    const salida=new Map(proyectos.map(nombre=>{
+      const catalogo=obtenerAlcanceCompleto(nombre);
+      const entregables=new Map([...catalogo].map(([id,codigo])=>[id,{codigo,directas:0,indirectas:0,total:0,autores:new Map(),autoresCompletos:false}]));
+      return [key(nombre),{nombre,horas:0,directas:0,indirectas:0,pendientes:0,entregables,capturas:0,personas:new Set()}];
+    }));
     for(const r of rows){
       const p=salida.get(key(r.proyecto));if(!p)continue;
       const h=Number(r.horas);
@@ -6519,6 +7139,7 @@ ipEl('ipCopiarInforme').addEventListener('click',async()=>{const t=ipEl('ipCopia
     for(const p of salida.values()){
       const n=p.entregables.size;
       if(n){
+        // Nunca se reparte sólo entre los entregables con captura del período.
         const cuota=p.indirectas/n;
         for(const e of p.entregables.values()){e.indirectas=cuota;e.total=e.directas+cuota;}
       }else p.pendientes=p.indirectas;
@@ -6555,8 +7176,8 @@ ipEl('ipCopiarInforme').addEventListener('click',async()=>{const t=ipEl('ipCopia
   }
   function resumenAutores(e,excel=false){
     const personas=[...e.autores.values()].sort((a,b)=>b.horas-a.horas||a.nombre.localeCompare(b.nombre,'es'));
-    if(excel)return personas.map(p=>p.nombre+' ('+fmt(p.horas)+' h directas)').join('; ')+(e.autoresCompletos?'':(personas.length?'; DATOS INCOMPLETOS':'Nombres pendientes de recuperar'));
-    if(!personas.length)return '<span class="amp-meta-authors-warning">Nombres no disponibles. Actualiza el SQL.</span>';
+    if(excel){if(e.directas<0.005)return 'Sin capturas directas en el período';return personas.map(p=>p.nombre+' ('+fmt(p.horas)+' h directas)').join('; ')+(e.autoresCompletos?'':(personas.length?'; DATOS INCOMPLETOS':'Nombres pendientes de recuperar'));}
+    if(!personas.length)return e.directas<0.005?'<span class="amp-meta-authors-muted">Sin horas directas en este período</span>':'<span class="amp-meta-authors-warning">Nombres no disponibles. Revisa el SQL.</span>';
     const chip=p=>'<span class="amp-meta-author" title="'+escapeHtml(p.nombre)+' registró '+fmt(p.horas)+' h directamente"><span>'+escapeHtml(p.nombre)+'</span><small>'+fmt(p.horas)+' h</small></span>';
     const resumen=personas.slice(0,2).map(chip).join('');
     const extra=personas.length>2?'<details class="amp-meta-authors-more"><summary>Ver '+(personas.length-2)+' persona(s) más</summary>'+personas.slice(2).map(chip).join('')+'</details>':'';
@@ -6566,16 +7187,66 @@ ipEl('ipCopiarInforme').addEventListener('click',async()=>{const t=ipEl('ipCopia
     const busqueda=key($('ampMetaBuscarEntregable')?.value||'');
     const filas=desgloseActual.filter(e=>!busqueda||key(e.proyecto).includes(busqueda)||key(e.codigo).includes(busqueda)||[...e.autores.values()].some(a=>key(a.nombre).includes(busqueda)));
     $('ampMetaDetalleFilas').innerHTML=filas.map(e=>{
-      const dif=e.total-META_HORAS;
-      return '<tr><td>'+escapeHtml(e.proyecto)+'</td><td><strong>'+escapeHtml(e.codigo)+'</strong></td><td class="amp-meta-authors-cell">'+resumenAutores(e)+'</td><td>'+fmt(e.directas)+' h</td><td>'+fmt(e.indirectas)+' h</td><td><strong>'+fmt(e.total)+' h</strong></td><td><span class="amp-meta-pill'+(dif<=.00000001?' ok':' over')+'">'+(dif<=.00000001?'En meta':'+'+fmt(dif)+' h')+'</span></td></tr>';
-    }).join('')||'<tr><td colspan="7">Sin entregables coincidentes.</td></tr>';
+      const eq=e.consumoEquivalente,resto=e.disponible,dif=eq===null?null:eq-META_HORAS;
+      return '<tr><td>'+escapeHtml(e.proyecto)+'</td><td><strong>'+escapeHtml(e.codigo)+'</strong></td><td class="amp-meta-authors-cell">'+resumenAutores(e)+'</td><td>'+fmt(e.directas)+' h</td><td>'+fmt(e.indirectas)+' h</td><td>'+fmt(e.total)+' h</td><td>'+fmt(e.preconsumo)+' h</td><td>'+fmt(e.acumulado)+' h</td><td><strong>'+(eq===null?'—':fmt(eq)+' h')+'</strong></td><td>'+(resto===null?'—':fmt(resto)+' h')+'</td><td><span class="amp-meta-pill'+(dif===null?'':dif<=.00000001?' ok':' over')+'">'+(dif===null?'Sin etapa vigente':dif<=.00000001?'En meta':'+'+fmt(dif)+' h')+'</span></td></tr>';
+    }).join('')||'<tr><td colspan="11">Sin entregables coincidentes.</td></tr>';
   }
   function exportarDetalle(){
     if(typeof XLSX==='undefined')return alert('No se pudo cargar la biblioteca Excel.');
     if(!desgloseActual.length)return alert('No hay entregables con capturas en la selección.');
-    const filas=desgloseActual.map(e=>({'Proyecto':e.proyecto,'Entregable':e.codigo,'Personas con capturas directas':resumenAutores(e,true),'Número de personas':e.autores.size,'Horas directas':Number(e.directas.toFixed(6)),'Horas indirectas distribuidas':Number(e.indirectas.toFixed(6)),'Total horas':Number(e.total.toFixed(6)),'Meta horas':META_HORAS,'Desviación':Number((e.total-META_HORAS).toFixed(6))}));
-    const libro=XLSX.utils.book_new();XLSX.utils.book_append_sheet(libro,XLSX.utils.json_to_sheet(filas),'Reparto por entregable');
-    XLSX.writeFile(libro,'AMP_horas_distribuidas_y_personas.xlsx');
+    const filas=desgloseActual.map(e=>({'Proyecto':e.proyecto,'Entregable':e.codigo,
+      'Personas con capturas directas en período':resumenAutores(e,true),'Número personas (directas)':e.autores.size,
+      'Horas directas período':Number(e.directas.toFixed(6)),
+      'Horas indirectas período':Number(e.indirectas.toFixed(6)),
+      'Total período':Number(e.total.toFixed(6)),
+      'Etapa actual':e.etapaActual,'Etapa inicial seguimiento':e.etapaInicial,
+      'Fecha inicio de seguimiento':e.fechaInicio,
+      'Horas etapas anteriores asumidas':e.preconsumo,
+      'Horas reales acumuladas por entregable':Number(e.acumulado.toFixed(6)),
+      'Consumo presupuestario equivalente':e.consumoEquivalente===null?null:Number(e.consumoEquivalente.toFixed(6)),
+      'Horas disponibles hasta 21 h':e.disponible===null?null:Number(e.disponible.toFixed(6)),
+      'Meta horas':META_HORAS}));
+    const libro=XLSX.utils.book_new();XLSX.utils.book_append_sheet(libro,XLSX.utils.json_to_sheet(filas),'Horas y etapas por entregable');
+    XLSX.writeFile(libro,'AMP_horas_entregables_por_etapa.xlsx');
+  }
+  function exportarProyectos(){
+    if(typeof XLSX==='undefined')return alert('No se pudo cargar la biblioteca de Excel.');
+    if(!resumenProyectosActual.length)return alert('No hay proyectos con horas para exportar.');
+    const archivo=XLSX.utils.book_new();
+    const periodo=$('ampMetaTipo').value,fecha=$('ampMetaFecha').value;
+    const filas=resumenProyectosActual.map(p=>({
+      'Proyecto':p.nombre,'Horas válidas del período':Number(p.horas.toFixed(6)),
+      'Horas directas período':Number(p.directas.toFixed(6)),
+      'Horas indirectas repartidas período':Number((p.indirectas-p.pendientes).toFixed(6)),
+      'Horas sin alcance':Number(p.pendientes.toFixed(6)),
+      'Entregables del proyecto':p.entregables.size,
+      'Personas diferentes del período':p.personasVerificadas?p.personas.size:'No disponible',
+      'Etapa actual':p.evaluacion.config?fase(p.evaluacion.config.etapa_actual).nombre:'SIN CONFIGURAR',
+      'Etapa inicial del control':p.evaluacion.config?fase(p.evaluacion.config.etapa_inicio).nombre:'SIN CONFIGURAR',
+      'Fecha inicio del control':p.evaluacion.inicio,
+      'Horas anteriores asumidas / entregable':p.evaluacion.base,
+      'Horas reales acumuladas / entregable':p.evaluacion.promedioReal===null?null:Number(p.evaluacion.promedioReal.toFixed(6)),
+      'Consumo equivalente / entregable':p.evaluacion.equivalente===null?null:Number(p.evaluacion.equivalente.toFixed(6)),
+      'Horas disponibles / entregable':p.evaluacion.disponible===null?null:Number(p.evaluacion.disponible.toFixed(6)),
+      'Presupuesto total horas proyecto':21*p.entregables.size,
+      'Consumo equivalente horas proyecto':Number(p.evaluacion.totalEquivalente.toFixed(6)),
+      'Estado':!p.entregables.size?'Sin entregables':p.evaluacion.antes?'Anterior al inicio del control':!p.evaluacion.config?'Etapa sin configurar':p.evaluacion.disponible>=-.000001?'En meta':'Sobre meta'
+    }));
+    const hoja=XLSX.utils.json_to_sheet(filas);hoja['!cols']=Object.keys(filas[0]).map((x,i)=>({wch:i===0?30:Math.max(20,Math.min(48,x.length+3))}));
+    hoja['!autofilter']={ref:'A1:Q'+(filas.length+1)};
+    XLSX.utils.book_append_sheet(archivo,hoja,'Proyectos y etapas');
+    const condiciones=[
+      {Concepto:'Tipo período',Valor:periodo},{Concepto:'Período seleccionado',Valor:periodo==='total'?'Histórico completo':fecha},
+      {Concepto:'Proyectos',Valor:resumenProyectosActual.map(p=>p.nombre).join('; ')},
+      {Concepto:'Etapas',Valor:ETAPAS.map(e=>e.id+'='+fmt(e.horas)+' h').join('; ')+' por entregable (configuración global).'},
+      {Concepto:'Preconsumo',Valor:'Se presupuestan como consumidas las etapas ANTERIORES A LA ETAPA DE INICIO DEL CONTROL (una sola vez).'},
+      {Concepto:'Horas reales',Valor:'Acumuladas desde la fecha inicio de seguimiento hasta el fin del período elegido, directas al entregable e indirectas distribuidas al catálogo completo.'},
+      {Concepto:'Consumo equivalente',Valor:'Horas presupuestarias previas por entregable + horas reales acumuladas por entregable.'},
+      {Concepto:'Disponibilidad',Valor:'21 h - consumo equivalente. Un valor negativo refleja sobreconsumo.'}
+    ];
+    const contexto=XLSX.utils.json_to_sheet(condiciones);contexto['!cols']=[{wch:28},{wch:110}];
+    XLSX.utils.book_append_sheet(archivo,contexto,'Reglas y filtros');
+    XLSX.writeFile(archivo,'AMP_proyectos_etapas_'+(periodo==='total'?'historico':fecha)+'.xlsx');
   }
   function init(){
     const destino=$('ampMetaProjectMount'),selector=$('ipInformeSelector');if(!destino||!selector)return;
@@ -6598,6 +7269,8 @@ ipEl('ipCopiarInforme').addEventListener('click',async()=>{const t=ipEl('ipCopia
     $('ampMetaActualizar').addEventListener('click',()=>{if(typeof ipCargar==='function')ipCargar();});
     $('ampMetaBuscarEntregable').addEventListener('input',renderDetalle);
     $('ampMetaExcelDetalle').addEventListener('click',exportarDetalle);
+    $('ampMetaExcelProyectos').addEventListener('click',exportarProyectos);
+    actualizarUIEtapas();
     $('ampMetaAvanzado').addEventListener('toggle',()=>{
       if($('ampMetaAvanzado').open){requestAnimationFrame(()=>{if(typeof ipGraficas!=='undefined')Object.values(ipGraficas).forEach(g=>{try{g.resize()}catch(_){}})});}
     });
@@ -6605,12 +7278,13 @@ ipEl('ipCopiarInforme').addEventListener('click',async()=>{const t=ipEl('ipCopia
   }
   window.ampMetaRender=function(){
     if(!$('ampMetaResults'))return;
+    actualizarProyectosDelPeriodo();
     const tipo=$('ampMetaTipo').value,fecha=$('ampMetaFecha').value,proyectos=[...$('ipInformeProyecto').selectedOptions].map(x=>x.value),
       seleccion=new Set(proyectos.map(key)),fechaOK=periodoValido(tipo,fecha),
       datos=typeof ipDatos!=='undefined'&&Array.isArray(ipDatos)?ipDatos:[],totalProyectos=proyectos.length;
     const aviso=$('ampMetaEmpty');
     if(!totalProyectos||!fechaOK){
-      aviso.hidden=false;aviso.textContent=!totalProyectos?'Selecciona uno o varios proyectos para consultar las horas.':'Selecciona una fecha válida para calcular el promedio.';
+      aviso.hidden=false;aviso.textContent=!totalProyectos?'Selecciona uno o varios proyectos con horas en ese período.':'Selecciona una fecha válida para calcular el promedio.';
       $('ampMetaResults').hidden=true;return;
     }
     aviso.hidden=true;$('ampMetaResults').hidden=false;
@@ -6623,11 +7297,24 @@ ipEl('ipCopiarInforme').addEventListener('click',async()=>{const t=ipEl('ipCopia
     const porProyecto=repartir(validos,proyectos);
     const todos=[...porProyecto.values()];
     const proyectosConDatos=todos.filter(p=>p.capturas>0).sort((a,b)=>b.horas-a.horas||a.nombre.localeCompare(b.nombre,'es'));
-    const horas=todos.reduce((s,p)=>s+p.horas,0),directas=todos.reduce((s,p)=>s+p.directas,0),indirectas=todos.reduce((s,p)=>s+p.indirectas,0),pendientes=todos.reduce((s,p)=>s+p.pendientes,0),
-      entregables=todos.reduce((s,p)=>s+p.entregables.size,0),promedio=entregables>0?(horas-pendientes)/entregables:null,
+    const horas=todos.reduce((s,p)=>s+p.horas,0),directas=todos.reduce((s,p)=>s+p.directas,0),indirectas=todos.reduce((s,p)=>s+p.indirectas,0),pendientes=todos.reduce((s,p)=>s+p.pendientes,0);
+    // El presupuesto se mide ACUMULADO desde el inicio del seguimiento, no se reinicia cada mes.
+    const cierre=fechaUltima(tipo,fecha);
+    for(const p of todos)p.evaluacion=evaluarEtapa(p,cierre);
+    const aplicables=todos.filter(p=>p.entregables.size&&!p.evaluacion.antes&&p.evaluacion.config),
+      entregables=aplicables.reduce((s,p)=>s+p.entregables.size,0),
+      consumoGlobal=aplicables.reduce((s,p)=>s+p.evaluacion.totalEquivalente,0),
+      promedio=entregables>0?consumoGlobal/entregables:null,
       diferencia=promedio===null?null:promedio-META_HORAS,cumple=promedio!==null&&promedio<=META_HORAS;
     enlazarAutores(porProyecto,validos,enPeriodo,noExcluido);
-    desgloseActual=proyectosConDatos.flatMap(p=>[...p.entregables.values()].map(e=>({...e,proyecto:p.nombre}))).sort((a,b)=>a.proyecto.localeCompare(b.proyecto,'es')||b.total-a.total||a.codigo.localeCompare(b.codigo,'es'));
+    desgloseActual=proyectosConDatos.flatMap(p=>[...p.entregables.values()].map(e=>{
+      const info=p.evaluacion,his=info.entregables.get(key(e.codigo)),acumulado=his?.total||0,
+        preconsumo=info.antes?0:info.base,consumoEquivalente=info.antes||!info.config?null:preconsumo+acumulado;
+      return {...e,proyecto:p.nombre,preconsumo,acumulado,
+        consumoEquivalente,disponible:consumoEquivalente===null?null:21-consumoEquivalente,
+        etapaActual:info.config?fase(info.config.etapa_actual).nombre:'Sin configurar',
+        etapaInicial:info.config?fase(info.config.etapa_inicio).nombre:'Sin configurar',fechaInicio:info.inicio};
+    })).sort((a,b)=>a.proyecto.localeCompare(b.proyecto,'es')||(b.consumoEquivalente||0)-(a.consumoEquivalente||0)||a.codigo.localeCompare(b.codigo,'es'));
     // Si la RPC original omite usuario_id, no mostrar 0 como si fuese una cifra comprobada.
     let personalCompleto=validos.every(r=>Boolean(texto(r.usuario_id))),usuariosValidos=validos;
     if(!personalCompleto&&Array.isArray(datosPersonas.rows)){
@@ -6639,27 +7326,39 @@ ipEl('ipCopiarInforme').addEventListener('click',async()=>{const t=ipEl('ipCopia
     const personasGlobal=new Set();
     for(const p of porProyecto.values())p.personas=new Set();
     if(personalCompleto)for(const r of usuariosValidos){const uid=texto(r.usuario_id),p=porProyecto.get(key(r.proyecto));if(uid&&p){p.personas.add(uid);personasGlobal.add(uid);}}
+    resumenProyectosActual=proyectosConDatos.map(p=>({...p,personasVerificadas:personalCompleto}));
     $('ampMetaHoras').textContent=fmt(horas)+' h';$('ampMetaEntregables').textContent=fmt(entregables,0);
     $('ampMetaPersonas').textContent=personalCompleto?fmt(personasGlobal.size,0):'—';
     const avisoPersonas=$('ampMetaPersonasAviso');avisoPersonas.hidden=personalCompleto;
     avisoPersonas.textContent=personalCompleto?'':'No se puede contar personal de forma confiable: la función de indicadores no entrega usuario_id. Instala el complemento SQL amp_indicadores_personas_lectura para consultar únicamente los empleados autorizados. No se mostrará un cero falso.';
     $('ampMetaPromedio').textContent=promedio===null?'—':fmt(promedio)+' h';
     const estado=$('ampMetaEstado');estado.className='amp-meta-status'+(promedio===null?'':cumple?' ok':' over');
-    estado.textContent=promedio===null?'Sin entregables con horas':cumple?'Dentro de la meta':'Por encima de la meta';
-    $('ampMetaDiferencia').textContent=promedio===null?'Meta: 21 h por entregable':(Math.abs(diferencia)<.005?'Exactamente en la meta':(diferencia>0?'+':'−')+fmt(Math.abs(diferencia))+' h frente a la meta');
+    estado.textContent=promedio===null?'Sin etapas configuradas':cumple?'Dentro de la meta':'Por encima de la meta';
+    $('ampMetaDiferencia').textContent=promedio===null?'Meta: 21 h por entregable':(Math.abs(diferencia)<.005?'Exactamente 21 h':(diferencia>0?'+':'−')+fmt(Math.abs(diferencia))+' h frente a las 21 h totales');
     const escala=Math.max(42,(promedio||0)*1.08),barra=$('ampMetaBarra');barra.style.width=String(Math.max(0,Math.min(100,(promedio||0)/escala*100)))+'%';barra.classList.toggle('over',diferencia>0);
     const track=document.querySelector('.amp-meta-meter-target');if(track)track.style.left=String(META_HORAS/escala*100)+'%';$('ampMetaEscala').textContent='Meta 21 h · escala '+fmt(escala,0)+' h';
     $('ampMetaContador').textContent=proyectosConDatos.length+' proyecto'+(proyectosConDatos.length===1?'':'s')+' con capturas';
     const reparto=indirectas-pendientes;
     $('ampMetaDesglose').innerHTML='<span>Directas: <strong>'+fmt(directas)+' h</strong></span><span>Indirectas repartidas: <strong>'+fmt(reparto)+' h</strong></span>'+(pendientes>0?'<span>Indirectas pendientes (sin entregables): <strong>'+fmt(pendientes)+' h</strong></span>':'');
     $('ampMetaFilas').innerHTML=proyectosConDatos.map(p=>{
-      const cantidad=p.entregables.size,media=cantidad?(p.horas-p.pendientes)/cantidad:null,ok=media!==null&&media<=META_HORAS;
-      const clase=media===null?'':ok?' ok':' over',label=media===null?'Sin entregables':ok?'En meta':'Sobre meta';
-      return '<tr><td><strong>'+escapeHtml(p.nombre)+'</strong></td><td>'+fmt(p.horas)+' h</td><td>'+fmt(p.directas)+' h</td><td>'+fmt(p.indirectas-p.pendientes)+' h</td><td>'+cantidad+'</td><td>'+(personalCompleto?p.personas.size:'—')+'</td><td><strong>'+(media===null?'—':fmt(media)+' h')+'</strong></td><td><span class="amp-meta-pill'+clase+'">'+label+'</span></td></tr>';
-    }).join('')||'<tr><td class="amp-meta-row-empty" colspan="8">No hay capturas válidas en la selección.</td></tr>';
+      const cantidad=p.entregables.size,info=p.evaluacion,media=info.equivalente,
+        ok=media!==null&&media<=META_HORAS,
+        clase=media===null?'':ok?' ok':' over',
+        label=!cantidad?'Sin catálogo':info.antes?'Antes del control':!info.config?'Etapa sin configurar':ok?'En meta':'Sobre meta';
+      return '<tr><td><strong>'+escapeHtml(p.nombre)+'</strong></td><td>'+fmt(p.horas)+' h</td><td>'+fmt(p.directas)+' h</td><td>'+fmt(p.indirectas-p.pendientes)+' h</td><td>'+cantidad+'</td><td>'+(personalCompleto?p.personas.size:'—')+'</td><td>'+(info.config?escapeHtml(fase(info.config.etapa_actual).nombre):'<span class="amp-hitos-warning">Sin configurar</span>')+'</td><td>'+fmt(info.base)+' h</td><td>'+(info.promedioReal===null?'—':fmt(info.promedioReal)+' h')+'</td><td><strong>'+(media===null?'—':fmt(media)+' h')+'</strong></td><td>'+(info.disponible===null?'—':fmt(info.disponible)+' h')+'</td><td><span class="amp-meta-pill'+clase+'">'+label+'</span></td></tr>';
+    }).join('')||'<tr><td class="amp-meta-row-empty" colspan="12">No hay capturas válidas en la selección.</td></tr>';
     renderDetalle();
     const excluidas=base.length-validos.length;
-    $('ampMetaNota').textContent='Las horas directas se conservan en cada entregable. Las '+fmt(indirectas)+' h indirectas se reparten por partes iguales entre los entregables trabajados de cada proyecto, sin mezclarlos entre proyectos. '+(pendientes?fmt(pendientes)+' h no se repartieron porque no había entregables directos en el proyecto y período. ':'')+'Promedio global: ('+fmt(horas)+' h'+(pendientes?' − '+fmt(pendientes)+' h pendientes':'')+') ÷ '+entregables+' entregables. '+(excluidas?excluidas+' capturas excluidas por configuración. ':'')+'Solo lectura; no modifica las capturas originales.';
+    const presupuestoAsumido=aplicables.reduce((sum,p)=>sum+p.evaluacion.totalBase,0),
+      horasHistoricas=aplicables.reduce((sum,p)=>sum+p.evaluacion.reales,0),
+      saldo=(21*entregables)-consumoGlobal;
+    $('ampHitosMetricas').innerHTML='<span>Etapas anteriores dadas por consumidas: <strong>'+fmt(presupuestoAsumido)+' h</strong></span><span>Horas reales acumuladas desde el inicio: <strong>'+fmt(horasHistoricas)+' h</strong></span><span>Presupuesto restante: <strong>'+fmt(saldo)+' h</strong></span>';
+    $('ampMetaNota').textContent='Horas del período (proyectos seleccionados): '+fmt(horas)+' h (directas '+fmt(directas)+' h e indirectas '+fmt(indirectas-pendientes)+' h repartidas). '+'El presupuesto ajustado solo considera los proyectos con etapa configurada. '+
+      'El presupuesto de 21 h es POR PROYECTO COMPLETO Y POR ENTREGABLE, no una meta nueva cada mes. Consumo equivalente: '+fmt(presupuestoAsumido)+' h de etapas previas asumidas + '+fmt(horasHistoricas)+' h REALES acumuladas hasta el cierre del período = '+fmt(consumoGlobal)+' h ÷ '+entregables+' entregables = '+(promedio===null?'—':fmt(promedio)+' h')+' por entregable. '+
+      (pendientes?fmt(pendientes)+' h del período sin catálogo no se pudieron repartir. ':'')+
+      (excluidas?excluidas+' capturas excluidas por criterios administrativos. ':'')+
+      'El sistema no crea horas ficticias en Supabase: el preconsumo solo afecta al presupuesto.';
+    actualizarUIEtapas();
   };
   document.addEventListener('DOMContentLoaded',init);
 })();
@@ -6701,4 +7400,3 @@ ipEl('ipCopiarInforme').addEventListener('click',async()=>{const t=ipEl('ipCopia
 </script>
 </body>
 </html>
-```
