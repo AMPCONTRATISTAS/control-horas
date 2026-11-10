@@ -944,6 +944,170 @@ html[data-amp-theme="dark"] .deliverables-status.success{color:#86efac}
 html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
 
 </style>
+<style>
+
+/* Selector de proyectos accesible, con búsqueda y selección por casillas. */
+.ip-multi-wrap{position:relative;min-width:260px;flex:1.45;align-self:flex-end}
+.ip-multi-label{display:block;font-size:14px;font-weight:700;margin-bottom:6px}
+.ip-multi-trigger{width:100%;min-height:43px;padding:10px 12px;text-align:left;border:1px solid #94a3b8;border-radius:8px;background:#fff;color:#0f172a;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:15px;font-weight:600}
+.ip-multi-trigger:focus-visible,.ip-multi-panel button:focus-visible,.ip-multi-panel input:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+.ip-multi-arrow{font-size:18px;color:#64748b;transition:transform .12s}
+.ip-multi-trigger[aria-expanded="true"] .ip-multi-arrow{transform:rotate(180deg)}
+.ip-multi-panel{position:absolute;z-index:80;top:calc(100% + 6px);left:0;width:max(100%,370px);max-width:calc(100vw - 32px);padding:12px;background:#fff;border:1px solid #cbd5e1;border-radius:12px;box-shadow:0 12px 32px #0f172a35;color:#172033}
+.ip-multi-panel[hidden],#ipInformeProyecto[hidden]{display:none!important}
+.ip-multi-search-label{display:block;margin:0 0 5px;font-size:13px;font-weight:600}
+#ipInformeBuscar{width:100%;min-height:44px;font-size:16px}
+.ip-multi-actions{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.ip-multi-actions button,.ip-multi-footer button{font-size:13px;min-height:35px;padding:7px 10px;background:#e9eff9;color:#1e40af;border:1px solid #cbd5e1;border-radius:7px}
+.ip-multi-actions button:hover,.ip-multi-footer button:hover{background:#dbeafe}
+.ip-multi-list{max-height:250px;overflow:auto;border:1px solid #e2e8f0;border-radius:8px;overscroll-behavior:contain}
+.ip-multi-option{display:flex;align-items:center;gap:10px;padding:10px 9px;margin:0;font-size:15px;font-weight:500;cursor:pointer;line-height:1.25;border-bottom:1px solid #f1f5f9}
+.ip-multi-option:last-child{border-bottom:none}
+.ip-multi-option:hover{background:#eff6ff}
+.ip-multi-option input[type="checkbox"]{flex:0 0 19px;width:19px;height:19px;min-height:19px;margin:0;accent-color:#2563eb;cursor:pointer}
+.ip-multi-option span{min-width:0;overflow-wrap:anywhere}
+.ip-multi-empty{padding:14px;color:#64748b;font-size:14px}
+.ip-multi-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;font-size:12px;color:#64748b}
+.ip-multi-footer button{font-weight:700}
+html[data-amp-theme="dark"] .ip-multi-label{color:#e5e7eb}
+html[data-amp-theme="dark"] .ip-multi-trigger,html[data-amp-theme="dark"] .ip-multi-panel{background:#101a2a;color:#e2e8f0;border-color:#475569}
+html[data-amp-theme="dark"] .ip-multi-option{border-color:#334155;color:#e5e7eb}
+html[data-amp-theme="dark"] .ip-multi-option:hover{background:#29415f}
+html[data-amp-theme="dark"] .ip-multi-actions button,html[data-amp-theme="dark"] .ip-multi-footer button{background:#25354a;color:#bfdbfe;border-color:#475569}
+html[data-amp-theme="dark"] .ip-multi-actions button:hover,html[data-amp-theme="dark"] .ip-multi-footer button:hover{background:#29415f}
+html[data-amp-theme="dark"] .ip-multi-list{border-color:#475569}
+html[data-amp-theme="dark"] .ip-multi-footer,html[data-amp-theme="dark"] .ip-multi-arrow{color:#bac8da}
+@media(max-width:700px){.ip-multi-wrap{flex:1 1 100%;min-width:0;width:100%}.ip-multi-panel{width:100%;max-width:100%}.ip-multi-option{padding:12px 9px;font-size:16px}}
+</style>
+
+<style>
+/* AMP Indicadores 21h: lectura rápida; los informes históricos siguen disponibles en Avanzado. */
+.amp-meta-page{--amp-meta-accent:#2563eb;--amp-meta-border:#d9e2f0}
+.amp-meta-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px}
+.amp-meta-heading h2{font-size:25px;margin:0 0 8px;color:inherit}
+.amp-meta-heading p{font-size:15px;line-height:1.55;color:#64748b;margin:0}
+.amp-meta-goal-tag{font-size:13px;font-weight:800;white-space:nowrap;color:#1e40af;background:#dbeafe;border:1px solid #93c5fd;border-radius:30px;padding:10px 14px;letter-spacing:.02em}
+.amp-meta-sync{font-size:13px;min-height:20px;margin-bottom:10px;color:#64748b}
+.amp-meta-filters{display:grid;grid-template-columns:minmax(255px,1.8fr) minmax(145px,.8fr) minmax(190px,.95fr) auto;gap:12px;align-items:end;margin:15px 0 18px}
+.amp-meta-control{display:flex;flex-direction:column;gap:6px;font-size:15px;font-weight:700;color:inherit;margin:0}
+.amp-meta-control input,.amp-meta-control select,.amp-meta-filters .ip-multi-trigger{height:46px;font-size:16px}
+.amp-meta-project-mount{min-width:0}.amp-meta-project-mount .ip-multi-wrap{width:100%;min-width:0;flex:none}
+.amp-meta-project-mount .ip-multi-label{font-size:15px}.amp-meta-refrescar{min-height:46px;white-space:nowrap}
+.amp-meta-hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:25px 25px 17px;border:1px solid #bbd4fb;border-radius:15px;background:linear-gradient(120deg,#eef5ff,#fff)}
+.amp-meta-eyebrow{font-size:13px;letter-spacing:.055em;font-weight:800;color:#3b5b95}
+.amp-meta-primary-value{font-size:clamp(37px,5vw,61px);line-height:1.2;font-weight:800;color:#172554;letter-spacing:-.04em;margin:7px 0 2px}
+.amp-meta-primary-caption{font-size:15px;color:#475569}
+.amp-meta-hero-aside{display:flex;flex-direction:column;gap:10px;align-items:flex-end;justify-content:center;text-align:right}
+.amp-meta-status{display:inline-flex;border-radius:24px;background:#e2e8f0;color:#334155;padding:7px 12px;font-size:13px;font-weight:800}
+.amp-meta-status.ok{background:#dcfce7;color:#166534}.amp-meta-status.over{background:#fee2e2;color:#991b1b}
+.amp-meta-difference{font-size:14px;color:#475569;font-weight:600}
+.amp-meta-meter{grid-column:1/-1;margin-top:12px}
+.amp-meta-meter-track{height:13px;border-radius:30px;background:#dbeafe;position:relative;overflow:hidden}
+.amp-meta-meter-fill{height:100%;width:0%;border-radius:30px;background:#2563eb;transition:width .2s ease}
+.amp-meta-meter-fill.over{background:#dc2626}.amp-meta-meter-target{position:absolute;left:50%;top:0;height:100%;border-left:2px dashed #0f172a}
+.amp-meta-meter-legend{display:flex;justify-content:space-between;margin-top:5px;font-size:12px;color:#64748b}
+.amp-meta-smallcards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:16px 0 22px}
+.amp-meta-smallcard{background:#f8fafc;border:1px solid #dbe3ed;border-radius:12px;padding:18px;min-height:105px}
+.amp-meta-smallcard span{display:block;font-size:14px;color:#64748b;line-height:1.3;margin-bottom:10px}
+.amp-meta-smallcard strong{display:block;font-size:27px;color:#172554;line-height:1.2;font-weight:800}
+.amp-meta-table-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:18px 0 10px}
+.amp-meta-table-heading h3{font-size:18px;margin:0}.amp-meta-table-heading span{font-size:13px;color:#64748b}
+.amp-meta-table-wrap{width:100%;overflow:auto;border:1px solid #dbe3ed;border-radius:11px;max-height:395px}
+.amp-meta-table{min-width:790px;width:100%;border-collapse:collapse;font-size:15px}
+.amp-meta-table th{font-size:13px;font-weight:800;background:#f1f5f9;position:sticky;top:0;z-index:1;text-align:left;white-space:normal}
+.amp-meta-table td{font-size:15px}.amp-meta-table td:nth-child(n+2){font-variant-numeric:tabular-nums}
+.amp-meta-table .amp-meta-row-empty{color:#64748b;text-align:center;padding:23px}
+.amp-meta-pill{display:inline-flex;padding:5px 9px;border-radius:20px;background:#e2e8f0;color:#475569;font-size:12px;font-weight:800;white-space:nowrap}
+.amp-meta-pill.ok{color:#166534;background:#dcfce7}.amp-meta-pill.over{color:#991b1b;background:#fee2e2}
+.amp-meta-note{font-size:13px;line-height:1.55;color:#64748b;margin:14px 0 8px}
+.amp-meta-empty{font-size:15px;padding:16px;border:1px dashed #cbd5e1;border-radius:10px;background:#f8fafc;margin:12px 0}
+.amp-meta-empty[hidden]{display:none}
+
+.amp-meta-breakdown{display:flex;gap:10px;flex-wrap:wrap;margin:-5px 0 18px}
+.amp-meta-breakdown span{background:#eef3fb;border:1px solid #dae4f4;border-radius:9px;padding:9px 13px;font-size:13px;color:#334155}
+.amp-meta-breakdown strong{color:#172554}
+.amp-meta-personas-aviso{margin:0 0 16px;padding:10px 12px;border-left:3px solid #d97706;background:#fffbeb;color:#92400e;border-radius:5px;font-size:13px}
+.amp-meta-personas-aviso[hidden]{display:none}
+.amp-meta-detalle{border:1px solid #dbe3ed;border-radius:10px;padding:12px;margin:14px 0 19px}
+.amp-meta-detalle>summary{cursor:pointer;font-size:15px;font-weight:700;color:#1d4ed8;padding:3px 5px}
+.amp-meta-detalle-tools{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:14px 0}
+.amp-meta-detalle-tools input{max-width:380px;min-height:41px}
+.amp-meta-detail-table{min-width:790px}
+/* Personas responsables de las capturas directas, con detalle compacto y legible. */
+.amp-meta-detail-table{min-width:1120px}
+.amp-meta-detail-table td.amp-meta-authors-cell{min-width:265px;max-width:430px;white-space:normal;font-variant-numeric:normal}
+.amp-meta-author{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:5px 8px;margin:2px 4px 2px 0;border:1px solid #cbd5e1;border-radius:7px;background:#eff6ff;color:#1e3a8a;font-size:12px;font-weight:600;line-height:1.3;overflow-wrap:anywhere}
+.amp-meta-author small{font-size:11px;white-space:nowrap;font-weight:700;color:#475569}
+.amp-meta-authors-more{font-size:12px;cursor:pointer;color:#1d4ed8;font-weight:700;margin-top:2px}
+.amp-meta-authors-more summary{list-style:revert}
+.amp-meta-authors-warning{font-size:12px;color:#92400e;line-height:1.4;display:block}
+html[data-amp-theme="dark"] .amp-meta-author{border-color:#3c5473;background:#1e3a5f;color:#bfdbfe}
+html[data-amp-theme="dark"] .amp-meta-author small{color:#cbd5e1}
+html[data-amp-theme="dark"] .amp-meta-authors-more{color:#93c5fd}
+html[data-amp-theme="dark"] .amp-meta-authors-warning{color:#fcd34d}
+@media(max-width:700px){.amp-meta-detail-table td.amp-meta-authors-cell{min-width:0;max-width:none}.amp-meta-author{font-size:13px}}
+
+.amp-meta-detalle-scroll{max-height:440px}
+html[data-amp-theme="dark"] .amp-meta-breakdown span{background:#1e293b;color:#cbd5e1;border-color:#334155}
+html[data-amp-theme="dark"] .amp-meta-breakdown strong{color:#f8fafc}
+html[data-amp-theme="dark"] .amp-meta-personas-aviso{background:#422006;color:#fde68a}
+html[data-amp-theme="dark"] .amp-meta-detalle{border-color:#334155}
+html[data-amp-theme="dark"] .amp-meta-detalle>summary{color:#93c5fd}
+@media(max-width:700px){.amp-meta-detalle-tools{flex-direction:column;align-items:stretch}.amp-meta-detalle-tools input{max-width:100%}}
+.amp-meta-advanced{margin:20px 0 2px;border-top:1px solid var(--amp-meta-border);padding-top:15px}
+.amp-meta-advanced>summary{font-size:15px;font-weight:700;color:#2563eb;cursor:pointer;padding:9px 0;user-select:none}
+.amp-meta-legacy{padding-top:15px}.amp-meta-legacy .ip-direccion .ip-toolbar{align-items:end}
+html[data-amp-theme="dark"] .amp-meta-heading p,html[data-amp-theme="dark"] .amp-meta-sync,html[data-amp-theme="dark"] .amp-meta-smallcard span,html[data-amp-theme="dark"] .amp-meta-table-heading span,html[data-amp-theme="dark"] .amp-meta-note{color:#bac8da}
+html[data-amp-theme="dark"] .amp-meta-hero{background:linear-gradient(120deg,#22395b,#172234);border-color:#3d5c87}
+html[data-amp-theme="dark"] .amp-meta-eyebrow{color:#a5c4fa}
+html[data-amp-theme="dark"] .amp-meta-primary-value,html[data-amp-theme="dark"] .amp-meta-smallcard strong{color:#e2eeff}
+html[data-amp-theme="dark"] .amp-meta-primary-caption,html[data-amp-theme="dark"] .amp-meta-difference{color:#cbd5e1}
+html[data-amp-theme="dark"] .amp-meta-goal-tag{background:#1e3a5f;border-color:#3b82f6;color:#bfdbfe}
+html[data-amp-theme="dark"] .amp-meta-smallcard,html[data-amp-theme="dark"] .amp-meta-empty{background:#1e293b;border-color:#334155}
+html[data-amp-theme="dark"] .amp-meta-table-wrap{border-color:#334155}
+html[data-amp-theme="dark"] .amp-meta-table th{background:#25354a;color:#e2e8f0}
+html[data-amp-theme="dark"] .amp-meta-table td{color:#e2e8f0}
+html[data-amp-theme="dark"] .amp-meta-advanced{border-color:#334155}
+html[data-amp-theme="dark"] .amp-meta-advanced>summary{color:#93c5fd}
+html[data-amp-theme="dark"] .amp-meta-status.ok,html[data-amp-theme="dark"] .amp-meta-pill.ok{background:#14532d;color:#bbf7d0}
+html[data-amp-theme="dark"] .amp-meta-status.over,html[data-amp-theme="dark"] .amp-meta-pill.over{background:#7f1d1d;color:#fecaca}
+html[data-amp-theme="dark"] .amp-meta-status:not(.ok):not(.over),html[data-amp-theme="dark"] .amp-meta-pill:not(.ok):not(.over){background:#334155;color:#cbd5e1}
+@media(max-width:1000px){.amp-meta-filters{grid-template-columns:1fr 1fr}.amp-meta-project-mount{grid-column:1/-1}.amp-meta-refrescar{grid-column:2}}
+@media(max-width:700px){
+  .amp-meta-table-wrap{max-height:none;overflow:visible;border:none}
+  .amp-meta-table,.amp-meta-table tbody{display:block;min-width:0;width:100%}
+  .amp-meta-table thead{display:none}
+  .amp-meta-table tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px 14px;border:1px solid #dbe3ed;border-radius:10px;padding:12px;margin-bottom:10px}
+  .amp-meta-table td{display:block;border:0;padding:5px 0;font-size:14px;min-width:0;overflow-wrap:anywhere}
+  .amp-meta-table td::before{display:block;font-size:12px;color:#64748b;font-weight:600;margin-bottom:4px}
+  .amp-meta-table td:nth-child(1){grid-column:1/-1;font-size:16px;border-bottom:1px solid #e2e8f0;padding-bottom:9px;margin-bottom:4px}
+  .amp-meta-table td:nth-child(2)::before{content:'Horas'}
+  .amp-meta-table td:nth-child(3)::before{content:'Entregables con horas'}
+  .amp-meta-table td:nth-child(4)::before{content:'Personas'}
+  .amp-meta-table td:nth-child(5)::before{content:'Promedio'}
+  .amp-meta-table td:nth-child(6)::before{content:'Vs. meta'}
+  .amp-meta-table td[colspan]{grid-column:1/-1}
+  html[data-amp-theme="dark"] .amp-meta-table tr{border-color:#334155}
+  html[data-amp-theme="dark"] .amp-meta-table td::before{color:#bac8da}
+}
+@media(max-width:700px){
+  .amp-meta-table:not(.amp-meta-detail-table) td:nth-child(2)::before{content:'Horas'}
+  .amp-meta-table:not(.amp-meta-detail-table) td:nth-child(3)::before{content:'Directas'}
+  .amp-meta-table:not(.amp-meta-detail-table) td:nth-child(4)::before{content:'Indirectas'}
+  .amp-meta-table:not(.amp-meta-detail-table) td:nth-child(5)::before{content:'Entregables'}
+  .amp-meta-table:not(.amp-meta-detail-table) td:nth-child(6)::before{content:'Personas'}
+  .amp-meta-table:not(.amp-meta-detail-table) td:nth-child(7)::before{content:'Promedio'}
+  .amp-meta-table:not(.amp-meta-detail-table) td:nth-child(8)::before{content:'Vs. meta'}
+  .amp-meta-detail-table td:nth-child(2)::before{content:'Entregable'}
+  .amp-meta-detail-table td:nth-child(3)::before{content:'Personas que registraron'}
+  .amp-meta-detail-table td:nth-child(4)::before{content:'Directas'}
+  .amp-meta-detail-table td:nth-child(5)::before{content:'Indirectas'}
+  .amp-meta-detail-table td:nth-child(6)::before{content:'Total'}
+  .amp-meta-detail-table td:nth-child(7)::before{content:'Vs. 21 h'}
+  .amp-meta-detail-table td.amp-meta-authors-cell{grid-column:1/-1}
+}
+@media(max-width:600px){.amp-meta-heading{flex-direction:column}.amp-meta-goal-tag{align-self:flex-start}.amp-meta-filters{grid-template-columns:1fr}.amp-meta-project-mount,.amp-meta-refrescar{grid-column:1}.amp-meta-hero{padding:18px;grid-template-columns:1fr}.amp-meta-hero-aside{align-items:flex-start;text-align:left}.amp-meta-smallcards{grid-template-columns:1fr}.amp-meta-smallcard{min-height:80px;padding:14px}.amp-meta-primary-value{font-size:48px}.amp-meta-table{font-size:14px}}
+</style>
 </head>
 
 <body>
@@ -1063,9 +1227,75 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
      <button type="button" id="tabCalculadoraElectrica" class="main-tab-button" aria-selected="false">Calculadora eléctrica</button>
   </nav>
 
-  <section id="indicadoresCard" class="card tab-view-hidden">
-    <h2>📈 Indicadores de productividad · Ingeniería</h2>
-    <p id="ipEstado">Cargando indicadores autorizados...</p>
+  <section id="indicadoresCard" class="card tab-view-hidden amp-meta-page" aria-label="Indicadores de horas por entregable">
+    <div class="amp-meta-heading">
+      <div>
+        <h2>Indicadores · Horas por entregable</h2>
+        <p>Consulta las horas que está registrando el equipo y compáralas con la <strong>meta de 21 h por entregable</strong>.</p>
+      </div>
+      <div class="amp-meta-goal-tag">META: 21 h / entregable</div>
+    </div>
+    <div id="ipEstado" class="amp-meta-sync" role="status">Cargando indicadores autorizados...</div>
+    <div class="amp-meta-filters" aria-label="Filtros de indicadores">
+      <div id="ampMetaProjectMount" class="amp-meta-project-mount"></div>
+      <label class="amp-meta-control" for="ampMetaTipo">Período
+        <select id="ampMetaTipo"><option value="mes">Mes</option><option value="semana">Semana</option><option value="anio">Año</option><option value="total">Todo el historial</option></select>
+      </label>
+      <label class="amp-meta-control" for="ampMetaFecha" id="ampMetaFechaGrupo">Mes seleccionado
+        <input type="month" id="ampMetaFecha">
+      </label>
+      <button type="button" class="btn-secondary amp-meta-refrescar" id="ampMetaActualizar" title="Volver a consultar Supabase">Actualizar datos</button>
+    </div>
+    <div id="ampMetaEmpty" class="amp-meta-empty" hidden></div>
+    <div class="amp-meta-results" id="ampMetaResults">
+      <div class="amp-meta-hero" aria-live="polite">
+        <div>
+          <div class="amp-meta-eyebrow">PROMEDIO SEGÚN CAPTURAS</div>
+          <div class="amp-meta-primary-value" id="ampMetaPromedio">—</div>
+          <div class="amp-meta-primary-caption">horas distribuidas por entregable trabajado</div>
+        </div>
+        <div class="amp-meta-hero-aside">
+          <span class="amp-meta-status" id="ampMetaEstado">Sin datos</span>
+          <div class="amp-meta-difference" id="ampMetaDiferencia">Meta 21 h</div>
+        </div>
+        <div class="amp-meta-meter" role="img" aria-label="Comparativo con la meta de 21 horas">
+          <div class="amp-meta-meter-track"><div class="amp-meta-meter-fill" id="ampMetaBarra"></div><div class="amp-meta-meter-target"></div></div>
+          <div class="amp-meta-meter-legend"><span>0 h</span><span id="ampMetaEscala">Meta 21 h</span></div>
+        </div>
+      </div>
+      <div class="amp-meta-smallcards">
+        <div class="amp-meta-smallcard"><span>Horas registradas válidas</span><strong id="ampMetaHoras">0 h</strong></div>
+        <div class="amp-meta-smallcard"><span>Entregables trabajados</span><strong id="ampMetaEntregables">0</strong></div>
+        <div class="amp-meta-smallcard"><span>Personas diferentes</span><strong id="ampMetaPersonas">—</strong></div>
+      </div>
+      <div class="amp-meta-breakdown" id="ampMetaDesglose" aria-live="polite"></div>
+      <p class="amp-meta-personas-aviso" id="ampMetaPersonasAviso" hidden></p>
+      <div class="amp-meta-table-heading"><h3>Promedio por proyecto</h3><span id="ampMetaContador">—</span></div>
+      <div class="amp-meta-table-wrap">
+        <table class="amp-meta-table">
+          <thead><tr><th>Proyecto</th><th>Horas</th><th>Directas</th><th>Indirectas</th><th>Entregables</th><th>Personas</th><th>Promedio</th><th>Vs. meta</th></tr></thead>
+          <tbody id="ampMetaFilas"><tr><td colspan="8">Selecciona un período para consultar el promedio.</td></tr></tbody>
+        </table>
+      </div>
+      <p id="ampMetaNota" class="amp-meta-note">Las horas directas se conservan en el entregable. Las indirectas se reparten por igual entre los entregables trabajados del proyecto y período.</p>
+      <details class="amp-meta-detalle" id="ampMetaDetalle">
+        <summary>Ver horas distribuidas por cada entregable</summary>
+        <div class="amp-meta-detalle-tools">
+          <input id="ampMetaBuscarEntregable" type="search" placeholder="Buscar proyecto, entregable o persona" aria-label="Buscar proyecto, entregable o persona">
+          <button type="button" class="btn-secondary" id="ampMetaExcelDetalle">Exportar desglose a Excel</button>
+        </div>
+        <div class="amp-meta-table-wrap amp-meta-detalle-scroll">
+          <table class="amp-meta-table amp-meta-detail-table">
+            <thead><tr><th>Proyecto</th><th>Entregable</th><th>Personas que registraron horas</th><th>Horas directas</th><th>Indirectas asignadas</th><th>Total</th><th>Vs. 21 h</th></tr></thead>
+            <tbody id="ampMetaDetalleFilas"><tr><td colspan="7">Selecciona un período.</td></tr></tbody>
+          </table>
+        </div>
+        <p class="amp-meta-note">La columna de personas muestra únicamente quién registró <strong>horas directas</strong> en cada entregable. Las juntas, llamadas y demás horas indirectas se distribuyen para el cálculo, pero no se atribuyen como capturas directas a esas personas. Este informe no modifica los registros originales de Supabase.</p>
+      </details>
+    </div>
+    <details class="amp-meta-advanced" id="ampMetaAvanzado">
+      <summary>Ver análisis detallado y configuración avanzada</summary>
+      <div class="amp-meta-legacy">
     <div class="ip-toolbar">
       <label>Proyecto<select id="ipProyecto"><option value="">Departamento completo</option></select></label>
       <label>Período<select id="ipModo"><option value="total">Total histórico</option><option value="rango">Rango de meses</option><option value="mes">Mes individual</option></select></label>
@@ -1075,11 +1305,29 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
     </div>
     <section class="ip-direccion" aria-label="Resumen de horas y entregables">
       <h3>Resumen de horas y entregables</h3>
-      <p>Consulta las horas registradas en una semana, mes o año. El promedio distribuye <strong>todas las horas del proyecto</strong> —incluidas juntas, llamadas y coordinación— entre los entregables de su catálogo, aunque todavía no tengan horas asignadas individualmente.</p>
+      <p>Indicadores históricos de presupuesto contra el alcance del catálogo. El reparto real de horas directas e indirectas por entregable se muestra en el resumen principal, arriba.</p>
       <div class="ip-toolbar">
         <label>Período<select id="ipInformeTipo"><option value="mes">Mes</option><option value="semana">Semana</option><option value="anio">Año</option></select></label>
         <label id="ipInformeFechaLabel">Mes del resumen<input type="month" id="ipInformeMes"></label>
-        <label style="min-width:240px">Proyectos del informe <small>(Ctrl o Shift para varios)</small><select id="ipInformeProyecto" multiple size="5" aria-label="Selecciona uno o varios proyectos"></select></label><button type="button" class="btn-secondary" id="ipInformeTodos">Seleccionar todos</button>
+        <div class="ip-multi-wrap" id="ipInformeSelector">
+          <span class="ip-multi-label" id="ipInformeProyectoEtiqueta">Proyectos del informe</span>
+          <button type="button" id="ipInformeProyectoBoton" class="ip-multi-trigger" aria-expanded="false" aria-haspopup="true" aria-controls="ipInformeProyectoPanel" aria-labelledby="ipInformeProyectoEtiqueta ipInformeProyectoTexto">
+            <span id="ipInformeProyectoTexto">Seleccionar proyectos</span><span class="ip-multi-arrow" aria-hidden="true">▾</span>
+          </button>
+          <!-- El select se mantiene oculto para que los cálculos existentes sigan utilizando selectedOptions. -->
+          <select id="ipInformeProyecto" multiple hidden tabindex="-1" aria-hidden="true"></select>
+          <div id="ipInformeProyectoPanel" class="ip-multi-panel" hidden>
+            <label for="ipInformeBuscar" class="ip-multi-search-label">Buscar proyecto</label>
+            <input type="search" id="ipInformeBuscar" placeholder="Escribe para buscar…" autocomplete="off" aria-label="Buscar proyectos del informe">
+            <div class="ip-multi-actions">
+              <button type="button" id="ipInformeTodos">Todos</button>
+              <button type="button" id="ipInformeVisibles">Seleccionar visibles</button>
+              <button type="button" id="ipInformeLimpiar">Limpiar</button>
+            </div>
+            <div id="ipInformeLista" class="ip-multi-list" role="group" aria-label="Proyectos disponibles"></div>
+            <div class="ip-multi-footer"><span id="ipInformeContador">0 proyectos seleccionados</span><button type="button" id="ipInformeCerrar">Listo</button></div>
+          </div>
+        </div>
         <button type="button" class="btn-primary" id="ipCopiarInforme">Copiar resumen</button>
       </div>
       <div class="ip-kpis" id="ipInformeKpis"></div><div id="ipInformeExclusiones" class="ip-note"></div>
@@ -1116,6 +1364,8 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
       <div class="ip-toolbar"><label>Empleado<select id="ipPermEmpleado"></select></label><label>Proyecto<select id="ipPermProyecto"></select></label><button class="btn-primary" type="button" id="ipConceder">Conceder</button><button class="btn-secondary" type="button" id="ipRevocar">Revocar</button></div>
       <div id="ipPermEstado"></div>
     </div>
+      </div>
+    </details>
   </section>
   <section id="resumenAdminCard" class="card tab-view-hidden"><h2>📊 Resumen de administrador · Horas hombre de ingeniería</h2><div class="card" id="raPermisosPanel" style="display:none;background:#f1f5f9"><h3>Acceso exclusivo al resumen de horas</h3><p>Solo las cuentas maestras pueden conceder o revocar este acceso. No concede permisos de entregables.</p><div class="admin-filter-row"><select id="raNuevoRevisor"><option value="">Seleccionar empleado</option></select><button type="button" class="btn-primary" onclick="raGuardarRevisor(true)">Dar acceso al resumen</button></div><div id="raListaRevisores"></div></div><p id="raEstado" style="color:#64748b">Selecciona los filtros para analizar las horas del equipo.</p><div class="ra-filters"><label>Periodo<select id="raFiltroTipo"><option value="semana">Semana</option><option value="mes">Mes</option><option value="anio">Año</option></select></label><label id="raFiltroPeriodoLabel">Semana<select id="raSemana"></select></label><label>Persona<select id="raPersona"></select></label><label>Proyecto<select id="raProyecto"></select></label><label>Actividad<select id="raActividad"></select></label><label>Entregable<select id="raEntregable"></select></label><label>Cumple objetivo<select id="raCumple"></select></label></div><div class="buttons"><button type="button" class="btn-secondary" onclick="raLimpiar()">Limpiar filtros</button><button type="button" class="btn-primary" onclick="cargarResumenAdmin()">Actualizar datos</button><button type="button" class="btn-primary" onclick="raExportar()">Exportar Excel</button></div><div class="ra-kpis"><div><small>Horas registradas</small><strong id="raHoras">0</strong></div><div><small>Personas con captura</small><strong id="raActivos">0</strong></div><div><small>Sin captura (periodo)</small><strong id="raSin">0</strong></div><div><small>Asignaciones registradas</small><strong id="raRegistros">0</strong></div></div><div class="ra-grid"><div class="chart-card"><h3>Horas por proyecto</h3><div class="ra-chart"><canvas id="raChartProyecto"></canvas></div></div><div class="chart-card"><h3>Horas por semana</h3><div class="ra-chart"><canvas id="raChartSemana"></canvas></div></div><div class="chart-card"><h3>Distribución por proyecto</h3><div class="ra-chart"><canvas id="raChartDona"></canvas></div></div><div class="chart-card"><h3>Cumplimiento de objetivos</h3><div class="ra-chart"><canvas id="raChartCumple"></canvas></div></div><div class="chart-card" style="grid-column:1/-1"><h3>Horas registradas por persona</h3><p class="chart-note">Incluye empleados activos sin captura. Usa los filtros superiores; pulsa una barra para seleccionar a la persona.</p><div class="ra-chart" id="raPersonaChartWrap" style="height:440px"><canvas id="raChartPersona"></canvas></div></div></div><section class="card" style="margin-top:18px;background:#f8fafc"><h3>Auditoría de captura · Todos los empleados</h3><div class="ra-filters"><label>Periodo<select id="raPeriodoTipo"><option value="semana">Semana</option><option value="mes">Mes</option><option value="anio">Año</option></select></label><label id="raAuditoriaPeriodoLabel">Semana / mes / año<select id="raPeriodoValor"></select></label><label>Mostrar<select id="raEstadoCaptura"><option value="todos">Todos</option><option value="sin">Sin registros</option><option value="incumple">No alcanzaron el objetivo</option><option value="cumple">Cumplieron</option></select></label></div><p id="raObjetivoInfo" style="color:#475569"></p><div class="buttons"><button class="btn-primary" type="button" onclick="raCopiarSin()">Copiar nombres sin captura</button><button class="btn-secondary" type="button" onclick="raCopiarAuditoria()">Copiar tabla de horas</button><button class="btn-primary" type="button" onclick="raExportarAuditoria()">Exportar auditoría Excel</button></div><div class="table-container" style="max-height:450px;overflow:auto"><table class="ra-table"><thead><tr><th>Empleado</th><th>Periodo</th><th>Horas registradas</th><th>Vacaciones / permisos / asuetos (h)</th><th>Objetivo (h)</th><th>Diferencia</th><th>Resultado</th></tr></thead><tbody id="raAuditoriaBody"></tbody></table></div></section><h3>Horas acumuladas por entregable</h3><p class="chart-note">Las capturas múltiples se reparten en registros individuales. Aquí se suman las horas reales de cada entregable sin multiplicarlas. Respeta los filtros de persona, proyecto y período.</p><div class="table-container" style="max-height:430px;overflow:auto"><table class="ra-table"><thead><tr><th>Proyecto</th><th>Entregable</th><th>Asignaciones</th><th>Horas acumuladas</th></tr></thead><tbody id="raEntregablesAcumulados"></tbody></table></div><h3>Control de captura por persona y semana</h3><div class="table-container" style="max-height:400px;overflow:auto"><table class="ra-table"><thead><tr><th>Persona</th><th>Semana</th><th>Horas</th><th>Asignaciones</th><th>Estado</th></tr></thead><tbody id="raControl"></tbody></table></div><h3>Detalle de registros filtrados</h3><div class="table-container" style="max-height:460px;overflow:auto"><table class="ra-table"><thead><tr><th>Fecha</th><th>Persona</th><th>Semana</th><th>Proyecto</th><th>Actividad</th><th>Entregable</th><th>Horas</th><th>Objetivo</th></tr></thead><tbody id="raDetalle"></tbody></table></div></section>
    <!-- Módulo independiente: la calculadora vive en un iframe para aislar sus estilos y JavaScript de Control de Horas. -->
@@ -6114,8 +6364,42 @@ const ipHorasSemana=y=>y>=2030?40:y===2029?42:y===2028?44:y===2027?46:48;
 function ipCapacidadMes(m){const y=Number(m.slice(0,4)),mo=Number(m.slice(5,7));return ipHorasSemana(y)*new Date(y,mo,0).getDate()/7;}
 function ipMesesEntre(a,b){if(!a||!b||a>b)return [];let out=[],[y,m]=a.split('-').map(Number);for(let n=0;n<240&&`${y}-${String(m).padStart(2,'0')}`<=b;n++){out.push(`${y}-${String(m).padStart(2,'0')}`);if(++m>12){m=1;y++;}}return out;}
 async function ipPermiso(){if(!usuarioActual){ipPuedeVer=false;ipEsAdmin=false;ipEl('tabIndicadores').style.display='none';return;}try{const {data,error}=await supabaseClient.rpc('amp_indicadores_acceso');if(error)throw error;ipPuedeVer=!!data?.permitido;ipEsAdmin=!!data?.admin;}catch(e){ipPuedeVer=false;ipEsAdmin=false;console.warn('Indicadores sin permisos configurados:',e.message);}ipEl('tabIndicadores').style.display=ipPuedeVer?'inline-flex':'none';}
-async function ipCargar(){if(!ipPuedeVer)return;ipEl('ipEstado').textContent='Cargando datos y catálogo autorizados...';try{const {data,error}=await supabaseClient.rpc('amp_indicadores_datos');if(error)throw error;ipDatos=data?.horas||[];ipProyectos=data?.proyectos||[];ipCatalogo=data?.entregables||[];ipPlanes=data?.planes||[];ipHistoria=data?.historial||[];ipUsuarios=data?.usuarios||[];ipEsAdmin=!!data?.admin;ipEl('ipAdmin').style.display=ipEsAdmin?'block':'none';await ipCargarCriterios();ipPoblar();ipRender();ipEl('ipEstado').textContent=`${ipDatos.length} capturas y ${ipCatalogo.length} entregables autorizados. Meta: 21 horas por entregable.`;}catch(e){ipEl('ipEstado').textContent='No se pudieron cargar indicadores: '+e.message+'. Ejecuta el SQL de instalación y comprueba los permisos.';}}
-function ipPoblar(){const proyectos=[...new Set([...ipProyectos,...ipCatalogo.map(x=>x.proyecto),...ipDatos.map(x=>x.proyecto),...ipPlanes.map(x=>x.proyecto)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));for(const id of ['ipProyecto','ipAdminProyecto','ipPermProyecto']){const el=ipEl(id),old=el.value;el.innerHTML=(id==='ipProyecto'&&ipEsAdmin?'<option value="">Departamento completo</option>':'')+proyectos.map(p=>`<option value="${ipHtml(p)}">${ipHtml(p)}</option>`).join('');if([...el.options].some(o=>o.value===old))el.value=old;}const informe=ipEl('ipInformeProyecto'),seleccionados=[...informe.selectedOptions].map(o=>o.value);informe.innerHTML=proyectos.map(p=>`<option value="${ipHtml(p)}">${ipHtml(p)}</option>`).join('');[...informe.options].forEach(o=>o.selected=seleccionados.length?seleccionados.includes(o.value):true);const cp=ipEl('ipConfigProyecto'),oldcp=cp.value;cp.innerHTML=proyectos.map(p=>`<option value="${ipHtml(p)}">${ipHtml(p)}</option>`).join('');if(proyectos.includes(oldcp))cp.value=oldcp;ipConfigRender();ipEl('ipPermEmpleado').innerHTML='<option value="">Seleccionar empleado</option>'+ipUsuarios.map(u=>`<option value="${ipHtml(u.id)}">${ipHtml(u.nombre)} · ${ipHtml(u.correo)}</option>`).join('');const meses=[...new Set(ipDatos.map(ipMes).filter(Boolean))].sort();if(meses.length){if(!ipEl('ipDesde').value)ipEl('ipDesde').value=meses[0];if(!ipEl('ipHasta').value)ipEl('ipHasta').value=meses[meses.length-1];if(!ipEl('ipInformeMes').value)ipEl('ipInformeMes').value=meses[meses.length-1];}ipAdminRender();}
+async function ipCargar(){if(!ipPuedeVer)return;ipEl('ipEstado').textContent='Cargando datos y catálogo autorizados...';try{const {data,error}=await supabaseClient.rpc('amp_indicadores_datos');if(error)throw error;ipDatos=data?.horas||[];ipProyectos=data?.proyectos||[];ipCatalogo=data?.entregables||[];ipPlanes=data?.planes||[];ipHistoria=data?.historial||[];ipUsuarios=data?.usuarios||[];ipEsAdmin=!!data?.admin;ipEl('ipAdmin').style.display=ipEsAdmin?'block':'none';if(typeof window.ampMetaCargarPersonas==='function')await window.ampMetaCargarPersonas();await ipCargarCriterios();ipPoblar();ipRender();ipEl('ipEstado').textContent=`${ipDatos.length} capturas y ${ipCatalogo.length} entregables autorizados. Meta: 21 horas por entregable.`;}catch(e){ipEl('ipEstado').textContent='No se pudieron cargar indicadores: '+e.message+'. Ejecuta el SQL de instalación y comprueba los permisos.';}}
+
+/* Selector visual sincronizado con la selección múltiple nativa que usan los indicadores. */
+let ipInformePoblado=false;
+function ipInformeActualizarSelector(){
+  const select=ipEl('ipInformeProyecto'),opciones=[...select.options],
+        seleccionadas=opciones.filter(o=>o.selected),boton=ipEl('ipInformeProyectoTexto'),
+        contador=ipEl('ipInformeContador'),busca=ipUpper(ipEl('ipInformeBuscar').value);
+  boton.textContent=!opciones.length?'No hay proyectos':!seleccionadas.length?'Ningún proyecto seleccionado':
+    seleccionadas.length===opciones.length?`Todos los proyectos (${opciones.length})`:
+    seleccionadas.length===1?seleccionadas[0].textContent:`${seleccionadas.length} proyectos seleccionados`;
+  contador.textContent=`${seleccionadas.length} de ${opciones.length} proyectos seleccionados`;
+  const visibles=opciones.filter(o=>ipUpper(o.textContent).includes(busca));
+  const lista=ipEl('ipInformeLista'),scroll=lista.scrollTop;
+  lista.innerHTML=visibles.length?visibles.map(o=>`<label class="ip-multi-option"><input type="checkbox" data-proyecto="${ipHtml(o.value)}" ${o.selected?'checked':''}><span>${ipHtml(o.textContent)}</span></label>`).join(''):
+    '<div class="ip-multi-empty">No hay proyectos que coincidan con la búsqueda.</div>';
+  lista.scrollTop=scroll;
+}
+function ipInformeAplicarSeleccion(modo){
+  const select=ipEl('ipInformeProyecto'),busca=ipUpper(ipEl('ipInformeBuscar').value);
+  [...select.options].forEach(o=>{
+    if(modo==='todos')o.selected=true;
+    else if(modo==='limpiar')o.selected=false;
+    else if(modo==='visibles'&&ipUpper(o.textContent).includes(busca))o.selected=true;
+  });
+  ipInformeActualizarSelector();
+  ipInformeRender();
+}
+function ipInformeAbrir(cerrar){
+  const panel=ipEl('ipInformeProyectoPanel'),boton=ipEl('ipInformeProyectoBoton');
+  const abrir=typeof cerrar==='boolean'?!cerrar:panel.hidden;
+  panel.hidden=!abrir;
+  boton.setAttribute('aria-expanded',String(abrir));
+  if(abrir){ipInformeActualizarSelector();ipEl('ipInformeBuscar').focus();}
+}
+function ipPoblar(){const proyectos=[...new Set([...ipProyectos,...ipCatalogo.map(x=>x.proyecto),...ipDatos.map(x=>x.proyecto),...ipPlanes.map(x=>x.proyecto)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));for(const id of ['ipProyecto','ipAdminProyecto','ipPermProyecto']){const el=ipEl(id),old=el.value;el.innerHTML=(id==='ipProyecto'&&ipEsAdmin?'<option value="">Departamento completo</option>':'')+proyectos.map(p=>`<option value="${ipHtml(p)}">${ipHtml(p)}</option>`).join('');if([...el.options].some(o=>o.value===old))el.value=old;}const informe=ipEl('ipInformeProyecto'),seleccionados=[...informe.selectedOptions].map(o=>o.value);informe.innerHTML=proyectos.map(p=>`<option value="${ipHtml(p)}">${ipHtml(p)}</option>`).join('');[...informe.options].forEach(o=>o.selected=ipInformePoblado?seleccionados.includes(o.value):true);ipInformePoblado=true;ipInformeActualizarSelector();const cp=ipEl('ipConfigProyecto'),oldcp=cp.value;cp.innerHTML=proyectos.map(p=>`<option value="${ipHtml(p)}">${ipHtml(p)}</option>`).join('');if(proyectos.includes(oldcp))cp.value=oldcp;ipConfigRender();ipEl('ipPermEmpleado').innerHTML='<option value="">Seleccionar empleado</option>'+ipUsuarios.map(u=>`<option value="${ipHtml(u.id)}">${ipHtml(u.nombre)} · ${ipHtml(u.correo)}</option>`).join('');const meses=[...new Set(ipDatos.map(ipMes).filter(Boolean))].sort();if(meses.length){if(!ipEl('ipDesde').value)ipEl('ipDesde').value=meses[0];if(!ipEl('ipHasta').value)ipEl('ipHasta').value=meses[meses.length-1];if(!ipEl('ipInformeMes').value)ipEl('ipInformeMes').value=meses[meses.length-1];}ipAdminRender();}
 function ipFiltrado(){const p=ipEl('ipProyecto').value,modo=ipEl('ipModo').value,a=ipEl('ipDesde').value,b=modo==='mes'?a:ipEl('ipHasta').value;const rows=ipDatos.filter(r=>(!p||r.proyecto===p)&&(modo==='total'||(ipMes(r)>=a&&ipMes(r)<=b)));const proy=[...new Set([...ipProyectos,...ipCatalogo.map(x=>x.proyecto),...ipDatos.map(x=>x.proyecto),...ipPlanes.map(x=>x.proyecto)].filter(x=>!p||x===p))];return {rows,proy,modo,a,b};}
 function ipStats(rows,proyecto,alcance,capacidad){const rr=rows.filter(r=>r.proyecto===proyecto),direct=rr.filter(r=>ipTipo(r)&&ipClean(r.entregable)),horas=rr.reduce((s,r)=>s+ipNum(r.horas),0),hDirect=direct.reduce((s,r)=>s+ipNum(r.horas),0),trabajados=new Set(direct.map(r=>ipUpper(r.entregable))).size,fechas=rr.map(r=>r.fecha).sort();return {proyecto,alcance,trabajados,horas,hDirect,indirect:horas-hDirect,alc:alcance?horas/alcance:null,trab:trabajados?horas/trabajados:null,fuerza:capacidad?horas/capacidad:null,primera:fechas[0]||'—',ultima:fechas[fechas.length-1]||'—'};}
 function ipKpi(label,value,sub=''){return `<div class="ip-kpi"><small>${ipHtml(label)}</small><strong>${ipHtml(value)}</strong><span>${ipHtml(sub)}</span></div>`;}
@@ -6129,7 +6413,7 @@ function ipAlcanceVigente(p,mes){const catalogo=[...new Set(ipCatalogo.filter(e=
 function ipInformeRender(){const tipo=ipEl('ipInformeTipo').value,fecha=ipEl('ipInformeMes').value,proys=[...ipEl('ipInformeProyecto').selectedOptions].map(o=>o.value),fechaValida=tipo==='anio'?/^\d{4}$/.test(fecha):tipo==='semana'?/^\d{4}-W\d{2}$/.test(fecha):/^\d{4}-\d{2}$/.test(fecha);const rows=fechaValida?ipDatos.filter(r=>proys.some(p=>ipUpper(p)===ipUpper(r.proyecto))&&ipPeriodoIncluye(r,tipo,fecha)):[];const total=rows.reduce((a,r)=>a+ipNum(r.horas),0),directas=rows.filter(r=>ipTipo(r)&&ipClean(r.entregable)).reduce((a,r)=>a+ipNum(r.horas),0);const meses=tipo==='anio'?Array.from({length:12},(_,i)=>`${fecha}-${String(i+1).padStart(2,'0')}`):tipo==='semana'?(()=>{const [y,w]=fecha.split('-W').map(Number),d=new Date(Date.UTC(y,0,4));d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7+(w-1)*7);return [...new Set(Array.from({length:7},(_,i)=>{const z=new Date(d);z.setUTCDate(z.getUTCDate()+i);return z.toISOString().slice(0,7)}))]})():[fecha];let horasValidas=0,alcancePonderado=0;const porMes=[];for(const mes of meses){const ex=ipExclusionVigente(mes),pp=proys.filter(p=>!ex.proyectos.some(x=>ipUpper(x)===ipUpper(p)));const mRows=rows.filter(r=>ipMes(r)===mes&&!ex.proyectos.some(x=>ipUpper(x)===ipUpper(r.proyecto))&&!ex.actividades.some(x=>ipUpper(x)===ipUpper(r.actividad)));const h=mRows.reduce((a,r)=>a+ipNum(r.horas),0),n=pp.reduce((a,p)=>a+ipAlcanceVigente(p,mes),0);horasValidas+=h;porMes.push({mes,h,n});alcancePonderado+=n;}
 // Para períodos con cambios de alcance, el denominador se pondera por los días de cada mes dentro del período.
 let alcance=0;if(tipo==='mes')alcance=porMes[0]?.n||0;else if(tipo==='anio')alcance=porMes.reduce((a,x)=>a+x.n,0)/12;else alcance=porMes.reduce((a,x)=>a+x.n,0)/Math.max(1,porMes.length);
-const promedio=alcance?ipFmt(horasValidas/alcance)+' h':'No disponible',nombre=proys.length===1?proys[0]:`${proys.length} proyectos`,periodo=tipo==='anio'?'año':tipo==='semana'?'semana':'mes';ipEl('ipInformeKpis').innerHTML=[ipKpi('Horas totales registradas',ipFmt(total)+' h','Todas las capturas de los proyectos seleccionados'),ipKpi('Horas válidas para productividad',ipFmt(horasValidas)+' h','Sin actividades ni proyectos excluidos'),ipKpi('Horas directas a entregables',ipFmt(directas)+' h','Capturas asociadas a entregables; incluye las excluidas en el total directo'),ipKpi('Entregables vigentes',ipFmt(alcance,alcance%1?2:0),'Alcance configurado según vigencia; promedio ponderado si cambió'),ipKpi('Promedio por entregable vigente',promedio,'Horas válidas ÷ entregables vigentes')].join('');const mensaje=`RESUMEN DE HORAS Y ENTREGABLES\nPeríodo: ${fecha} (${periodo})\nProyectos: ${proys.join(', ')}\nHoras totales: ${ipFmt(total)} h\nHoras válidas para productividad: ${ipFmt(horasValidas)} h\nHoras directas a entregables: ${ipFmt(directas)} h\nEntregables vigentes: ${ipFmt(alcance)}\nPromedio: ${promedio}\nSe excluyen proyectos y actividades según configuración vigente.`;ipEl('ipCopiarInforme').dataset.texto=mensaje;ipEl('ipInformeTexto').textContent=`${nombre} · ${fecha}: ${ipFmt(total)} h totales, ${ipFmt(horasValidas)} h válidas y ${ipFmt(directas)} h directas. Promedio ${promedio}. El promedio distribuye las horas válidas entre el alcance vigente; no mide horas reales individuales.`;const e=ipExclusionVigente(meses[meses.length-1]||'9999-12');ipEl('ipInformeExclusiones').textContent='Exclusiones vigentes al cierre: proyectos '+(e.proyectos.join(', ')||'ninguno')+' · actividades '+(e.actividades.join(', ')||'ninguna')+'.';}
+const promedio=alcance?ipFmt(horasValidas/alcance)+' h':'No disponible',nombre=proys.length===1?proys[0]:`${proys.length} proyectos`,periodo=tipo==='anio'?'año':tipo==='semana'?'semana':'mes';ipEl('ipInformeKpis').innerHTML=[ipKpi('Horas totales registradas',ipFmt(total)+' h','Todas las capturas de los proyectos seleccionados'),ipKpi('Horas válidas para productividad',ipFmt(horasValidas)+' h','Sin actividades ni proyectos excluidos'),ipKpi('Horas directas a entregables',ipFmt(directas)+' h','Capturas asociadas a entregables; incluye las excluidas en el total directo'),ipKpi('Entregables vigentes',ipFmt(alcance,alcance%1?2:0),'Alcance configurado según vigencia; promedio ponderado si cambió'),ipKpi('Promedio por entregable vigente',promedio,'Horas válidas ÷ entregables vigentes')].join('');const mensaje=`RESUMEN DE HORAS Y ENTREGABLES\nPeríodo: ${fecha} (${periodo})\nProyectos: ${proys.join(', ')}\nHoras totales: ${ipFmt(total)} h\nHoras válidas para productividad: ${ipFmt(horasValidas)} h\nHoras directas a entregables: ${ipFmt(directas)} h\nEntregables vigentes: ${ipFmt(alcance)}\nPromedio: ${promedio}\nSe excluyen proyectos y actividades según configuración vigente.`;ipEl('ipCopiarInforme').dataset.texto=mensaje;ipEl('ipInformeTexto').textContent=`${nombre} · ${fecha}: ${ipFmt(total)} h totales, ${ipFmt(horasValidas)} h válidas y ${ipFmt(directas)} h directas. Promedio ${promedio}. El promedio distribuye las horas válidas entre el alcance vigente; no mide horas reales individuales.`;const e=ipExclusionVigente(meses[meses.length-1]||'9999-12');ipEl('ipInformeExclusiones').textContent='Exclusiones vigentes al cierre: proyectos '+(e.proyectos.join(', ')||'ninguno')+' · actividades '+(e.actividades.join(', ')||'ninguna')+'.';;if(typeof ampMetaRender === "function")ampMetaRender();}
 function ipInformeTipoCambiar(){
  const tipo=ipEl('ipInformeTipo').value,el=ipEl('ipInformeMes'),actual=el.value;
  let fecha=new Date(),mesActual=`${fecha.getFullYear()}-${String(fecha.getMonth()+1).padStart(2,'0')}`;
@@ -6149,7 +6433,236 @@ async function ipGuardar(){const p=ipEl('ipAdminProyecto').value,n=Number(ipEl('
 async function ipPermCambiar(conceder){const uid=ipEl('ipPermEmpleado').value,p=ipEl('ipPermProyecto').value;if(!uid||!p)return alert('Selecciona empleado y proyecto.');const {error}=await supabaseClient.rpc('amp_indicadores_permiso',{p_usuario:uid,p_proyecto:p,p_activo:conceder});ipEl('ipPermEstado').textContent=error?'Error: '+error.message:conceder?'Acceso concedido.':'Acceso revocado.';}
 function ipExportar(){if(typeof XLSX==='undefined')return alert('No se cargó Excel.');const wb=XLSX.utils.book_new(),ws=XLSX.utils.json_to_sheet(ipVista);XLSX.utils.book_append_sheet(wb,ws,'Indicadores');XLSX.writeFile(wb,'AMP_indicadores.xlsx');}
  document.addEventListener('DOMContentLoaded',()=>{
-ipEl('ipInformeMes').addEventListener('change',ipInformeRender);ipEl('ipInformeTipo').addEventListener('change',ipInformeTipoCambiar);ipEl('ipInformeProyecto').addEventListener('change',ipInformeRender);ipEl('ipInformeTodos').addEventListener('click',()=>{[...ipEl('ipInformeProyecto').options].forEach(o=>o.selected=true);ipInformeRender();});ipEl('ipCopiarInforme').addEventListener('click',async()=>{const t=ipEl('ipCopiarInforme').dataset.texto||'';try{await navigator.clipboard.writeText(t);alert('Resumen copiado.');}catch(e){window.prompt('Copia el resumen:',t);}});ipEl('ipProyectos').addEventListener('click',e=>{const tr=e.target.closest('tr[data-proyecto]');if(!tr)return;const p=tr.dataset.proyecto;ipEl('ipProyecto').value=p;[...ipEl('ipInformeProyecto').options].forEach(o=>o.selected=o.value===p);ipRender();ipEl('ipProyecto').scrollIntoView({behavior:'smooth',block:'center'});});ipEl('ipActualizar').addEventListener('click',ipRender);ipEl('ipGraficaTipo').addEventListener('change',ipRender);ipEl('ipConfigProyecto').addEventListener('change',ipConfigRender);ipEl('ipConfigDesde').addEventListener('change',ipConfigRender);ipEl('ipExclusionDesde').addEventListener('change',ipConfigRender);ipEl('ipConfigMetodo').addEventListener('change',ipConfigListaRender);ipEl('ipConfigBuscar').addEventListener('input',ipConfigListaRender);ipEl('ipConfigLista').addEventListener('change',e=>{const n=e.target.dataset.nombre;if(!n)return;if(e.target.checked)ipConfigSeleccion.add(n);else ipConfigSeleccion.delete(n);ipConfigListaRender();});ipEl('ipConfigGuardar').addEventListener('click',ipConfigGuardar);ipEl('ipExclusionGuardar').addEventListener('click',ipExclusionGuardar);ipEl('ipProyecto').addEventListener('change',()=>{[...ipEl('ipInformeProyecto').options].forEach(o=>o.selected=!ipEl('ipProyecto').value||o.value===ipEl('ipProyecto').value);ipRender();});ipEl('ipModo').addEventListener('change',()=>{const modo=ipEl('ipModo').value;ipEl('ipHasta').disabled=modo!=='rango';ipEl('ipDesde').disabled=modo==='total';ipRender();});ipEl('ipDesde').addEventListener('change',ipRender);ipEl('ipHasta').addEventListener('change',ipRender);ipEl('ipAdminProyecto').addEventListener('change',ipAdminRender);ipEl('ipGuardarDuracion').addEventListener('click',ipGuardar);ipEl('ipConceder').addEventListener('click',()=>ipPermCambiar(true));ipEl('ipRevocar').addEventListener('click',()=>ipPermCambiar(false));ipEl('ipExcel').addEventListener('click',ipExportar);});
+ipEl('ipInformeMes').addEventListener('change',ipInformeRender);ipEl('ipInformeTipo').addEventListener('change',ipInformeTipoCambiar);ipEl('ipInformeProyecto').addEventListener('change',()=>{ipInformeActualizarSelector();ipInformeRender();});ipEl('ipInformeTodos').addEventListener('click',()=>ipInformeAplicarSeleccion('todos'));ipEl('ipInformeVisibles').addEventListener('click',()=>ipInformeAplicarSeleccion('visibles'));
+ipEl('ipInformeLimpiar').addEventListener('click',()=>ipInformeAplicarSeleccion('limpiar'));
+ipEl('ipInformeCerrar').addEventListener('click',()=>ipInformeAbrir(true));
+ipEl('ipInformeProyectoBoton').addEventListener('click',()=>ipInformeAbrir());
+ipEl('ipInformeBuscar').addEventListener('input',ipInformeActualizarSelector);
+ipEl('ipInformeLista').addEventListener('change',e=>{
+  if(!e.target.matches('input[type="checkbox"][data-proyecto]'))return;
+  const opcion=[...ipEl('ipInformeProyecto').options].find(o=>o.value===e.target.dataset.proyecto);
+  if(!opcion)return;
+  opcion.selected=e.target.checked;ipInformeActualizarSelector();ipInformeRender();
+});
+document.addEventListener('click',e=>{
+  if(!ipEl('ipInformeSelector').contains(e.target))ipInformeAbrir(true);
+});
+ipEl('ipInformeSelector').addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ipInformeAbrir(true);ipEl('ipInformeProyectoBoton').focus();}
+});
+ipEl('ipCopiarInforme').addEventListener('click',async()=>{const t=ipEl('ipCopiarInforme').dataset.texto||'';try{await navigator.clipboard.writeText(t);alert('Resumen copiado.');}catch(e){window.prompt('Copia el resumen:',t);}});ipEl('ipProyectos').addEventListener('click',e=>{const tr=e.target.closest('tr[data-proyecto]');if(!tr)return;const p=tr.dataset.proyecto;ipEl('ipProyecto').value=p;[...ipEl('ipInformeProyecto').options].forEach(o=>o.selected=o.value===p);ipInformeActualizarSelector();ipRender();ipEl('ipProyecto').scrollIntoView({behavior:'smooth',block:'center'});});ipEl('ipActualizar').addEventListener('click',ipRender);ipEl('ipGraficaTipo').addEventListener('change',ipRender);ipEl('ipConfigProyecto').addEventListener('change',ipConfigRender);ipEl('ipConfigDesde').addEventListener('change',ipConfigRender);ipEl('ipExclusionDesde').addEventListener('change',ipConfigRender);ipEl('ipConfigMetodo').addEventListener('change',ipConfigListaRender);ipEl('ipConfigBuscar').addEventListener('input',ipConfigListaRender);ipEl('ipConfigLista').addEventListener('change',e=>{const n=e.target.dataset.nombre;if(!n)return;if(e.target.checked)ipConfigSeleccion.add(n);else ipConfigSeleccion.delete(n);ipConfigListaRender();});ipEl('ipConfigGuardar').addEventListener('click',ipConfigGuardar);ipEl('ipExclusionGuardar').addEventListener('click',ipExclusionGuardar);ipEl('ipProyecto').addEventListener('change',()=>{[...ipEl('ipInformeProyecto').options].forEach(o=>o.selected=!ipEl('ipProyecto').value||o.value===ipEl('ipProyecto').value);ipInformeActualizarSelector();ipRender();});ipEl('ipModo').addEventListener('change',()=>{const modo=ipEl('ipModo').value;ipEl('ipHasta').disabled=modo!=='rango';ipEl('ipDesde').disabled=modo==='total';ipRender();});ipEl('ipDesde').addEventListener('change',ipRender);ipEl('ipHasta').addEventListener('change',ipRender);ipEl('ipAdminProyecto').addEventListener('change',ipAdminRender);ipEl('ipGuardarDuracion').addEventListener('click',ipGuardar);ipEl('ipConceder').addEventListener('click',()=>ipPermCambiar(true));ipEl('ipRevocar').addEventListener('click',()=>ipPermCambiar(false));ipEl('ipExcel').addEventListener('click',ipExportar);});
+</script>
+
+
+<script>
+/* AMP: horas directas + reparto equitativo de indirectas (solo lectura). */
+(function(){
+  const META_HORAS=21;
+  const $=id=>document.getElementById(id);
+  const texto=x=>String(x??'').trim();
+  const key=x=>texto(x).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').toUpperCase();
+  const fmt=(n,d=2)=>Number(n||0).toLocaleString('es-MX',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const escapeHtml=x=>texto(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const entregableOk=e=>Boolean(texto(e))&&!['SIN ENTREGABLE','NINGUNO','N/A','—','-','NULL'].includes(key(e));
+  const esIndirectaActividad=actividad=>/\b(JUNTA|JUNTAS|REUNION|REUNIONES|LLAMADA|LLAMADAS|COORDINACION|RETRABAJO|RE-TRABAJO|RE TRABAJO|REWORK)\b/i.test(key(actividad));
+  const actividadesDirectasAntiguas=new Set(['PLANOS','SUBMITTALS','MEMORIAS','AS BUILT']);
+  // Consulta la regla central de la pestaña Administración siempre que esté cargada.
+  function esDirecta(r){
+    if(!entregableOk(r.entregable)||esIndirectaActividad(r.actividad))return false;
+    const lista=typeof actividades!=='undefined'&&Array.isArray(actividades)?actividades:[];
+    const regla=lista.find(x=>key(x.nombre)===key(r.actividad));
+    if(regla&&typeof regla.requiere_entregable==='boolean')return regla.requiere_entregable;
+    // Para capturas históricas, un entregable explícito es directo salvo actividad indirecta.
+    return true;
+  }
+  const datosPersonas={rows:null,error:null};
+  let desgloseActual=[];
+  let detallePersonasDisponible=false;
+  const resolverNombre=(uid,propuesto)=>{
+    const id=texto(uid);
+    if(texto(propuesto))return texto(propuesto);
+    const usuarios=typeof ipUsuarios!=='undefined'&&Array.isArray(ipUsuarios)?ipUsuarios:[];
+    const existente=usuarios.find(u=>texto(u.id||u.usuario_id)===id);
+    if(existente&&texto(existente.nombre||existente.NOMBRE))return texto(existente.nombre||existente.NOMBRE);
+    const otro=typeof empleadosParaPermisos!=='undefined'&&Array.isArray(empleadosParaPermisos)?empleadosParaPermisos.find(u=>texto(u.id||u.usuario_id)===id):null;
+    if(otro&&texto(otro.NOMBRE||otro.nombre))return texto(otro.NOMBRE||otro.nombre);
+    return id?'Usuario '+id.slice(0,8):'Nombre no disponible';
+  };
+  window.ampMetaCargarPersonas=async function(){
+    datosPersonas.rows=null;datosPersonas.error=null;
+    const registros=typeof ipDatos!=='undefined'&&Array.isArray(ipDatos)?ipDatos:[];
+    if(!registros.length)return;
+    try{
+      const {data,error}=await supabaseClient.rpc('amp_indicadores_personas_lectura');
+      if(error)throw error;
+      if(!Array.isArray(data))throw new Error('La respuesta no tiene el formato esperado.');
+      datosPersonas.rows=data;
+    }catch(e){datosPersonas.error=e?.message||String(e);console.warn('Faltan identificadores de empleados en indicadores:',datosPersonas.error);}
+  };
+  function periodoValido(tipo,fecha){return tipo==='total'||(tipo==='anio'?/^\d{4}$/:tipo==='semana'?/^\d{4}-W\d{2}$/:/^\d{4}-\d{2}$/).test(fecha);}
+  // Separa las horas por proyecto. Las horas indirectas nunca se multiplican.
+  function repartir(rows,proyectos){
+    const salida=new Map(proyectos.map(nombre=>[key(nombre),{nombre,horas:0,directas:0,indirectas:0,pendientes:0,entregables:new Map(),capturas:0,personas:new Set()}]));
+    for(const r of rows){
+      const p=salida.get(key(r.proyecto));if(!p)continue;
+      const h=Number(r.horas);
+      if(!Number.isFinite(h)||h<0)continue;
+      p.horas+=h;p.capturas++;
+      const uid=texto(r.usuario_id);if(uid)p.personas.add(uid);
+      if(esDirecta(r)){
+        p.directas+=h;
+        const cod=key(r.entregable);
+        if(!p.entregables.has(cod))p.entregables.set(cod,{codigo:texto(r.entregable),directas:0,indirectas:0,total:0,autores:new Map(),autoresCompletos:false});
+        p.entregables.get(cod).directas+=h;
+      }else{p.indirectas+=h;}
+    }
+    for(const p of salida.values()){
+      const n=p.entregables.size;
+      if(n){
+        const cuota=p.indirectas/n;
+        for(const e of p.entregables.values()){e.indirectas=cuota;e.total=e.directas+cuota;}
+      }else p.pendientes=p.indirectas;
+    }
+    return salida;
+  }
+  // Cruza las capturas directas y los nombres devueltos por la RPC autorizada.
+  // Solo usa h directas del mismo proyecto, código y período; no asigna las indirectas a ningún autor.
+  function enlazarAutores(proyectos,validos,enPeriodo,noExcluido){
+    const fuenteSQL=Array.isArray(datosPersonas.rows)?datosPersonas.rows.filter(r=>
+      enPeriodo(r)&&noExcluido(r)&&esDirecta(r)&&texto(r.usuario_id)&&
+      r.entregable!==undefined&&r.horas!==undefined&&Number.isFinite(Number(r.horas))):[];
+    const haySQL=fuenteSQL.length>0;
+    // Con datos históricos que ya traen usuario_id, el listado sigue disponible aunque aún no se actualice el SQL.
+    const fuente=haySQL?fuenteSQL:validos.filter(r=>esDirecta(r)&&texto(r.usuario_id));
+    detallePersonasDisponible=haySQL||fuente.length>0;
+    for(const r of fuente){
+      const proyecto=proyectos.get(key(r.proyecto));
+      if(!proyecto)continue;
+      const entregable=proyecto.entregables.get(key(r.entregable));
+      if(!entregable)continue;
+      const uid=texto(r.usuario_id),h=Number(r.horas);
+      if(!uid||!Number.isFinite(h)||h<0)continue;
+      const persona=entregable.autores.get(uid)||{uid,nombre:resolverNombre(uid,r.nombre||r.NOMBRE),horas:0};
+      persona.horas+=h;
+      // Priorizar el nombre oficial sobre un nombre de respaldo.
+      if(texto(r.nombre||r.NOMBRE))persona.nombre=resolverNombre(uid,r.nombre||r.NOMBRE);
+      entregable.autores.set(uid,persona);
+    }
+    for(const p of proyectos.values())for(const e of p.entregables.values()){
+      const horasIdentificadas=[...e.autores.values()].reduce((sum,u)=>sum+u.horas,0);
+      e.autoresCompletos=Math.abs(horasIdentificadas-e.directas)<0.011;
+    }
+  }
+  function resumenAutores(e,excel=false){
+    const personas=[...e.autores.values()].sort((a,b)=>b.horas-a.horas||a.nombre.localeCompare(b.nombre,'es'));
+    if(excel)return personas.map(p=>p.nombre+' ('+fmt(p.horas)+' h directas)').join('; ')+(e.autoresCompletos?'':(personas.length?'; DATOS INCOMPLETOS':'Nombres pendientes de recuperar'));
+    if(!personas.length)return '<span class="amp-meta-authors-warning">Nombres no disponibles. Actualiza el SQL.</span>';
+    const chip=p=>'<span class="amp-meta-author" title="'+escapeHtml(p.nombre)+' registró '+fmt(p.horas)+' h directamente"><span>'+escapeHtml(p.nombre)+'</span><small>'+fmt(p.horas)+' h</small></span>';
+    const resumen=personas.slice(0,2).map(chip).join('');
+    const extra=personas.length>2?'<details class="amp-meta-authors-more"><summary>Ver '+(personas.length-2)+' persona(s) más</summary>'+personas.slice(2).map(chip).join('')+'</details>':'';
+    return resumen+extra+(!e.autoresCompletos?'<span class="amp-meta-authors-warning">Algunas capturas no pudieron asociarse con seguridad a una persona.</span>':'');
+  }
+  function renderDetalle(){
+    const busqueda=key($('ampMetaBuscarEntregable')?.value||'');
+    const filas=desgloseActual.filter(e=>!busqueda||key(e.proyecto).includes(busqueda)||key(e.codigo).includes(busqueda)||[...e.autores.values()].some(a=>key(a.nombre).includes(busqueda)));
+    $('ampMetaDetalleFilas').innerHTML=filas.map(e=>{
+      const dif=e.total-META_HORAS;
+      return '<tr><td>'+escapeHtml(e.proyecto)+'</td><td><strong>'+escapeHtml(e.codigo)+'</strong></td><td class="amp-meta-authors-cell">'+resumenAutores(e)+'</td><td>'+fmt(e.directas)+' h</td><td>'+fmt(e.indirectas)+' h</td><td><strong>'+fmt(e.total)+' h</strong></td><td><span class="amp-meta-pill'+(dif<=.00000001?' ok':' over')+'">'+(dif<=.00000001?'En meta':'+'+fmt(dif)+' h')+'</span></td></tr>';
+    }).join('')||'<tr><td colspan="7">Sin entregables coincidentes.</td></tr>';
+  }
+  function exportarDetalle(){
+    if(typeof XLSX==='undefined')return alert('No se pudo cargar la biblioteca Excel.');
+    if(!desgloseActual.length)return alert('No hay entregables con capturas en la selección.');
+    const filas=desgloseActual.map(e=>({'Proyecto':e.proyecto,'Entregable':e.codigo,'Personas con capturas directas':resumenAutores(e,true),'Número de personas':e.autores.size,'Horas directas':Number(e.directas.toFixed(6)),'Horas indirectas distribuidas':Number(e.indirectas.toFixed(6)),'Total horas':Number(e.total.toFixed(6)),'Meta horas':META_HORAS,'Desviación':Number((e.total-META_HORAS).toFixed(6))}));
+    const libro=XLSX.utils.book_new();XLSX.utils.book_append_sheet(libro,XLSX.utils.json_to_sheet(filas),'Reparto por entregable');
+    XLSX.writeFile(libro,'AMP_horas_distribuidas_y_personas.xlsx');
+  }
+  function init(){
+    const destino=$('ampMetaProjectMount'),selector=$('ipInformeSelector');if(!destino||!selector)return;
+    destino.appendChild(selector);
+    const tipo=$('ampMetaTipo'),fecha=$('ampMetaFecha');tipo.value='mes';
+    const hoy=new Date();fecha.value=$('ipInformeMes').value||`${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}`;
+    tipo.addEventListener('change',()=>{
+      const v=tipo.value,grupo=$('ampMetaFechaGrupo');grupo.style.display=v==='total'?'none':'';
+      const etiqueta={mes:'Mes seleccionado',semana:'Semana seleccionada',anio:'Año seleccionado'}[v]||'';
+      grupo.firstChild.textContent=etiqueta+'\n        ';
+      const anterior=fecha.value;
+      if(v==='anio'){fecha.type='number';fecha.min='2000';fecha.max='2100';fecha.step='1';fecha.value=anterior.slice(0,4)||String(hoy.getFullYear());}
+      else if(v==='semana'){fecha.type='week';fecha.removeAttribute('min');fecha.removeAttribute('max');fecha.removeAttribute('step');fecha.value='';}
+      else if(v==='mes'){fecha.type='month';fecha.removeAttribute('min');fecha.removeAttribute('max');fecha.removeAttribute('step');fecha.value=/^\d{4}-\d{2}$/.test(anterior)?anterior:`${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}`;}
+      ampMetaRender();
+    });
+    fecha.addEventListener('change',ampMetaRender);
+    selector.addEventListener('click',()=>requestAnimationFrame(ampMetaRender));
+    selector.addEventListener('change',ampMetaRender);
+    $('ampMetaActualizar').addEventListener('click',()=>{if(typeof ipCargar==='function')ipCargar();});
+    $('ampMetaBuscarEntregable').addEventListener('input',renderDetalle);
+    $('ampMetaExcelDetalle').addEventListener('click',exportarDetalle);
+    $('ampMetaAvanzado').addEventListener('toggle',()=>{
+      if($('ampMetaAvanzado').open){requestAnimationFrame(()=>{if(typeof ipGraficas!=='undefined')Object.values(ipGraficas).forEach(g=>{try{g.resize()}catch(_){}})});}
+    });
+    ampMetaRender();
+  }
+  window.ampMetaRender=function(){
+    if(!$('ampMetaResults'))return;
+    const tipo=$('ampMetaTipo').value,fecha=$('ampMetaFecha').value,proyectos=[...$('ipInformeProyecto').selectedOptions].map(x=>x.value),
+      seleccion=new Set(proyectos.map(key)),fechaOK=periodoValido(tipo,fecha),
+      datos=typeof ipDatos!=='undefined'&&Array.isArray(ipDatos)?ipDatos:[],totalProyectos=proyectos.length;
+    const aviso=$('ampMetaEmpty');
+    if(!totalProyectos||!fechaOK){
+      aviso.hidden=false;aviso.textContent=!totalProyectos?'Selecciona uno o varios proyectos para consultar las horas.':'Selecciona una fecha válida para calcular el promedio.';
+      $('ampMetaResults').hidden=true;return;
+    }
+    aviso.hidden=true;$('ampMetaResults').hidden=false;
+    const enPeriodo=r=>tipo==='total'||(typeof ipPeriodoIncluye==='function'&&ipPeriodoIncluye(r,tipo,fecha));
+    const noExcluido=r=>{
+      const mes=texto(r.fecha).slice(0,7),ex=typeof ipExclusionVigente==='function'?ipExclusionVigente(mes):{proyectos:[],actividades:[]};
+      return !(ex.proyectos||[]).some(x=>key(x)===key(r.proyecto))&&!(ex.actividades||[]).some(x=>key(x)===key(r.actividad));
+    };
+    const base=datos.filter(r=>seleccion.has(key(r.proyecto))&&enPeriodo(r)),validos=base.filter(noExcluido);
+    const porProyecto=repartir(validos,proyectos);
+    const todos=[...porProyecto.values()];
+    const proyectosConDatos=todos.filter(p=>p.capturas>0).sort((a,b)=>b.horas-a.horas||a.nombre.localeCompare(b.nombre,'es'));
+    const horas=todos.reduce((s,p)=>s+p.horas,0),directas=todos.reduce((s,p)=>s+p.directas,0),indirectas=todos.reduce((s,p)=>s+p.indirectas,0),pendientes=todos.reduce((s,p)=>s+p.pendientes,0),
+      entregables=todos.reduce((s,p)=>s+p.entregables.size,0),promedio=entregables>0?(horas-pendientes)/entregables:null,
+      diferencia=promedio===null?null:promedio-META_HORAS,cumple=promedio!==null&&promedio<=META_HORAS;
+    enlazarAutores(porProyecto,validos,enPeriodo,noExcluido);
+    desgloseActual=proyectosConDatos.flatMap(p=>[...p.entregables.values()].map(e=>({...e,proyecto:p.nombre}))).sort((a,b)=>a.proyecto.localeCompare(b.proyecto,'es')||b.total-a.total||a.codigo.localeCompare(b.codigo,'es'));
+    // Si la RPC original omite usuario_id, no mostrar 0 como si fuese una cifra comprobada.
+    let personalCompleto=validos.every(r=>Boolean(texto(r.usuario_id))),usuariosValidos=validos;
+    if(!personalCompleto&&Array.isArray(datosPersonas.rows)){
+      const candidatos=datosPersonas.rows.filter(r=>seleccion.has(key(r.proyecto))&&enPeriodo(r)&&noExcluido(r));
+      // Evitar conteos parciales si la RPC auxiliar no pudo vincular alguna captura.
+      const cobertura=validos.every(r=>candidatos.some(x=>key(x.proyecto)===key(r.proyecto)&&texto(x.fecha).slice(0,10)===texto(r.fecha).slice(0,10)&&key(x.actividad)===key(r.actividad)));
+      if(cobertura){usuariosValidos=candidatos;personalCompleto=true;}
+    }
+    const personasGlobal=new Set();
+    for(const p of porProyecto.values())p.personas=new Set();
+    if(personalCompleto)for(const r of usuariosValidos){const uid=texto(r.usuario_id),p=porProyecto.get(key(r.proyecto));if(uid&&p){p.personas.add(uid);personasGlobal.add(uid);}}
+    $('ampMetaHoras').textContent=fmt(horas)+' h';$('ampMetaEntregables').textContent=fmt(entregables,0);
+    $('ampMetaPersonas').textContent=personalCompleto?fmt(personasGlobal.size,0):'—';
+    const avisoPersonas=$('ampMetaPersonasAviso');avisoPersonas.hidden=personalCompleto;
+    avisoPersonas.textContent=personalCompleto?'':'No se puede contar personal de forma confiable: la función de indicadores no entrega usuario_id. Instala el complemento SQL amp_indicadores_personas_lectura para consultar únicamente los empleados autorizados. No se mostrará un cero falso.';
+    $('ampMetaPromedio').textContent=promedio===null?'—':fmt(promedio)+' h';
+    const estado=$('ampMetaEstado');estado.className='amp-meta-status'+(promedio===null?'':cumple?' ok':' over');
+    estado.textContent=promedio===null?'Sin entregables con horas':cumple?'Dentro de la meta':'Por encima de la meta';
+    $('ampMetaDiferencia').textContent=promedio===null?'Meta: 21 h por entregable':(Math.abs(diferencia)<.005?'Exactamente en la meta':(diferencia>0?'+':'−')+fmt(Math.abs(diferencia))+' h frente a la meta');
+    const escala=Math.max(42,(promedio||0)*1.08),barra=$('ampMetaBarra');barra.style.width=String(Math.max(0,Math.min(100,(promedio||0)/escala*100)))+'%';barra.classList.toggle('over',diferencia>0);
+    const track=document.querySelector('.amp-meta-meter-target');if(track)track.style.left=String(META_HORAS/escala*100)+'%';$('ampMetaEscala').textContent='Meta 21 h · escala '+fmt(escala,0)+' h';
+    $('ampMetaContador').textContent=proyectosConDatos.length+' proyecto'+(proyectosConDatos.length===1?'':'s')+' con capturas';
+    const reparto=indirectas-pendientes;
+    $('ampMetaDesglose').innerHTML='<span>Directas: <strong>'+fmt(directas)+' h</strong></span><span>Indirectas repartidas: <strong>'+fmt(reparto)+' h</strong></span>'+(pendientes>0?'<span>Indirectas pendientes (sin entregables): <strong>'+fmt(pendientes)+' h</strong></span>':'');
+    $('ampMetaFilas').innerHTML=proyectosConDatos.map(p=>{
+      const cantidad=p.entregables.size,media=cantidad?(p.horas-p.pendientes)/cantidad:null,ok=media!==null&&media<=META_HORAS;
+      const clase=media===null?'':ok?' ok':' over',label=media===null?'Sin entregables':ok?'En meta':'Sobre meta';
+      return '<tr><td><strong>'+escapeHtml(p.nombre)+'</strong></td><td>'+fmt(p.horas)+' h</td><td>'+fmt(p.directas)+' h</td><td>'+fmt(p.indirectas-p.pendientes)+' h</td><td>'+cantidad+'</td><td>'+(personalCompleto?p.personas.size:'—')+'</td><td><strong>'+(media===null?'—':fmt(media)+' h')+'</strong></td><td><span class="amp-meta-pill'+clase+'">'+label+'</span></td></tr>';
+    }).join('')||'<tr><td class="amp-meta-row-empty" colspan="8">No hay capturas válidas en la selección.</td></tr>';
+    renderDetalle();
+    const excluidas=base.length-validos.length;
+    $('ampMetaNota').textContent='Las horas directas se conservan en cada entregable. Las '+fmt(indirectas)+' h indirectas se reparten por partes iguales entre los entregables trabajados de cada proyecto, sin mezclarlos entre proyectos. '+(pendientes?fmt(pendientes)+' h no se repartieron porque no había entregables directos en el proyecto y período. ':'')+'Promedio global: ('+fmt(horas)+' h'+(pendientes?' − '+fmt(pendientes)+' h pendientes':'')+') ÷ '+entregables+' entregables. '+(excluidas?excluidas+' capturas excluidas por configuración. ':'')+'Solo lectura; no modifica las capturas originales.';
+  };
+  document.addEventListener('DOMContentLoaded',init);
+})();
 </script>
 
 <script>
