@@ -1,3 +1,4 @@
+```
 <!DOCTYPE html>
 
 <html lang="es">
@@ -862,6 +863,28 @@
     .amp-regla-ayuda{font-size:12px;color:#64748b;margin:6px 0 0}
     html[data-amp-theme="dark"] .amp-reglas-scroll{border-color:#334155}
     html[data-amp-theme="dark"] .amp-reglas-scroll thead th{background:#25354a;color:#e2e8f0}
+
+    /* AMP: distribución de horas entre varios entregables sin duplicar tiempo. */
+    .amp-horas-entregables-toolbar {display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+    .amp-horas-entregables-toolbar input{flex:1 1 220px;min-width:0}
+    .amp-horas-entregables-lista {max-height:224px;overflow-y:auto;overscroll-behavior:contain;border:1px solid #cbd5e1;border-radius:9px;padding:5px 10px;background:#f8fafc}
+    .amp-horas-entregables-fila {display:flex;align-items:center;gap:10px;padding:7px 4px;border-bottom:1px solid #e2e8f0;font-weight:400;cursor:pointer;overflow-wrap:anywhere}
+    .amp-horas-entregables-fila:last-child {border-bottom:0}
+    .amp-horas-entregables-fila input {width:18px;height:18px;min-height:18px;flex:none;padding:0;accent-color:#2563eb}
+    .amp-horas-entregables-resumen{font-size:13px;color:#475569;margin:7px 0}
+    .amp-horas-reparto {border:1px solid #bfdbfe;border-radius:9px;padding:11px 13px;background:#eff6ff;color:#1e3a8a;font-size:13px;line-height:1.5}
+    .amp-horas-reparto strong {font-weight:700}
+    .amp-horas-reparto-detalle {margin-top:8px}
+    .amp-horas-reparto-detalle summary {cursor:pointer;font-weight:600}
+    .amp-horas-reparto-tabla {width:100%;min-width:0;margin-top:8px;border-collapse:collapse}
+    .amp-horas-reparto-tabla th,.amp-horas-reparto-tabla td {padding:5px 7px;border-bottom:1px solid #bfdbfe;text-align:left}
+    .amp-horas-reparto-tabla th:last-child,.amp-horas-reparto-tabla td:last-child{text-align:right;white-space:nowrap}
+    html[data-amp-theme="dark"] .amp-horas-entregables-lista{background:#101a2a;border-color:#475569}
+    html[data-amp-theme="dark"] .amp-horas-entregables-fila{border-color:#334155}
+    html[data-amp-theme="dark"] .amp-horas-entregables-resumen{color:#cbd5e1}
+    html[data-amp-theme="dark"] .amp-horas-reparto{background:#1e3a5f;color:#dbeafe;border-color:#3b82f6}
+    html[data-amp-theme="dark"] .amp-horas-reparto-tabla th,html[data-amp-theme="dark"] .amp-horas-reparto-tabla td{border-color:#475569}
+    @media(max-width:700px){.amp-horas-entregables-toolbar input{flex-basis:100%}.amp-horas-entregables-toolbar button{flex:1 1 auto}}
   </style>
 
 <style>.ra-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin:16px 0}.ra-filters label{display:block}.ra-filters select{margin-top:6px}.ra-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0}.ra-kpis>div{padding:17px;border:1px solid #dbe3ed;border-radius:12px;background:#f8fafc}.ra-kpis small{display:block;color:#64748b}.ra-kpis strong{display:block;font-size:27px;color:#1d4ed8;margin-top:8px}.ra-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.ra-chart{height:300px;position:relative}.ra-table{min-width:800px}.ra-table tbody tr{cursor:pointer}.ra-table tbody tr:hover{background:#dbeafe}@media(max-width:750px){.ra-grid{grid-template-columns:1fr}.ra-kpis{grid-template-columns:repeat(2,1fr)}}</style><style>
@@ -1094,7 +1117,7 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
       <div id="ipPermEstado"></div>
     </div>
   </section>
-  <section id="resumenAdminCard" class="card tab-view-hidden"><h2>📊 Resumen de administrador · Horas hombre de ingeniería</h2><div class="card" id="raPermisosPanel" style="display:none;background:#f1f5f9"><h3>Acceso exclusivo al resumen de horas</h3><p>Solo las cuentas maestras pueden conceder o revocar este acceso. No concede permisos de entregables.</p><div class="admin-filter-row"><select id="raNuevoRevisor"><option value="">Seleccionar empleado</option></select><button type="button" class="btn-primary" onclick="raGuardarRevisor(true)">Dar acceso al resumen</button></div><div id="raListaRevisores"></div></div><p id="raEstado" style="color:#64748b">Selecciona los filtros para analizar las horas del equipo.</p><div class="ra-filters"><label>Periodo<select id="raFiltroTipo"><option value="semana">Semana</option><option value="mes">Mes</option><option value="anio">Año</option></select></label><label id="raFiltroPeriodoLabel">Semana<select id="raSemana"></select></label><label>Persona<select id="raPersona"></select></label><label>Proyecto<select id="raProyecto"></select></label><label>Actividad<select id="raActividad"></select></label><label>Entregable<select id="raEntregable"></select></label><label>Cumple objetivo<select id="raCumple"></select></label></div><div class="buttons"><button type="button" class="btn-secondary" onclick="raLimpiar()">Limpiar filtros</button><button type="button" class="btn-primary" onclick="cargarResumenAdmin()">Actualizar datos</button><button type="button" class="btn-primary" onclick="raExportar()">Exportar Excel</button></div><div class="ra-kpis"><div><small>Horas registradas</small><strong id="raHoras">0</strong></div><div><small>Personas con captura</small><strong id="raActivos">0</strong></div><div><small>Sin captura (periodo)</small><strong id="raSin">0</strong></div><div><small>Registros</small><strong id="raRegistros">0</strong></div></div><div class="ra-grid"><div class="chart-card"><h3>Horas por proyecto</h3><div class="ra-chart"><canvas id="raChartProyecto"></canvas></div></div><div class="chart-card"><h3>Horas por semana</h3><div class="ra-chart"><canvas id="raChartSemana"></canvas></div></div><div class="chart-card"><h3>Distribución por proyecto</h3><div class="ra-chart"><canvas id="raChartDona"></canvas></div></div><div class="chart-card"><h3>Cumplimiento de objetivos</h3><div class="ra-chart"><canvas id="raChartCumple"></canvas></div></div><div class="chart-card" style="grid-column:1/-1"><h3>Horas registradas por persona</h3><p class="chart-note">Incluye empleados activos sin captura. Usa los filtros superiores; pulsa una barra para seleccionar a la persona.</p><div class="ra-chart" id="raPersonaChartWrap" style="height:440px"><canvas id="raChartPersona"></canvas></div></div></div><section class="card" style="margin-top:18px;background:#f8fafc"><h3>Auditoría de captura · Todos los empleados</h3><div class="ra-filters"><label>Periodo<select id="raPeriodoTipo"><option value="semana">Semana</option><option value="mes">Mes</option><option value="anio">Año</option></select></label><label id="raAuditoriaPeriodoLabel">Semana / mes / año<select id="raPeriodoValor"></select></label><label>Mostrar<select id="raEstadoCaptura"><option value="todos">Todos</option><option value="sin">Sin registros</option><option value="incumple">No alcanzaron el objetivo</option><option value="cumple">Cumplieron</option></select></label></div><p id="raObjetivoInfo" style="color:#475569"></p><div class="buttons"><button class="btn-primary" type="button" onclick="raCopiarSin()">Copiar nombres sin captura</button><button class="btn-secondary" type="button" onclick="raCopiarAuditoria()">Copiar tabla de horas</button><button class="btn-primary" type="button" onclick="raExportarAuditoria()">Exportar auditoría Excel</button></div><div class="table-container" style="max-height:450px;overflow:auto"><table class="ra-table"><thead><tr><th>Empleado</th><th>Periodo</th><th>Horas registradas</th><th>Vacaciones / permisos / asuetos (h)</th><th>Objetivo (h)</th><th>Diferencia</th><th>Resultado</th></tr></thead><tbody id="raAuditoriaBody"></tbody></table></div></section><h3>Control de captura por persona y semana</h3><div class="table-container" style="max-height:400px;overflow:auto"><table class="ra-table"><thead><tr><th>Persona</th><th>Semana</th><th>Horas</th><th>Registros</th><th>Estado</th></tr></thead><tbody id="raControl"></tbody></table></div><h3>Detalle de registros filtrados</h3><div class="table-container" style="max-height:460px;overflow:auto"><table class="ra-table"><thead><tr><th>Fecha</th><th>Persona</th><th>Semana</th><th>Proyecto</th><th>Actividad</th><th>Entregable</th><th>Horas</th><th>Objetivo</th></tr></thead><tbody id="raDetalle"></tbody></table></div></section>
+  <section id="resumenAdminCard" class="card tab-view-hidden"><h2>📊 Resumen de administrador · Horas hombre de ingeniería</h2><div class="card" id="raPermisosPanel" style="display:none;background:#f1f5f9"><h3>Acceso exclusivo al resumen de horas</h3><p>Solo las cuentas maestras pueden conceder o revocar este acceso. No concede permisos de entregables.</p><div class="admin-filter-row"><select id="raNuevoRevisor"><option value="">Seleccionar empleado</option></select><button type="button" class="btn-primary" onclick="raGuardarRevisor(true)">Dar acceso al resumen</button></div><div id="raListaRevisores"></div></div><p id="raEstado" style="color:#64748b">Selecciona los filtros para analizar las horas del equipo.</p><div class="ra-filters"><label>Periodo<select id="raFiltroTipo"><option value="semana">Semana</option><option value="mes">Mes</option><option value="anio">Año</option></select></label><label id="raFiltroPeriodoLabel">Semana<select id="raSemana"></select></label><label>Persona<select id="raPersona"></select></label><label>Proyecto<select id="raProyecto"></select></label><label>Actividad<select id="raActividad"></select></label><label>Entregable<select id="raEntregable"></select></label><label>Cumple objetivo<select id="raCumple"></select></label></div><div class="buttons"><button type="button" class="btn-secondary" onclick="raLimpiar()">Limpiar filtros</button><button type="button" class="btn-primary" onclick="cargarResumenAdmin()">Actualizar datos</button><button type="button" class="btn-primary" onclick="raExportar()">Exportar Excel</button></div><div class="ra-kpis"><div><small>Horas registradas</small><strong id="raHoras">0</strong></div><div><small>Personas con captura</small><strong id="raActivos">0</strong></div><div><small>Sin captura (periodo)</small><strong id="raSin">0</strong></div><div><small>Asignaciones registradas</small><strong id="raRegistros">0</strong></div></div><div class="ra-grid"><div class="chart-card"><h3>Horas por proyecto</h3><div class="ra-chart"><canvas id="raChartProyecto"></canvas></div></div><div class="chart-card"><h3>Horas por semana</h3><div class="ra-chart"><canvas id="raChartSemana"></canvas></div></div><div class="chart-card"><h3>Distribución por proyecto</h3><div class="ra-chart"><canvas id="raChartDona"></canvas></div></div><div class="chart-card"><h3>Cumplimiento de objetivos</h3><div class="ra-chart"><canvas id="raChartCumple"></canvas></div></div><div class="chart-card" style="grid-column:1/-1"><h3>Horas registradas por persona</h3><p class="chart-note">Incluye empleados activos sin captura. Usa los filtros superiores; pulsa una barra para seleccionar a la persona.</p><div class="ra-chart" id="raPersonaChartWrap" style="height:440px"><canvas id="raChartPersona"></canvas></div></div></div><section class="card" style="margin-top:18px;background:#f8fafc"><h3>Auditoría de captura · Todos los empleados</h3><div class="ra-filters"><label>Periodo<select id="raPeriodoTipo"><option value="semana">Semana</option><option value="mes">Mes</option><option value="anio">Año</option></select></label><label id="raAuditoriaPeriodoLabel">Semana / mes / año<select id="raPeriodoValor"></select></label><label>Mostrar<select id="raEstadoCaptura"><option value="todos">Todos</option><option value="sin">Sin registros</option><option value="incumple">No alcanzaron el objetivo</option><option value="cumple">Cumplieron</option></select></label></div><p id="raObjetivoInfo" style="color:#475569"></p><div class="buttons"><button class="btn-primary" type="button" onclick="raCopiarSin()">Copiar nombres sin captura</button><button class="btn-secondary" type="button" onclick="raCopiarAuditoria()">Copiar tabla de horas</button><button class="btn-primary" type="button" onclick="raExportarAuditoria()">Exportar auditoría Excel</button></div><div class="table-container" style="max-height:450px;overflow:auto"><table class="ra-table"><thead><tr><th>Empleado</th><th>Periodo</th><th>Horas registradas</th><th>Vacaciones / permisos / asuetos (h)</th><th>Objetivo (h)</th><th>Diferencia</th><th>Resultado</th></tr></thead><tbody id="raAuditoriaBody"></tbody></table></div></section><h3>Horas acumuladas por entregable</h3><p class="chart-note">Las capturas múltiples se reparten en registros individuales. Aquí se suman las horas reales de cada entregable sin multiplicarlas. Respeta los filtros de persona, proyecto y período.</p><div class="table-container" style="max-height:430px;overflow:auto"><table class="ra-table"><thead><tr><th>Proyecto</th><th>Entregable</th><th>Asignaciones</th><th>Horas acumuladas</th></tr></thead><tbody id="raEntregablesAcumulados"></tbody></table></div><h3>Control de captura por persona y semana</h3><div class="table-container" style="max-height:400px;overflow:auto"><table class="ra-table"><thead><tr><th>Persona</th><th>Semana</th><th>Horas</th><th>Asignaciones</th><th>Estado</th></tr></thead><tbody id="raControl"></tbody></table></div><h3>Detalle de registros filtrados</h3><div class="table-container" style="max-height:460px;overflow:auto"><table class="ra-table"><thead><tr><th>Fecha</th><th>Persona</th><th>Semana</th><th>Proyecto</th><th>Actividad</th><th>Entregable</th><th>Horas</th><th>Objetivo</th></tr></thead><tbody id="raDetalle"></tbody></table></div></section>
    <!-- Módulo independiente: la calculadora vive en un iframe para aislar sus estilos y JavaScript de Control de Horas. -->
   <section id="calculadoraElectricaSection" class="card tab-view-hidden" aria-label="Calculadora eléctrica beta">
     <div class="calculator-beta-banner" role="status">
@@ -1233,21 +1256,27 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
         </div>
 
 
-        <div class="form-group amp-sin-entregable" id="entregableGrupo">
-
-          <label for="entregable">
-            Entregable
-          </label>
-
-          <select id="entregable">
-
-            <option value="">
-              Sin entregable
-            </option>
-
+        <div class="form-group full amp-sin-entregable" id="entregableGrupo">
+          <label for="buscarEntregableHoras">Entregables (selecciona uno o varios)</label>
+          <!-- Selector original conservado para compatibilidad con la edición de registros anteriores. -->
+          <select id="entregable" class="hidden" tabindex="-1" aria-hidden="true">
+            <option value="">Sin entregable</option>
           </select>
-          <small id="ayudaEntregable" class="amp-regla-ayuda">Selecciona un entregable del proyecto.</small>
-
+          <small id="ayudaEntregable" class="amp-regla-ayuda">Selecciona uno o varios entregables del proyecto.</small>
+          <div class="amp-horas-entregables-toolbar">
+            <input id="buscarEntregableHoras" type="search" placeholder="Buscar entregable por nombre o clave..." autocomplete="off">
+            <button id="seleccionarVisiblesHoras" type="button" class="btn-secondary btn-small">Seleccionar visibles</button>
+            <button id="limpiarEntregablesHoras" type="button" class="btn-secondary btn-small">Quitar selección</button>
+          </div>
+          <div id="listaEntregablesHoras" class="amp-horas-entregables-lista" role="group" aria-label="Entregables del proyecto"></div>
+          <p id="totalEntregablesHoras" class="amp-horas-entregables-resumen" aria-live="polite">0 seleccionados</p>
+          <div class="amp-horas-reparto">
+            <div id="resumenRepartoHoras" aria-live="polite">Indica las horas y selecciona los entregables para visualizar el reparto.</div>
+            <details id="detalleRepartoHoras" class="amp-horas-reparto-detalle">
+              <summary>Ver horas asignadas a cada entregable</summary>
+              <div id="filasRepartoHoras"></div>
+            </details>
+          </div>
         </div>
 
 
@@ -2087,6 +2116,8 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
     const esAdminMaestroId = (id) => ADMIN_MAESTRO_IDS.includes(String(id || ""));
 
     let registroEditando = null;
+    // Selección en memoria: las horas se distribuyen al guardar como filas individuales.
+    let entregablesSeleccionadosHoras = new Set();
 
 
     /* ==================================================
@@ -2151,6 +2182,11 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
             }
           );
 
+        // Multiselección disponible únicamente para actividades que requieren entregable.
+        document.getElementById("buscarEntregableHoras")?.addEventListener("input", renderEntregablesHoras);
+        document.getElementById("seleccionarVisiblesHoras")?.addEventListener("click", () => seleccionarEntregablesVisiblesHoras(true));
+        document.getElementById("limpiarEntregablesHoras")?.addEventListener("click", () => seleccionarEntregablesVisiblesHoras(false));
+        document.getElementById("horas")?.addEventListener("input", actualizarVistaRepartoHoras);
         document.getElementById("guardarPermisoEntregables")?.addEventListener("click", guardarPermisoEntregables);
         document.getElementById("actividad")?.addEventListener("change", async () => {
           aplicarReglaEntregable();
@@ -3273,6 +3309,137 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
       return ["PLANOS", "SUBMITTALS", "MEMORIAS", "AS BUILT"].includes(normalizarNombreActividad(nombre));
     }
 
+    // Reparto exacto a centésimas: la suma de las filas siempre coincide con el total.
+    function repartirHorasEntregables(horas, cantidad) {
+      const h = Number(horas);
+      const centesimas = Math.round(h * 100);
+      if (!Number.isFinite(h) || h <= 0 || h > 999 || Math.abs(h * 100 - centesimas) > 0.000001) {
+        throw new Error("Escribe horas válidas con máximo dos decimales (ej. 8.60).");
+      }
+      if (!Number.isInteger(cantidad) || cantidad < 1) {
+        throw new Error("Selecciona al menos un entregable.");
+      }
+      if (centesimas < cantidad) {
+        throw new Error(`Las ${h.toFixed(2)} h no alcanzan para asignar al menos 0.01 h a cada uno de los ${cantidad} entregables.`);
+      }
+      const parte = Math.floor(centesimas / cantidad);
+      const sobrantes = centesimas % cantidad;
+      return Array.from({length: cantidad}, (_, i) => (parte + (i < sobrantes ? 1 : 0)) / 100);
+    }
+
+    function nombresEntregablesHoras() {
+      const proyecto = document.getElementById("proyecto")?.value || "";
+      return [...new Set(entregables
+        .filter(e => e.activo !== false && e.proyectos?.nombre === proyecto)
+        .map(e => String(e.nombre || "").trim()).filter(Boolean))];
+    }
+
+    function sincronizarSelectorEntregableHoras() {
+      const selector = document.getElementById("entregable");
+      if (!selector) return;
+      selector.value = [...entregablesSeleccionadosHoras][0] || "";
+    }
+
+    function establecerEntregablesHoras(nombres) {
+      const permitidos = new Set(nombresEntregablesHoras());
+      entregablesSeleccionadosHoras = new Set((nombres || []).filter(n => permitidos.has(n)));
+      sincronizarSelectorEntregableHoras();
+      renderEntregablesHoras();
+    }
+
+    function renderEntregablesHoras() {
+      const lista = document.getElementById("listaEntregablesHoras");
+      if (!lista) return;
+      const nombres = nombresEntregablesHoras();
+      const busqueda = String(document.getElementById("buscarEntregableHoras")?.value || "").trim().toLocaleLowerCase("es-MX");
+      const visibles = nombres.filter(n => n.toLocaleLowerCase("es-MX").includes(busqueda));
+      const validos = new Set(nombres);
+      entregablesSeleccionadosHoras = new Set([...entregablesSeleccionadosHoras].filter(n => validos.has(n)));
+      sincronizarSelectorEntregableHoras();
+      lista.replaceChildren();
+      if (!visibles.length) {
+        const p = document.createElement("p");
+        p.className = "amp-horas-entregables-resumen";
+        p.textContent = nombres.length ? "Sin coincidencias para la búsqueda." : "Este proyecto no tiene entregables disponibles.";
+        lista.appendChild(p);
+      } else {
+        const frag = document.createDocumentFragment();
+        visibles.forEach(nombre => {
+          const label = document.createElement("label");
+          label.className = "amp-horas-entregables-fila";
+          const check = document.createElement("input");
+          check.type = "checkbox";
+          check.value = nombre;
+          check.checked = entregablesSeleccionadosHoras.has(nombre);
+          check.addEventListener("change", () => {
+            if (check.checked) {
+              if (registroEditando && entregablesSeleccionadosHoras.size > 0 && !entregablesSeleccionadosHoras.has(nombre)) {
+                check.checked = false;
+                mostrarMensaje("formMessage", "Al editar un registro existente solo puedes seleccionar un entregable. Para una carga múltiple usa una captura nueva.", "info");
+                return;
+              }
+              entregablesSeleccionadosHoras.add(nombre);
+            } else {
+              entregablesSeleccionadosHoras.delete(nombre);
+            }
+            sincronizarSelectorEntregableHoras();
+            actualizarVistaRepartoHoras();
+          });
+          label.append(check, document.createTextNode(nombre));
+          frag.appendChild(label);
+        });
+        lista.appendChild(frag);
+      }
+      const total = document.getElementById("totalEntregablesHoras");
+      if (total) total.textContent = `${entregablesSeleccionadosHoras.size} seleccionados de ${nombres.length} · ${visibles.length} visibles`;
+      document.getElementById("seleccionarVisiblesHoras").disabled = !!registroEditando || !visibles.length;
+      actualizarVistaRepartoHoras();
+    }
+
+    function seleccionarEntregablesVisiblesHoras(activar) {
+      if (registroEditando && activar) return;
+      const busqueda = String(document.getElementById("buscarEntregableHoras")?.value || "").trim().toLocaleLowerCase("es-MX");
+      const visibles = nombresEntregablesHoras().filter(n => n.toLocaleLowerCase("es-MX").includes(busqueda));
+      if (activar) visibles.forEach(n => entregablesSeleccionadosHoras.add(n));
+      else entregablesSeleccionadosHoras.clear();
+      sincronizarSelectorEntregableHoras();
+      renderEntregablesHoras();
+    }
+
+    function actualizarVistaRepartoHoras() {
+      const resumen = document.getElementById("resumenRepartoHoras");
+      const detalle = document.getElementById("filasRepartoHoras");
+      const panel = document.getElementById("detalleRepartoHoras");
+      if (!resumen || !detalle || !panel) return;
+      const n = entregablesSeleccionadosHoras.size;
+      const valor = document.getElementById("horas")?.value || "";
+      const total = document.getElementById("totalEntregablesHoras");
+      if (total) total.textContent = `${n} seleccionados de ${nombresEntregablesHoras().length} · ${nombresEntregablesHoras().filter(x => x.toLocaleLowerCase("es-MX").includes(String(document.getElementById("buscarEntregableHoras")?.value || "").trim().toLocaleLowerCase("es-MX"))).length} visibles`;
+      detalle.replaceChildren();
+      panel.hidden = !n || !valor;
+      if (!n) {resumen.textContent = "Selecciona uno o varios entregables para distribuir las horas."; return;}
+      if (!valor) {resumen.textContent = `${n} entregables seleccionados. Introduce las horas totales del día.`;return;}
+      try {
+        const h = Number(valor), partes = repartirHorasEntregables(h, n);
+        const minimo = Math.min(...partes), maximo = Math.max(...partes);
+        resumen.innerHTML = `<strong>${h.toFixed(2)} horas totales</strong> distribuidas entre <strong>${n} entregable(s)</strong>. Cada uno recibe <strong>${minimo.toFixed(2)}${minimo !== maximo ? " a " + maximo.toFixed(2) : ""} h</strong>. Total en reportes: <strong>${h.toFixed(2)} h, sin duplicar</strong>.`;
+        const tabla = document.createElement("table");
+        tabla.className = "amp-horas-reparto-tabla";
+        const head = tabla.createTHead().insertRow();
+        ["Entregable", "Horas"].forEach(x => {const cell = document.createElement("th");cell.textContent=x;head.appendChild(cell);});
+        const cuerpo = tabla.createTBody();
+        [...entregablesSeleccionadosHoras].forEach((nombre, i) => {
+          const fila = cuerpo.insertRow();
+          fila.insertCell().textContent = nombre;
+          fila.insertCell().textContent = partes[i].toFixed(2) + " h";
+        });
+        detalle.appendChild(tabla);
+      } catch (err) {
+        panel.hidden = true;
+        resumen.textContent = err.message;
+      }
+    }
+
     function aplicarReglaEntregable() {
       const actividadSeleccionada = document.getElementById("actividad")?.value || "";
       const grupo = document.getElementById("entregableGrupo");
@@ -3281,15 +3448,17 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
       const requerida = actividadRequiereEntregable(actividadSeleccionada);
       grupo.classList.toggle("amp-sin-entregable", !requerida);
       selector.disabled = !requerida;
-      selector.required = requerida;
-      if (!requerida) selector.value = "";
+      // No marcar required en un select oculto; la validación se realiza al guardar.
+      selector.required = false;
+      if (!requerida) establecerEntregablesHoras([]);
       const ayuda = document.getElementById("ayudaEntregable");
       if (ayuda) ayuda.textContent = requerida
-        ? "Obligatorio: selecciona un entregable del proyecto."
+        ? "Obligatorio: puedes elegir varios entregables. Las horas se repartirán automáticamente y se guardará una fila por entregable."
         : "";
       if (requerida && !document.getElementById("proyecto")?.value) {
-        if (ayuda) ayuda.textContent = "Selecciona un proyecto y después su entregable.";
+        if (ayuda) ayuda.textContent = "Selecciona un proyecto y después sus entregables.";
       }
+      actualizarVistaRepartoHoras();
     }
 
     async function refrescarReglasParaUsuario() {
@@ -3681,10 +3850,12 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
         `<option value="">
           Sin entregable
         </option>`;
-
+      entregablesSeleccionadosHoras.clear();
+      document.getElementById("buscarEntregableHoras").value = "";
 
       if (!proyectoNombre) {
         aplicarReglaEntregable();
+        renderEntregablesHoras();
         return;
       }
 
@@ -3722,6 +3893,7 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
           }
         );
       aplicarReglaEntregable();
+      renderEntregablesHoras();
 
     }
 
@@ -4335,10 +4507,19 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
         }
       }
       aplicarReglaEntregable();
-      const entregable = requiereEntregable ? document.getElementById("entregable").value : "";
-      if (requiereEntregable && !entregable) {
-        mostrarMensaje("formMessage", "La actividad seleccionada requiere un entregable. Selecciona uno del proyecto antes de guardar.", "error");
-        document.getElementById("entregable").focus();
+      const entregablesCaptura = requiereEntregable ? [...entregablesSeleccionadosHoras] : [""];
+      if (requiereEntregable && entregablesCaptura.length === 0) {
+        mostrarMensaje("formMessage", "La actividad seleccionada requiere al menos un entregable. Marca los entregables del proyecto antes de guardar.", "error");
+        document.getElementById("buscarEntregableHoras").focus();
+        return;
+      }
+      const validos = new Set(nombresEntregablesHoras());
+      if (requiereEntregable && entregablesCaptura.some(n => !validos.has(n))) {
+        mostrarMensaje("formMessage", "La selección tiene entregables ajenos al proyecto o que ya no están activos. Actualiza los catálogos.", "error");
+        return;
+      }
+      if (registroEditando && entregablesCaptura.length > 1) {
+        mostrarMensaje("formMessage", "La edición es individual. Selecciona un solo entregable o crea una captura nueva para varios.", "error");
         return;
       }
 
@@ -4431,21 +4612,13 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
       }
 
 
-      if (
-        !horas ||
-        horas <= 0
-      ) {
-
-        mostrarMensaje(
-          "formMessage",
-          "Escribe una cantidad de horas válida.",
-          "error"
-        );
-
+      let horasRepartidas;
+      try {
+        horasRepartidas = repartirHorasEntregables(horas, entregablesCaptura.length);
+      } catch (error) {
+        mostrarMensaje("formMessage", error.message, "error");
         return;
-
       }
-
 
       if (
         porcentaje < 0 ||
@@ -4493,10 +4666,10 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
           actividad,
 
         entregable:
-          entregable || null,
+          entregablesCaptura[0] || null,
 
         horas:
-          horas,
+          horasRepartidas[0],
 
         notas:
           notas || null,
@@ -4540,38 +4713,28 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
 
 
       let resultado;
-
-
-      if (
-        registroEditando
-      ) {
-
-        resultado =
-          await supabaseClient
-            .from("horas")
+      try {
+        if (registroEditando) {
+          // Nunca convertir silenciosamente un registro previo en varios.
+          resultado = await supabaseClient.from("horas")
             .update(registro)
-            .eq(
-              "id",
-              registroEditando
-            )
-            .eq(
-              "usuario_id",
-              usuarioActual.id
-            );
-
-      } else {
-
-        resultado =
-          await supabaseClient
-            .from("horas")
-            .insert(
-              registro
-            );
-
+            .eq("id", registroEditando)
+            .eq("usuario_id", usuarioActual.id);
+        } else {
+          // Una sola petición de inserción con todas las filas: cada una recibe
+          // únicamente sus horas proporcionales y los demás datos son idénticos.
+          const filas = entregablesCaptura.map((nombre, i) => ({
+            ...registro,
+            entregable: nombre || null,
+            horas: horasRepartidas[i]
+          }));
+          resultado = await supabaseClient.from("horas").insert(filas);
+        }
+      } catch (error) {
+        resultado = { error };
+      } finally {
+        boton.disabled = false;
       }
-
-
-      boton.disabled = false;
 
 
       if (
@@ -4598,7 +4761,9 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
         "formMessage",
         registroEditando
           ? "Registro actualizado correctamente."
-          : "Horas guardadas correctamente.",
+          : entregablesCaptura.length > 1
+            ? `${horas.toFixed(2)} h distribuidas entre ${entregablesCaptura.length} entregables y guardadas correctamente. El resumen sumará ${horas.toFixed(2)} h.`
+            : "Horas guardadas correctamente.",
         "success"
       );
 
@@ -4672,10 +4837,7 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
 
 
       aplicarReglaEntregable();
-      document
-        .getElementById("entregable")
-        .value =
-          actividadRequiereEntregable(registro.actividad) ? (registro.entregable || "") : "";
+      establecerEntregablesHoras(actividadRequiereEntregable(registro.actividad) && registro.entregable ? [registro.entregable] : []);
 
 
       document
@@ -4727,7 +4889,7 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
         .classList.remove(
           "hidden"
         );
-
+      renderEntregablesHoras();
 
       window.scrollTo({
         top: 0,
@@ -4760,7 +4922,7 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
 
       document.getElementById("actividad").value = registro.actividad || "";
       aplicarReglaEntregable();
-      document.getElementById("entregable").value = actividadRequiereEntregable(registro.actividad) ? (registro.entregable || "") : "";
+      establecerEntregablesHoras(actividadRequiereEntregable(registro.actividad) && registro.entregable ? [registro.entregable] : []);
       document.getElementById("fechaInicio").value = registro.fecha_inicio || "";
       document.getElementById("fechaVencimiento").value = registro.fecha_vencimiento || "";
       document.getElementById("horas").value = registro.horas ?? "";
@@ -4772,6 +4934,7 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
 
       document.getElementById("btnGuardar").textContent = "Guardar horas";
       document.getElementById("btnCancelarEdicion").classList.add("hidden");
+      renderEntregablesHoras();
 
       mostrarMensaje(
         "formMessage",
@@ -4904,6 +5067,9 @@ html[data-amp-theme="dark"] .deliverables-status.error{color:#fca5a5}
           `<option value="">
             Sin entregable
           </option>`;
+      entregablesSeleccionadosHoras.clear();
+      document.getElementById("buscarEntregableHoras").value = "";
+      renderEntregablesHoras();
 
 
       document
@@ -5829,6 +5995,21 @@ function raSemanaInicio(codigo){const m=/^(\d{2})S(\d{2})$/.exec(codigo||'');if(
 function raSemanaCerrada(codigo){const inicio=raSemanaInicio(codigo);if(!inicio)return false;const fin=new Date(inicio);fin.setUTCDate(fin.getUTCDate()+5);return fin.toISOString().slice(0,10)<raHoyLocal();}
 function raEstadoSemana(horas,n,semana){const meta=raHorasSemanaAnio(2000+Number(semana.slice(0,2)));return horas+0.00001>=meta?'COMPLETO':!raSemanaCerrada(semana)?'EN CURSO':n===0?'SIN CAPTURA':'INCOMPLETO';}
 function raGraficoPersonas(rows,people){const id='raChartPersona';if(raCharts[id])raCharts[id].destroy();const values=people.map(e=>({id:e.usuario_id,name:raNombre(e.usuario_id),h:rows.filter(r=>r.usuario_id===e.usuario_id).reduce((a,r)=>a+Number(r.horas||0),0)})).sort((a,b)=>b.h-a.h||a.name.localeCompare(b.name,'es'));raId('raPersonaChartWrap').style.height=Math.max(300,values.length*27+70)+'px';raCharts[id]=new Chart(raId(id),{type:'bar',data:{labels:values.map(x=>x.name),datasets:[{label:'Horas registradas',data:values.map(x=>x.h),backgroundColor:'#2563eb'}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}},onClick:(ev,els)=>{if(!els.length)return;raId('raPersona').value=values[els[0].index].id;raSeleccion={};raActualizarFiltrosDependientes();raRender();}}});}
+// Horas reales por entregable, sumadas en centésimas para evitar errores flotantes.
+function raResumenPorEntregable(rows) {
+ const mapa = new Map();
+ for(const r of rows) {
+  const proyecto = raTexto(r.proyecto), entregable = raTexto(r.entregable);
+  if(!entregable) continue;
+  const clave = JSON.stringify([proyecto, entregable]);
+  if(!mapa.has(clave)) mapa.set(clave, {proyecto,entregable,asignaciones:0,centimos:0});
+  const item=mapa.get(clave);
+  item.asignaciones++;
+  item.centimos += Math.round(Number(r.horas||0)*100);
+ }
+ return [...mapa.values()].sort((a,b)=>a.proyecto.localeCompare(b.proyecto,'es')||a.entregable.localeCompare(b.entregable,'es'));
+}
+
 function raRender(){
  const rows=raFiltrados(),tipo=raId('raFiltroTipo').value,periodo=raId('raSemana').value;
  const people=raEmpleados.filter(e=>!raId('raPersona').value||e.usuario_id===raId('raPersona').value);
@@ -5852,11 +6033,22 @@ function raRender(){
  raCharts.raChartCumple=new Chart(raId('raChartCumple'),{type:'bar',data:{labels:estados,datasets:[{label:'Personas / semanas',data:counts,backgroundColor:['#16a34a','#f59e0b','#dc2626','#2563eb']}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}}});
  raGraficoPersonas(rows,people);
  raId('raControl').innerHTML=control.slice(0,5000).map(x=>'<tr data-user="'+raEsc(x.id)+'" data-week="'+raEsc(x.w)+'"><td>'+raEsc(raNombre(x.id))+'</td><td>'+raEsc(x.w)+'</td><td>'+x.h.toFixed(2)+'</td><td>'+x.n+'</td><td>'+raEsc(x.estado)+'</td></tr>').join('')||'<tr><td colspan="5">Sin semanas disponibles</td></tr>';
+ const agrupados = raResumenPorEntregable(rows);
+ raId('raEntregablesAcumulados').innerHTML=agrupados.slice(0,3000).map(x=>'<tr><td>'+raEsc(x.proyecto)+'</td><td>'+raEsc(x.entregable)+'</td><td>'+x.asignaciones+'</td><td>'+(x.centimos/100).toFixed(2)+' h</td></tr>').join('')||'<tr><td colspan="4">Sin entregables asociados para los filtros seleccionados</td></tr>';
  raId('raDetalle').innerHTML=rows.slice(0,1500).map(r=>'<tr><td>'+raEsc(r.fecha)+'</td><td>'+raEsc(raNombre(r.usuario_id))+'</td><td>'+raEsc(raPeriodoSemana(r.fecha))+'</td><td>'+raEsc(r.proyecto)+'</td><td>'+raEsc(r.actividad)+'</td><td>'+raEsc(r.entregable)+'</td><td>'+Number(r.horas||0).toFixed(2)+'</td><td>'+raEsc(r.cumple_objetivo)+'</td></tr>').join('');
 }
 
 function raLimpiar(){['raSemana','raPersona','raProyecto','raActividad','raEntregable','raCumple'].forEach(id=>raId(id).value='');raSeleccion={};raActualizarFiltrosDependientes();raRender();}
-function raExportar(){let rows=raFiltrados().map(r=>({...r,nombre:raNombre(r.usuario_id)}));if(!rows.length)return alert('No hay registros para exportar');let ws=XLSX.utils.json_to_sheet(rows),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Horas filtradas');XLSX.writeFile(wb,'AMP_resumen_horas.xlsx');}
+function raExportar(){
+ const filtrados=raFiltrados();
+ const rows=filtrados.map(r=>({...r,nombre:raNombre(r.usuario_id)}));
+ if(!rows.length)return alert('No hay registros para exportar');
+ const wb=XLSX.utils.book_new();
+ XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Horas filtradas');
+ const resumen=raResumenPorEntregable(filtrados).map(x=>({Proyecto:x.proyecto,Entregable:x.entregable,Asignaciones:x.asignaciones,'Horas acumuladas':x.centimos/100}));
+ XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(resumen.length?resumen:[{'Sin entregables':'Sin registros asociados'}]),'Horas por entregable');
+ XLSX.writeFile(wb,'AMP_resumen_horas.xlsx');
+}
 
 
 async function raCargarRevisores(){
@@ -5996,3 +6188,4 @@ ipEl('ipInformeMes').addEventListener('change',ipInformeRender);ipEl('ipInformeT
 </script>
 </body>
 </html>
+```
