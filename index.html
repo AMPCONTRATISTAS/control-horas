@@ -1300,6 +1300,18 @@ html[data-amp-theme="dark"] .amp3-week-table tbody tr:hover td,html[data-amp-the
 @media(max-width:700px){.summary-grid:has(#amp3MisExtra){grid-template-columns:1fr}}
 
 </style>
+<style id="amp34SeguridadVistas">
+/* v3.4: cerradura visual por defecto. Nunca mostrar vistas nuevas debido al
+   cambio de clases provocado por la navegación heredada o una recarga. */
+html:not([data-amp3-route="semanal"]) #ampV3Semanal,
+html:not([data-amp3-route="compromisos"]) #ampV3Compromisos,
+html:not([data-amp3-route="centro"]) #amp3CentroIngenieria,
+html:not([data-amp3-authorized="true"]) #amp3CentroIngenieria,
+html:not([data-amp3-authorized="true"]) #tabCentroIngenieria {
+  display:none !important;
+}
+/* La clase tab-view-hidden sigue imponiéndose incluso para los usuarios permitidos. */
+</style>
 <style id="amp31Estilos">
 .amp31-director-banner{margin-bottom:14px;padding:12px 14px;border-radius:10px;background:#f1f5ff;border:1px solid #c7d7ff;color:#304466;font-size:13px;line-height:1.5}
 #amp3CentroIngenieria{padding:20px}
@@ -1665,7 +1677,7 @@ html[data-amp-theme="dark"] .amp32-checklist label:hover{background:#26405e}
   <section id="amp3CentroIngenieria" class="card tab-view-hidden" aria-label="Centro de control exclusivo de dirección">
     <div class="amp31-director-banner">Acceso exclusivo de las cuentas maestras de <strong>Roberto Soto</strong> y <strong>Rodrigo Godínez</strong>. Los datos reales se consultan con los permisos de Supabase.</div>
 <div class="amp3-shell amp3-report" id="amp3ResumenNuevo">
- <div class="amp3-head"><div><h2>Centro de control · Ingeniería eléctrica</h2><p>Lectura gerencial de las capturas reales, horas extras y compromisos; sin sustituir tu resumen y auditorías existentes.</p></div><div class="amp3-actions"><button type="button" class="btn-secondary" id="amp3ReporteDireccion">Exportar reporte de dirección (Excel)</button></div></div>
+ <div class="amp3-head"><div><h2>Centro de control · Ingeniería eléctrica</h2><p>Lectura gerencial de las capturas reales, horas extras y compromisos; sin sustituir tu resumen y auditorías existentes.</p></div><div class="amp3-actions"><button type="button" class="btn-secondary" id="amp33RecargarCentro">↻ Actualizar datos</button><button type="button" class="btn-secondary" id="amp3ReporteDireccion">Exportar reporte de dirección (Excel)</button></div></div>
  <div id="amp3ResumenEstado" class="amp3-msg">Cargando información del resumen autorizado...</div>
  <div class="amp3-kpis amp3-kpis-4"><div><small>Horas del filtro actual</small><strong id="amp3RTotal">—</strong><span>Directas e indirectas, ordinarias y extras</span></div><div><small>Horas extra registradas</small><strong id="amp3RExtras">—</strong><span>Incluidas en el total, sin sumarlas otra vez</span></div><div><small>Personas con captura</small><strong id="amp3RPersonas">—</strong><span>Según el período y filtros</span></div><div><small>Entregables con horas</small><strong id="amp3REntregables">—</strong><span>Proyecto + código sin duplicar</span></div></div>
  <div class="amp3-split"><div class="amp3-panel"><div class="amp3-head"><div><h3>Resumen por clasificación</h3><p>Las horas extras no son otra categoría productiva.</p></div></div><div id="amp3Clasificacion" class="amp3-donut-wrap"><div class="amp3-donut"></div><div id="amp3ClasLeyenda"></div></div></div>
@@ -2096,7 +2108,10 @@ html[data-amp-theme="dark"] .amp32-checklist label:hover{background:#26405e}
         <select id="borrarProyecto"><option value="">Seleccionar proyecto</option></select>
       </div>
       <div class="admin-filter-row"><div class="form-group"><label for="filtroNombreEntregable">Buscar dentro del nombre</label><input id="filtroNombreEntregable" type="search" placeholder="Ej. DW, DW-0, DU-001" autocomplete="off"></div></div>
-      <div id="resumenEntregables" class="admin-list-summary"></div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0">
+        <button type="button" id="btnActualizarCatalogoEntregables" class="btn-secondary btn-small">↻ Actualizar catálogo</button>
+        <span id="resumenEntregables" class="admin-list-summary" aria-live="polite"></span>
+      </div>
       <p class="deliverables-help">Puedes seleccionar varios entregables y eliminarlos juntos. Se quitarán de la lista del proyecto y dejarán de aparecer en el selector de horas. Esta acción no se puede deshacer.</p>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0">
         <button type="button" class="btn-danger" id="btnBorrarEntregablesSeleccionados" disabled>Eliminar seleccionados (0)</button>
@@ -2831,6 +2846,7 @@ html[data-amp-theme="dark"] .amp32-checklist label:hover{background:#26405e}
         document.getElementById("adminProyectoGestion")?.addEventListener("change", () => { const x = proyectos.find(p => String(p.id) === String(document.getElementById("adminProyectoGestion").value)); document.getElementById("adminProyectoNombreNuevo").value = x?.nombre || ""; });
         document.getElementById("adminActividadGestion")?.addEventListener("change", () => { const x = actividades.find(a => String(a.id) === String(document.getElementById("adminActividadGestion").value)); document.getElementById("adminActividadNombreNuevo").value = x?.nombre || ""; });
         document.getElementById("btnImportarEntregables")?.addEventListener("click", importarEntregablesDesdeArchivo);
+        document.getElementById("btnActualizarCatalogoEntregables")?.addEventListener("click", refrescarCatalogoEntregables);
         document.getElementById("borrarProyecto")?.addEventListener("change", renderListaEntregablesBorrar);
         document.getElementById("seleccionarTodosEntregables")?.addEventListener("change", event => {
           document.querySelectorAll(".entregable-borrar-check").forEach(cb => { if (!cb.disabled) cb.checked = event.target.checked; });
@@ -3174,7 +3190,8 @@ html[data-amp-theme="dark"] .amp32-checklist label:hover{background:#26405e}
       const cardEntregables = document.getElementById("adminEntregablesCard");
       const mostrar = !!usuarioActual && (esAdminApp() || (cardEntregables && !cardEntregables.classList.contains("hidden")));
       if (btn) btn.style.display = mostrar ? "inline-flex" : "none";
-      if (!mostrar) cambiarPestanaPrincipal("horas");
+      // No sacar a un empleado de "Mis actividades" cuando se actualizan permisos.
+      if (!mostrar && btn?.classList.contains("active")) cambiarPestanaPrincipal("horas");
     }
 
     function cambiarPestanaPrincipal(pestana) {
@@ -3187,7 +3204,14 @@ html[data-amp-theme="dark"] .amp32-checklist label:hover{background:#26405e}
       const resumen = pestana === "resumen" && puedeVerResumenHoras;
       const indicadores = pestana === "indicadores" && ipPuedeVer;
       const adminIds = new Set(["adminEntregablesCard", "adminGeneralCard"]);
+      // v3.4: las vistas incorporadas NUNCA pertenecen a "Mis horas" por defecto.
+      // Antes la rama genérica las destapaba al iniciar sesión y al pulsar F5.
+      const vistasNuevas = new Set(["amp3CentroIngenieria", "ampV3Semanal", "ampV3Compromisos"]);
       main.querySelectorAll(":scope > section.card").forEach(card => {
+        if (vistasNuevas.has(card.id)) {
+          card.classList.add("tab-view-hidden");
+          return;
+        }
         const esSeccionAdmin = adminIds.has(card.id);
         const esCalculadora = card.id === "calculadoraElectricaSection";
         if(card.id === "indicadoresCard") { card.classList.toggle("tab-view-hidden", !indicadores); return; }
@@ -3678,11 +3702,30 @@ html[data-amp-theme="dark"] .amp32-checklist label:hover{background:#26405e}
           console.error("Error importando entregables:", error);
           setMensajeEntregables("importarEntregablesMessage", "No se pudo importar. Verifica que el SQL de permisos esté aplicado y que tengas autorización. " + error.message, "error"); return;
         }
-        await cargarEntregables();
-        actualizarEntregables();
+        const catalogoActualizado = await cargarEntregables();
+        if (!catalogoActualizado) {
+          setMensajeEntregables("importarEntregablesMessage",
+            "La base de datos aceptó la importación de " + newNames.length + " entregables, pero no se pudo actualizar la lista. Usa «Actualizar catálogo» antes de volver a importar.", "error");
+          return;
+        }
+        actualizarEntregables(document.getElementById("proyecto")?.value || "");
         await cargarPermisosYPrepararModuloEntregables();
+        // Mostrar el MISMO proyecto importado, no el que quedó seleccionado antes.
+        const selectorListado = document.getElementById("borrarProyecto");
+        if (selectorListado && [...selectorListado.options].some(o => o.value === String(proyecto.id)))
+          selectorListado.value = String(proyecto.id);
+        const filtroListado = document.getElementById("filtroNombreEntregable");
+        if (filtroListado) filtroListado.value = "";
+        renderListaEntregablesBorrar();
+        const totalProyecto = entregables.filter(e => String(e.proyecto_id) === String(proyecto.id) && e.activo !== false).length;
         const omisiones = alreadyThere.length ? " Se omitieron " + alreadyThere.length + " que ya existían." : "";
-        setMensajeEntregables("importarEntregablesMessage", "Importación completada: " + newNames.length + " entregables agregados a " + proyecto.nombre + "." + omisiones, "success");
+        const comprobados = newNames.every(n => entregables.some(e => String(e.proyecto_id) === String(proyecto.id) &&
+          String(e.nombre).trim().toLocaleLowerCase() === n.toLocaleLowerCase()));
+        setMensajeEntregables("importarEntregablesMessage",
+          comprobados
+            ? "Importación completada: " + newNames.length + " entregables agregados a " + proyecto.nombre + "." + omisiones + " Total visible actualizado: " + totalProyecto + "."
+            : "La inserción se aceptó, pero algunos entregables no aparecen en la consulta autorizada. Comprueba permisos RLS y pulsa «Actualizar catálogo»; evita importar dos veces.",
+          comprobados ? "success" : "error");
         document.getElementById("archivoEntregables").value = "";
       } catch (err) {
         console.error("Archivo de entregables inválido:", err);
@@ -4339,44 +4382,56 @@ html[data-amp-theme="dark"] .amp32-checklist label:hover{background:#26405e}
     }
 
 
+    /* v3.3: Supabase devuelve como máximo una página por consulta.
+       Se recorren TODAS las páginas con un orden estable por id. De lo contrario,
+       los proyectos cuyos entregables queden más allá del primer millar desaparecen
+       del selector aunque la importación se haya guardado correctamente. */
     async function cargarEntregables() {
-
-      const {
-        data,
-        error
-      } =
-        await supabaseClient
-          .from("entregables")
-          .select(`
-            id,
-            nombre,
-            activo,
-            proyecto_id,
-            proyectos (
-              nombre
-            )
-          `)
-          .eq("activo", true)
-          .order("nombre");
-
-
-      if (error) {
-
-        console.error(
-          "Error entregables:",
-          error
-        );
-
-        return;
-
+      const pagina = 500;
+      const resultado = [];
+      try {
+        for (let desde = 0; desde < 200000; desde += pagina) {
+          const { data, error } = await supabaseClient
+            .from("entregables")
+            .select("id,nombre,activo,proyecto_id,proyectos(nombre)")
+            .eq("activo", true)
+            .order("id", { ascending: true })
+            .range(desde, desde + pagina - 1);
+          if (error) throw error;
+          resultado.push(...(data || []));
+          if (!data || data.length < pagina) {
+            entregables = resultado;
+            return true;
+          }
+        }
+        throw new Error("El catálogo supera 200,000 entregables; consulta al administrador.");
+      } catch (error) {
+        console.error("No se logró actualizar el catálogo completo de entregables:", error);
+        setMensajeEntregables("importarEntregablesMessage",
+          "No se pudo consultar el catálogo completo. El registro puede estar guardado en Supabase. No vuelvas a importarlo sin verificar. Detalle: " + error.message,
+          "error");
+        return false;
       }
-
-
-      entregables =
-        data || [];
-
     }
 
+    async function refrescarCatalogoEntregables() {
+      const boton = document.getElementById("btnActualizarCatalogoEntregables");
+      if (boton) { boton.disabled = true; boton.textContent = "Actualizando catálogo…"; }
+      try {
+        const ok = await cargarEntregables();
+        if (!ok) return;
+        const proyectoActual = document.getElementById("proyecto")?.value || "";
+        actualizarEntregables(proyectoActual);
+        renderListaEntregablesBorrar();
+        const filtroId = document.getElementById("borrarProyecto")?.value;
+        const cantidad = entregables.filter(e => String(e.proyecto_id) === String(filtroId) && e.activo !== false).length;
+        setMensajeEntregables("importarEntregablesMessage",
+          "Catálogo actualizado: " + entregables.length + " entregables activos cargados; " + cantidad + " en el proyecto seleccionado.",
+          "success");
+      } finally {
+        if (boton) { boton.disabled = false; boton.textContent = "↻ Actualizar catálogo"; }
+      }
+    }
 
     async function cargarHoras() {
 
@@ -7596,7 +7651,7 @@ ipEl('ipCopiarInforme').addEventListener('click',async()=>{const t=ipEl('ipCopia
 })();
 </script>
 <script id="amp3Script">
-/* AMP Control de Horas v3 - ampliación integrada, sin reemplazar reglas actuales.
+/* AMP Control de Horas v3.3 - corrección de catálogo y navegación, sin reemplazar reglas actuales.
    SQL requerido: AMP_Migracion_v3_Extras_Compromisos.sql
    Todo registro confirmado se guarda en tablas reales; nunca simula un guardado exitoso. */
 (function(){
@@ -7646,42 +7701,79 @@ function setupTabs(){
  $('amp31VolverDiaria')?.addEventListener('click',()=>cambiarPestanaPrincipal('horas'));
 }
 function updateDirectorTab(){
+ const can=director();
+ document.documentElement.dataset.amp3Authorized=can?'true':'false';
  const b=$('tabCentroIngenieria');if(!b)return;
- const can=director();b.style.display=can?'inline-flex':'none';
- if(!can){b.classList.remove('active');b.setAttribute('aria-selected','false');$('amp3CentroIngenieria')?.classList.add('tab-view-hidden');}
+ b.style.display=can?'inline-flex':'none';
+ if(!can){
+  b.classList.remove('active');b.setAttribute('aria-selected','false');
+  $('amp3CentroIngenieria')?.classList.add('tab-view-hidden');
+ }
 }
 // Captura semanal es un MODO de Mis horas. El centro es una pestaña diferente solo para los dos maestros.
+// La pestaña marcada debe ser EXACTAMENTE la que el usuario está viendo.
+// La navegación antigua marca Mis horas al preparar secciones y puede dejar
+// ese botón azul cuando una consulta asíncrona ya abrió el Centro de control.
+let amp3RutaActual='horas';
+function amp3SincronizarPestanas(){
+ const nav=$('mainTabs');if(!nav)return;
+ const objetivo={horas:'tabMisHoras',semanal:'tabMisHoras',compromisos:'tabCompromisos',
+                  admin:'tabAdministracion',indicadores:'tabIndicadores',
+                  resumen:'tabResumenAdmin',centro:'tabCentroIngenieria',calculadora:'tabCalculadoraElectrica'}[amp3RutaActual]||'tabMisHoras';
+ for(const boton of nav.querySelectorAll('.main-tab-button')){
+   const activo=boton.id===objetivo;
+   if(boton.classList.contains('active')!==activo)boton.classList.toggle('active',activo);
+   if(boton.getAttribute('aria-selected')!==String(activo))boton.setAttribute('aria-selected',String(activo));
+ }
+}
 function setupNavigation(){const old=cambiarPestanaPrincipal;
  cambiarPestanaPrincipal=function(p){
   if(p==='centro'&&!director())p='horas';
+  // Establecer acceso antes de mostrar paneles; por defecto centro está oculto.
+  document.documentElement.dataset.amp3Authorized=director()?'true':'false';
+  document.documentElement.dataset.amp3Route=p;
+  amp3RutaActual=p;
   const semanal=p==='semanal',comp=p==='compromisos',centro=p==='centro',special=semanal||comp||centro;
   old(special?'horas':p);
-  // La vista original no conoce estos tres módulos; ocultarlos siempre antes de seleccionar uno.
+  // Solo puede mostrarse una de las tres vistas nuevas, en la misma página.
   ['ampV3Semanal','ampV3Compromisos','amp3CentroIngenieria'].forEach(id=>$(id)?.classList.add('tab-view-hidden'));
   if(special){
    document.querySelectorAll('#appScreen main.container > section.card').forEach(e=>e.classList.add('tab-view-hidden'));
    $(semanal?'ampV3Semanal':comp?'ampV3Compromisos':'amp3CentroIngenieria')?.classList.remove('tab-view-hidden');
-   ['tabMisHoras','tabAdministracion','tabIndicadores','tabResumenAdmin','tabCalculadoraElectrica'].forEach(id=>{$(id)?.classList.remove('active');$(id)?.setAttribute('aria-selected','false')});
   }
-  // Mis horas permanece seleccionada durante su modo de captura semanal.
-  const misHoras=semanal||p==='horas';
-  $('tabMisHoras')?.classList.toggle('active',misHoras);
-  $('tabMisHoras')?.setAttribute('aria-selected',String(misHoras));
-  $('tabCompromisos')?.classList.toggle('active',comp);
-  $('tabCompromisos')?.setAttribute('aria-selected',String(comp));
-  $('tabCentroIngenieria')?.classList.toggle('active',centro);
-  $('tabCentroIngenieria')?.setAttribute('aria-selected',String(centro));
   updateDirectorTab();
+  amp3SincronizarPestanas();
+  // Reaplicar luego de cualquier cambio visual del navegador original.
+  requestAnimationFrame(amp3SincronizarPestanas);
   if(semanal)loadWeekly().catch(e=>msg('amp3SemanaMensaje',e.message,'error'));
   if(comp)loadCompromisos().catch(e=>msg('amp3CompMensaje',e.message,'error'));
   if(centro){
-    // Misma fuente del resumen existente; se aplica el permiso de lectura en el servidor.
     if(puedeVerResumenHoras)cargarResumenAdmin().catch(e=>msg('amp3ResumenEstado',e.message,'error'));
     else msg('amp3ResumenEstado','El usuario maestro aún no tiene autorización de lectura del resumen en Supabase. Comprueba amp_puede_ver_resumen.','error');
   }
  };
+ // No permite que otra función marque Mis horas mientras se visualiza el Centro.
+ const nav=$('mainTabs');
+ if(nav){
+   const observer=new MutationObserver(()=>{
+     const deseada={horas:'tabMisHoras',semanal:'tabMisHoras',compromisos:'tabCompromisos',admin:'tabAdministracion',
+       indicadores:'tabIndicadores',resumen:'tabResumenAdmin',centro:'tabCentroIngenieria',calculadora:'tabCalculadoraElectrica'}[amp3RutaActual]||'tabMisHoras';
+     const botones=nav.querySelectorAll('.main-tab-button');
+     if([...botones].some(b=>b.classList.contains('active')!==(b.id===deseada)))amp3SincronizarPestanas();
+   });
+   observer.observe(nav,{subtree:true,attributes:true,attributeFilter:['class']});
+ }
 }
 function setupHooks(){
+ const origLogout=cerrarSesion;
+ cerrarSesion=async function(...args){
+  document.documentElement.dataset.amp3Authorized='false';
+  document.documentElement.dataset.amp3Route='horas';
+  amp3RutaActual='horas';
+  ['amp3CentroIngenieria','ampV3Semanal','ampV3Compromisos'].forEach(id=>$(id)?.classList.add('tab-view-hidden'));
+  updateDirectorTab();
+  return await origLogout(...args);
+ };
  const origLoad=cargarDatos;
  cargarDatos=async function(...args){const val=await origLoad(...args);await probe();updateDirectorTab();if($('amp3FechaSemana'))$('amp3FechaSemana').value=today();return val;};
  const origClear=limpiarFormulario;
@@ -7981,6 +8073,10 @@ async function taskAction(ev){const b=ev.target.closest('button[data-task]');if(
 function exportComp(){downloadCSV('AMP_Compromisos_'+today()+'.csv',compFilter().map(c=>({Responsable:employeeName(c.usuario_id),Proyecto:c.proyecto,Actividad:c.actividad,Entregable:c.entregable,Titulo:c.titulo,Fecha_asignacion:c.fecha_asignacion,Fecha_compromiso:c.fecha_objetivo,Horas_estimadas:c.horas_estimadas,Avance:c.avance,Estado:c.estado,Fecha_cumplimiento:c.fecha_cumplimiento,Fecha_trabajo:c.fecha_trabajo_cumplimiento,Asignado_por:employeeName(c.asignado_por)})));}
 // ------- RESUMEN DE DIRECCIÓN: etiquetas claras, horas extras y ETC reales -------
 async function loadExecutive(){if(!director()||!puedeVerResumenHoras||resumenLoading)return;
+ if(($('raEstado')?.textContent||'').startsWith('No fue posible cargar el resumen:')){
+   msg('amp3ResumenEstado',$('raEstado').textContent,'error');
+   return;
+ }
  resumenLoading=true;msg('amp3ResumenEstado','Actualizando el reporte con datos autorizados...');
  try{
    if(extraInstalado){extraRows=await fetchPaged('horas','id,usuario_id,fecha,proyecto,horas,semana,es_hora_extra',q=>q.eq('es_hora_extra',true).order('id',{ascending:true}),100000);}else extraRows=[];
@@ -8068,7 +8164,12 @@ function workbookReport(){if(!director())return;if(typeof XLSX==='undefined'){al
 // ------- Vinculación y configuración de la experiencia -----
 function init(){
  if(!$('amp3FechaSemana'))return;
+ document.documentElement.dataset.amp3Authorized='false';
+ document.documentElement.dataset.amp3Route='horas';
+ ['amp3CentroIngenieria','ampV3Semanal','ampV3Compromisos'].forEach(id=>$(id)?.classList.add('tab-view-hidden'));
  setupNavigation();setupTabs();setupHooks();
+ // Arranque: 'Mis horas' por defecto, nunca un panel con datos administrativos.
+ cambiarPestanaPrincipal('horas');
  $('amp3FechaSemana').value=today();$('amp3FechaSemana').addEventListener('change',()=>loadWeekly());
  $('amp3AgregarFila').addEventListener('click',()=>{rows.push(freshRow());saveDraft();renderWeek();});
  $('amp3RecargarSemana').addEventListener('click',()=>loadWeekly());
@@ -8117,6 +8218,13 @@ function init(){
  $('amp3ExtraSemana').addEventListener('change',renderExtras);
  $('amp3ExtraExcel').addEventListener('click',()=>downloadCSV('AMP_Horas_Extra_'+today()+'.csv',allExtraExport()));
  $('amp3TablaProyeccion').addEventListener('click',updateProjection);
+ $('amp33RecargarCentro').addEventListener('click',async()=>{
+   const b=$('amp33RecargarCentro');b.disabled=true;b.textContent='Actualizando…';
+   try{if(!director()||!puedeVerResumenHoras){msg('amp3ResumenEstado','Tu cuenta no tiene acceso a los datos administrativos; comprueba los permisos de lectura.','error');return;}
+       await cargarResumenAdmin();}
+   catch(e){msg('amp3ResumenEstado','No fue posible actualizar el Centro de control: '+e.message,'error');}
+   finally{b.disabled=false;b.textContent='↻ Actualizar datos';}
+ });
  $('amp3ReporteDireccion').addEventListener('click',workbookReport);
  $('amp3IrComp').addEventListener('click',()=>cambiarPestanaPrincipal('compromisos'));
  const extra=$('amp3ExtraDia');if(extra)extra.addEventListener('change',()=>{if(extra.checked&&!extraInstalado)mostrarMensaje('formMessage','La hora extra requiere ejecutar el SQL v3 antes de guardar.','info')});
