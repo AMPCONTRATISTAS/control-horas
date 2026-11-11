@@ -1,11 +1,10 @@
-```
 <!DOCTYPE html>
 
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Control de Horas AMP</title>
+  <title>AMP | Control de Horas — Captura semanal y actividades</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -1220,6 +1219,94 @@ html[data-amp-theme="dark"] .amp-lote-warn{background:#713f12;color:#fef3c7}
 html[data-amp-theme="dark"] .amp-lote-errors{background:#4c1d25;color:#fecaca}
 @media(max-width:700px){.amp-lote{padding:12px}.amp-lote-bar>*{max-width:100%}.amp-lote-bar button{flex:1}}
 </style>
+<style id="amp3Styles">
+/* AMP v3: nueva experiencia aislada en clases amp3; no sustituye el sistema original. */
+.amp3-shell{--amp3-border:#dce5f2;--amp3-muted:#687b9b;color:#182b4d}
+.amp3-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:17px;flex-wrap:wrap}
+.amp3-head h2{font-size:26px;margin:0 0 7px;letter-spacing:-.03em;color:inherit}
+.amp3-head h3{font-size:17px;margin:0 0 6px;color:inherit}
+.amp3-head p{color:var(--amp3-muted);font-size:13px;margin:0;line-height:1.5;max-width:850px}
+.amp3-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.amp3-toolbar{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:13px 0 17px}
+.amp3-toolbar>label,.amp3-formgrid>label{display:flex;flex-direction:column;gap:5px;font-size:12px;letter-spacing:.015em;color:#637796;font-weight:750}
+.amp3-toolbar input,.amp3-toolbar select,.amp3-formgrid input,.amp3-formgrid select,.amp3-formgrid textarea{min-height:38px;border:1px solid var(--amp3-border);border-radius:8px;background:#fff;color:#142649;font-size:13px;padding:9px 11px}
+.amp3-toolbar>label{min-width:180px}
+.amp3-week-range{font-size:13px;font-weight:800;color:#2553b0;padding:9px 0}
+.amp3-chip{background:#eaf2ff;color:#194c9f;font-size:12px;border-radius:6px;padding:9px 12px;font-weight:800}
+.amp3-note{font-size:13px;line-height:1.6;border:1px solid #cfe0fa;border-left:3px solid #438af5;border-radius:8px;background:#f1f6ff;padding:12px 14px;color:#30558b;margin:16px 0}
+.amp3-msg{margin:10px 0;min-height:18px;font-size:13px;color:#5072a2}
+.amp3-msg.error{color:#b91c1c}.amp3-msg.ok{color:#15803d}
+.amp3-week-tablewrap,.amp3-overflow{overflow:auto;max-width:100%;border:1px solid var(--amp3-border);border-radius:12px;background:#fff}
+.amp3-week-table{min-width:1470px;width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px}
+.amp3-week-table th,.amp3-week-table td{border-bottom:1px solid #e1e7f0;padding:9px 7px;vertical-align:middle;text-align:center}
+.amp3-week-table thead th,.amp3-grid-table thead th{background:#f3f6fb;color:#70819f;font-size:11px;letter-spacing:.035em;text-transform:uppercase;font-weight:800;white-space:nowrap}
+.amp3-week-table th:first-child,.amp3-week-table td:first-child{text-align:left}
+.amp3-week-table td:nth-child(-n+4) select{width:100%;padding:8px 6px;min-height:36px;border-color:#dbe3f0;font-size:12px}
+.amp3-week-table td input[type=number]{width:58px;min-height:37px;padding:6px 4px;text-align:center;font-size:12px}
+.amp3-week-table td input[type=checkbox]{width:18px;height:18px;min-height:18px;accent-color:#3978e6}
+.amp3-week-table tfoot th,.amp3-week-table tfoot td{background:#ecf3ff;color:#173563;font-weight:800}
+.amp3-week-table tbody tr:hover td{background:#f8fbff}
+.amp3-sel-del{background:#f4f8ff;border:1px solid #dae6fb;max-width:100%;min-height:34px;color:#194f9d;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;padding:7px}
+.amp3-small-btn{font-size:11px;min-height:32px;padding:6px 8px;border:1px solid #d7e1ef;background:#f7faff;color:#416397}
+.amp3-savebar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:17px 0}
+.amp3-savebar strong{font-size:17px;color:inherit}.amp3-sub{font-size:12px;color:var(--amp3-muted);line-height:1.6;margin:5px 0}
+.amp3-details{margin:15px 0;border-top:1px solid #dae3ef;padding:12px 0}
+.amp3-details summary{font-size:13px;font-weight:800;color:#2563eb;cursor:pointer;padding:8px}
+.amp3-grid-table{width:100%;min-width:790px;border-collapse:collapse;font-size:12px}
+.amp3-grid-table th,.amp3-grid-table td{padding:11px 12px;border-bottom:1px solid #e6ecf4;text-align:left;vertical-align:middle}
+.amp3-grid-table tbody tr:hover td{background:#f8fafc}
+.amp3-grid-table td input[type=number]{width:88px;min-height:34px;padding:6px 8px}
+.amp3-grid-table td button{white-space:nowrap}
+.amp3-panel{border:1px solid var(--amp3-border);border-radius:14px;padding:18px 19px;background:#fff;margin:16px 0;min-width:0}
+.amp3-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:16px 0}
+.amp3-kpis>div{padding:19px;background:#fff;border:1px solid var(--amp3-border);border-radius:13px;min-width:0}
+.amp3-kpis small{font-size:11px;text-transform:uppercase;letter-spacing:.02em;font-weight:800;color:#7c8aa0;display:block}
+.amp3-kpis strong{font-size:29px;font-weight:850;display:block;margin:7px 0;color:#14274a}
+.amp3-kpis span{font-size:12px;color:#657896}
+.amp3-split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.amp3-split>.amp3-panel{margin:0}
+.amp3-formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:12px 0 17px}
+.amp3-span2{grid-column:span 2}
+.amp3-limited{max-height:335px}
+.amp3-pill{border-radius:30px;padding:5px 9px;font-size:11px;font-weight:800;white-space:nowrap;background:#e8f0ff;color:#265bb1}
+.amp3-pill.green{background:#dcfce7;color:#166534}.amp3-pill.red{background:#fee2e2;color:#b91c1c}.amp3-pill.orange{background:#fff2df;color:#ad5e00}
+.amp3-bar{height:7px;background:#e5edf8;border-radius:10px;min-width:70px;overflow:hidden}.amp3-bar span{display:block;height:100%;border-radius:10px;background:#3578ed}
+.amp3-donut-wrap{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.amp3-donut{width:170px;height:170px;border-radius:50%;background:conic-gradient(#337ce7 0 85%,#f4ad50 85% 100%);position:relative;flex:none}.amp3-donut:after{content:'';position:absolute;inset:28px;border-radius:50%;background:#fff}
+.amp3-legend-line{font-size:13px;padding:6px 0;display:flex;align-items:center;gap:10px}.amp3-dot{width:11px;height:11px;border-radius:3px;display:inline-block}
+.amp3-modal{position:fixed;inset:0;background:rgba(15,23,42,.58);display:flex;justify-content:center;align-items:center;padding:15px;z-index:2100}
+.amp3-modal-card{background:#fff;color:#132747;border-radius:16px;padding:22px;max-width:630px;width:100%;max-height:87dvh;overflow:auto;box-shadow:0 18px 56px #0004}
+.amp3-multi-list{max-height:355px;overflow:auto;border:1px solid #dbe3f0;border-radius:9px;margin:10px 0 15px;padding:8px}
+.amp3-multi-list label{display:flex;align-items:center;gap:9px;padding:9px 6px;border-bottom:1px solid #eef2f8;font-weight:500;font-size:13px;cursor:pointer}
+.amp3-multi-list input[type=checkbox]{width:18px;min-height:18px;height:18px;flex:none}
+.amp3-report{margin-bottom:28px;border-bottom:3px solid #e7eef8;padding-bottom:20px}
+.amp3-report .amp3-head>div>p{max-width:850px}
+.amp3-report .amp3-kpis>div{background:#f9fbfe}
+.amp3-report .amp3-panel{background:#fdfefe}
+.amp3-loading{opacity:.65;pointer-events:none}
+html[data-amp-theme="dark"] .amp3-shell{--amp3-border:#334761;--amp3-muted:#abc0da;color:#e2e8f0}
+html[data-amp-theme="dark"] .amp3-panel,html[data-amp-theme="dark"] .amp3-kpis>div,html[data-amp-theme="dark"] .amp3-week-tablewrap,html[data-amp-theme="dark"] .amp3-overflow,html[data-amp-theme="dark"] .amp3-modal-card{background:#172234;color:#e2e8f0}
+html[data-amp-theme="dark"] .amp3-week-table thead th,html[data-amp-theme="dark"] .amp3-week-table tfoot td,html[data-amp-theme="dark"] .amp3-grid-table thead th{background:#23344d;color:#dbeafe}
+html[data-amp-theme="dark"] .amp3-kpis strong,html[data-amp-theme="dark"] .amp3-savebar strong{color:#f0f6ff}
+html[data-amp-theme="dark"] .amp3-note{background:#173457;border-color:#3162a9;color:#d0e4ff}
+html[data-amp-theme="dark"] .amp3-donut:after{background:#172234}
+html[data-amp-theme="dark"] .amp3-sel-del,html[data-amp-theme="dark"] .amp3-small-btn{background:#223751;color:#dbeafe;border-color:#405574}
+html[data-amp-theme="dark"] .amp3-week-table tbody tr:hover td,html[data-amp-theme="dark"] .amp3-grid-table tbody tr:hover td{background:#243650}
+@media(max-width:900px){.amp3-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.amp3-split{grid-template-columns:1fr}.amp3-formgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.amp3-head h2{font-size:22px}.amp3-formgrid{grid-template-columns:1fr}.amp3-span2{grid-column:1}.amp3-kpis{gap:8px}.amp3-kpis>div{padding:12px}.amp3-kpis strong{font-size:23px}.amp3-panel{padding:12px}.amp3-actions button{flex:1 1 auto}.amp3-modal-card{padding:14px}}
+
+.summary-grid:has(#amp3MisExtra){grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:1100px){.summary-grid:has(#amp3MisExtra){grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.summary-grid:has(#amp3MisExtra){grid-template-columns:1fr}}
+
+</style>
+<style id="amp31Estilos">
+.amp31-director-banner{margin-bottom:14px;padding:12px 14px;border-radius:10px;background:#f1f5ff;border:1px solid #c7d7ff;color:#304466;font-size:13px;line-height:1.5}
+#amp3CentroIngenieria{padding:20px}
+#amp3CentroIngenieria .amp3-report{padding:0}
+html[data-amp-theme="dark"] .amp31-director-banner{background:#213451;color:#d4e2ff;border-color:#3c5473}
+@media(max-width:700px){#amp3CentroIngenieria{padding:13px}}
+</style>
 </head>
 
 <body>
@@ -1333,9 +1420,11 @@ html[data-amp-theme="dark"] .amp-lote-errors{background:#4c1d25;color:#fecaca}
 
   <nav id="mainTabs" class="main-tabs" aria-label="Secciones de la aplicación">
     <button type="button" id="tabMisHoras" class="main-tab-button active" aria-selected="true">Mis horas</button>
+    <button type="button" id="tabCompromisos" class="main-tab-button" aria-selected="false">📋 Mis actividades</button>
     <button type="button" id="tabAdministracion" class="main-tab-button" aria-selected="false" style="display:none">Administración / entregables</button>
     <button type="button" id="tabIndicadores" class="main-tab-button" style="display:none">📈 Indicadores</button>
     <button type="button" id="tabResumenAdmin" class="main-tab-button" style="display:none">📊 Resumen de administrador</button>
+    <button type="button" id="tabCentroIngenieria" class="main-tab-button" aria-selected="false" style="display:none" title="Exclusivo Roberto y Rodrigo">📈 Centro de control de ingeniería</button>
      <button type="button" id="tabCalculadoraElectrica" class="main-tab-button" aria-selected="false">Calculadora eléctrica</button>
   </nav>
 
@@ -1546,7 +1635,21 @@ html[data-amp-theme="dark"] .amp-lote-errors{background:#4c1d25;color:#fecaca}
       </details>
     </section>
   </section>
-  <section id="resumenAdminCard" class="card tab-view-hidden"><h2>📊 Resumen de administrador · Horas hombre de ingeniería</h2><div class="card" id="raPermisosPanel" style="display:none;background:#f1f5f9"><h3>Acceso exclusivo al resumen de horas</h3><p>Solo las cuentas maestras pueden conceder o revocar este acceso. No concede permisos de entregables.</p><div class="admin-filter-row"><select id="raNuevoRevisor"><option value="">Seleccionar empleado</option></select><button type="button" class="btn-primary" onclick="raGuardarRevisor(true)">Dar acceso al resumen</button></div><div id="raListaRevisores"></div></div><p id="raEstado" style="color:#64748b">Selecciona los filtros para analizar las horas del equipo.</p><div class="ra-filters"><label>Periodo<select id="raFiltroTipo"><option value="semana">Semana</option><option value="mes">Mes</option><option value="anio">Año</option></select></label><label id="raFiltroPeriodoLabel">Semana<select id="raSemana"></select></label><label>Persona<select id="raPersona"></select></label><label>Proyecto<select id="raProyecto"></select></label><label>Actividad<select id="raActividad"></select></label><label>Entregable<select id="raEntregable"></select></label><label>Cumple objetivo<select id="raCumple"></select></label></div><div class="buttons"><button type="button" class="btn-secondary" onclick="raLimpiar()">Limpiar filtros</button><button type="button" class="btn-primary" onclick="cargarResumenAdmin()">Actualizar datos</button><button type="button" class="btn-primary" onclick="raExportar()">Exportar Excel</button></div><div class="ra-kpis"><div><small>Horas registradas</small><strong id="raHoras">0</strong></div><div><small>Personas con captura</small><strong id="raActivos">0</strong></div><div><small>Sin captura (periodo)</small><strong id="raSin">0</strong></div><div><small>Asignaciones registradas</small><strong id="raRegistros">0</strong></div></div><div class="ra-grid"><div class="chart-card"><h3>Horas por proyecto</h3><div class="ra-chart"><canvas id="raChartProyecto"></canvas></div></div><div class="chart-card"><h3>Horas por semana</h3><div class="ra-chart"><canvas id="raChartSemana"></canvas></div></div><div class="chart-card"><h3>Distribución por proyecto</h3><div class="ra-chart"><canvas id="raChartDona"></canvas></div></div><div class="chart-card"><h3>Cumplimiento de objetivos</h3><div class="ra-chart"><canvas id="raChartCumple"></canvas></div></div><div class="chart-card" style="grid-column:1/-1"><h3>Horas registradas por persona</h3><p class="chart-note">Incluye empleados activos sin captura. Usa los filtros superiores; pulsa una barra para seleccionar a la persona.</p><div class="ra-chart" id="raPersonaChartWrap" style="height:440px"><canvas id="raChartPersona"></canvas></div></div></div><section class="card" style="margin-top:18px;background:#f8fafc"><h3>Auditoría de captura · Todos los empleados</h3><div class="ra-filters"><label>Periodo<select id="raPeriodoTipo"><option value="semana">Semana</option><option value="mes">Mes</option><option value="anio">Año</option></select></label><label id="raAuditoriaPeriodoLabel">Semana / mes / año<select id="raPeriodoValor"></select></label><label>Mostrar<select id="raEstadoCaptura"><option value="todos">Todos</option><option value="sin">Sin registros</option><option value="incumple">No alcanzaron el objetivo</option><option value="cumple">Cumplieron</option></select></label></div><p id="raObjetivoInfo" style="color:#475569"></p><div class="buttons"><button class="btn-primary" type="button" onclick="raCopiarSin()">Copiar nombres sin captura</button><button class="btn-secondary" type="button" onclick="raCopiarAuditoria()">Copiar tabla de horas</button><button class="btn-primary" type="button" onclick="raExportarAuditoria()">Exportar auditoría Excel</button></div><div class="table-container" style="max-height:450px;overflow:auto"><table class="ra-table"><thead><tr><th>Empleado</th><th>Periodo</th><th>Horas registradas</th><th>Vacaciones / permisos / asuetos (h)</th><th>Objetivo (h)</th><th>Diferencia</th><th>Resultado</th></tr></thead><tbody id="raAuditoriaBody"></tbody></table></div></section><h3>Horas acumuladas por entregable</h3><p class="chart-note">Las capturas múltiples se reparten en registros individuales. Aquí se suman las horas reales de cada entregable sin multiplicarlas. Respeta los filtros de persona, proyecto y período.</p><div class="table-container" style="max-height:430px;overflow:auto"><table class="ra-table"><thead><tr><th>Proyecto</th><th>Entregable</th><th>Asignaciones</th><th>Horas acumuladas</th></tr></thead><tbody id="raEntregablesAcumulados"></tbody></table></div><h3>Control de captura por persona y semana</h3><div class="table-container" style="max-height:400px;overflow:auto"><table class="ra-table"><thead><tr><th>Persona</th><th>Semana</th><th>Horas</th><th>Asignaciones</th><th>Estado</th></tr></thead><tbody id="raControl"></tbody></table></div><h3>Detalle de registros filtrados</h3><div class="table-container" style="max-height:460px;overflow:auto"><table class="ra-table"><thead><tr><th>Fecha</th><th>Persona</th><th>Semana</th><th>Proyecto</th><th>Actividad</th><th>Entregable</th><th>Horas</th><th>Objetivo</th></tr></thead><tbody id="raDetalle"></tbody></table></div></section>
+  <section id="amp3CentroIngenieria" class="card tab-view-hidden" aria-label="Centro de control exclusivo de dirección">
+    <div class="amp31-director-banner">Acceso exclusivo de las cuentas maestras de <strong>Roberto Soto</strong> y <strong>Rodrigo Godínez</strong>. Los datos reales se consultan con los permisos de Supabase.</div>
+<div class="amp3-shell amp3-report" id="amp3ResumenNuevo">
+ <div class="amp3-head"><div><h2>Centro de control · Ingeniería eléctrica</h2><p>Lectura gerencial de las capturas reales, horas extras y compromisos; sin sustituir tu resumen y auditorías existentes.</p></div><div class="amp3-actions"><button type="button" class="btn-secondary" id="amp3ReporteDireccion">Exportar reporte de dirección (Excel)</button></div></div>
+ <div id="amp3ResumenEstado" class="amp3-msg">Cargando información del resumen autorizado...</div>
+ <div class="amp3-kpis amp3-kpis-4"><div><small>Horas del filtro actual</small><strong id="amp3RTotal">—</strong><span>Directas e indirectas, ordinarias y extras</span></div><div><small>Horas extra registradas</small><strong id="amp3RExtras">—</strong><span>Incluidas en el total, sin sumarlas otra vez</span></div><div><small>Personas con captura</small><strong id="amp3RPersonas">—</strong><span>Según el período y filtros</span></div><div><small>Entregables con horas</small><strong id="amp3REntregables">—</strong><span>Proyecto + código sin duplicar</span></div></div>
+ <div class="amp3-split"><div class="amp3-panel"><div class="amp3-head"><div><h3>Resumen por clasificación</h3><p>Las horas extras no son otra categoría productiva.</p></div></div><div id="amp3Clasificacion" class="amp3-donut-wrap"><div class="amp3-donut"></div><div id="amp3ClasLeyenda"></div></div></div>
+ <div class="amp3-panel"><div class="amp3-head"><div><h3>Horas extra por persona y semana</h3><p>Horas capturadas, no necesariamente aprobadas para nómina.</p></div></div><div class="amp3-toolbar"><label>Semana<select id="amp3ExtraSemana"><option value="">Todas las semanas</option></select></label><button type="button" id="amp3ExtraExcel" class="btn-secondary">Exportar extras</button></div><div class="amp3-overflow amp3-limited"><table class="amp3-grid-table"><thead><tr><th>Colaborador</th><th>Horas extra</th><th>Jornada total</th><th>Semana</th></tr></thead><tbody id="amp3TablaExtras"><tr><td colspan="4">Sin información</td></tr></tbody></table></div></div></div>
+ <div class="amp3-panel"><div class="amp3-head"><div><h3>Proyección de recursos por proyecto</h3><p>Presupuesto de referencia = 21 h × entregables del catálogo. El ETC y avance son valores declarados y guardados por dirección, no calculados con las horas consumidas.</p></div></div><div class="amp3-overflow"><table class="amp3-grid-table"><thead><tr><th>Proyecto</th><th>Entregables</th><th>Base 21 h</th><th>Consumido</th><th>Avance declarado</th><th>Horas pendientes (ETC)</th><th>Proyección cierre</th><th>Margen</th><th>Actualizar</th></tr></thead><tbody id="amp3TablaProyeccion"><tr><td colspan="9">Calculando...</td></tr></tbody></table></div><p class="amp3-sub">Cuando no haya ETC registrado se mostrará “Pendiente de estimar”, sin inventar una proyección. El presupuesto oficial por etapas continúa en tu pestaña Indicadores.</p></div>
+ <div class="amp3-panel"><div class="amp3-head"><div><h3>Seguimiento de compromisos del equipo</h3><p>Se conservan fecha de asignación, avance declarado, fecha objetivo y cumplimiento real, incluso después del 100%.</p></div><button type="button" class="btn-secondary" id="amp3IrComp">Abrir actividades y compromisos</button></div><div class="amp3-kpis"><div><small>Activos</small><strong id="amp3RAc">—</strong></div><div><small>Vencidos</small><strong id="amp3RVenc">—</strong></div><div><small>Completados</small><strong id="amp3RCom">—</strong></div></div><div id="amp3CargaPersonas"></div></div>
+</div>
+  </section>
+  <section id="resumenAdminCard" class="card tab-view-hidden">
+
+<h2>📊 Resumen de administrador · Horas hombre de ingeniería</h2><div class="card" id="raPermisosPanel" style="display:none;background:#f1f5f9"><h3>Acceso exclusivo al resumen de horas</h3><p>Solo las cuentas maestras pueden conceder o revocar este acceso. No concede permisos de entregables.</p><div class="admin-filter-row"><select id="raNuevoRevisor"><option value="">Seleccionar empleado</option></select><button type="button" class="btn-primary" onclick="raGuardarRevisor(true)">Dar acceso al resumen</button></div><div id="raListaRevisores"></div></div><p id="raEstado" style="color:#64748b">Selecciona los filtros para analizar las horas del equipo.</p><div class="ra-filters"><label>Periodo<select id="raFiltroTipo"><option value="semana">Semana</option><option value="mes">Mes</option><option value="anio">Año</option></select></label><label id="raFiltroPeriodoLabel">Semana<select id="raSemana"></select></label><label>Persona<select id="raPersona"></select></label><label>Proyecto<select id="raProyecto"></select></label><label>Actividad<select id="raActividad"></select></label><label>Entregable<select id="raEntregable"></select></label><label>Cumple objetivo<select id="raCumple"></select></label></div><div class="buttons"><button type="button" class="btn-secondary" onclick="raLimpiar()">Limpiar filtros</button><button type="button" class="btn-primary" onclick="cargarResumenAdmin()">Actualizar datos</button><button type="button" class="btn-primary" onclick="raExportar()">Exportar Excel</button></div><div class="ra-kpis"><div><small>Horas registradas</small><strong id="raHoras">0</strong></div><div><small>Personas con captura</small><strong id="raActivos">0</strong></div><div><small>Sin captura (periodo)</small><strong id="raSin">0</strong></div><div><small>Asignaciones registradas</small><strong id="raRegistros">0</strong></div></div><div class="ra-grid"><div class="chart-card"><h3>Horas por proyecto</h3><div class="ra-chart"><canvas id="raChartProyecto"></canvas></div></div><div class="chart-card"><h3>Horas por semana</h3><div class="ra-chart"><canvas id="raChartSemana"></canvas></div></div><div class="chart-card"><h3>Distribución por proyecto</h3><div class="ra-chart"><canvas id="raChartDona"></canvas></div></div><div class="chart-card"><h3>Cumplimiento de objetivos</h3><div class="ra-chart"><canvas id="raChartCumple"></canvas></div></div><div class="chart-card" style="grid-column:1/-1"><h3>Horas registradas por persona</h3><p class="chart-note">Incluye empleados activos sin captura. Usa los filtros superiores; pulsa una barra para seleccionar a la persona.</p><div class="ra-chart" id="raPersonaChartWrap" style="height:440px"><canvas id="raChartPersona"></canvas></div></div></div><section class="card" style="margin-top:18px;background:#f8fafc"><h3>Auditoría de captura · Todos los empleados</h3><div class="ra-filters"><label>Periodo<select id="raPeriodoTipo"><option value="semana">Semana</option><option value="mes">Mes</option><option value="anio">Año</option></select></label><label id="raAuditoriaPeriodoLabel">Semana / mes / año<select id="raPeriodoValor"></select></label><label>Mostrar<select id="raEstadoCaptura"><option value="todos">Todos</option><option value="sin">Sin registros</option><option value="incumple">No alcanzaron el objetivo</option><option value="cumple">Cumplieron</option></select></label></div><p id="raObjetivoInfo" style="color:#475569"></p><div class="buttons"><button class="btn-primary" type="button" onclick="raCopiarSin()">Copiar nombres sin captura</button><button class="btn-secondary" type="button" onclick="raCopiarAuditoria()">Copiar tabla de horas</button><button class="btn-primary" type="button" onclick="raExportarAuditoria()">Exportar auditoría Excel</button></div><div class="table-container" style="max-height:450px;overflow:auto"><table class="ra-table"><thead><tr><th>Empleado</th><th>Periodo</th><th>Horas registradas</th><th>Vacaciones / permisos / asuetos (h)</th><th>Objetivo (h)</th><th>Diferencia</th><th>Resultado</th></tr></thead><tbody id="raAuditoriaBody"></tbody></table></div></section><h3>Horas acumuladas por entregable</h3><p class="chart-note">Las capturas múltiples se reparten en registros individuales. Aquí se suman las horas reales de cada entregable sin multiplicarlas. Respeta los filtros de persona, proyecto y período.</p><div class="table-container" style="max-height:430px;overflow:auto"><table class="ra-table"><thead><tr><th>Proyecto</th><th>Entregable</th><th>Asignaciones</th><th>Horas acumuladas</th></tr></thead><tbody id="raEntregablesAcumulados"></tbody></table></div><h3>Control de captura por persona y semana</h3><div class="table-container" style="max-height:400px;overflow:auto"><table class="ra-table"><thead><tr><th>Persona</th><th>Semana</th><th>Horas</th><th>Asignaciones</th><th>Estado</th></tr></thead><tbody id="raControl"></tbody></table></div><h3>Detalle de registros filtrados</h3><div class="table-container" style="max-height:460px;overflow:auto"><table class="ra-table"><thead><tr><th>Fecha</th><th>Persona</th><th>Semana</th><th>Proyecto</th><th>Actividad</th><th>Entregable</th><th>Horas</th><th>Objetivo</th></tr></thead><tbody id="raDetalle"></tbody></table></div></section>
    <!-- Módulo independiente: la calculadora vive en un iframe para aislar sus estilos y JavaScript de Control de Horas. -->
   <section id="calculadoraElectricaSection" class="card tab-view-hidden" aria-label="Calculadora eléctrica beta">
     <div class="calculator-beta-banner" role="status">
@@ -1613,6 +1716,12 @@ html[data-amp-theme="dark"] .amp-lote-errors{background:#4c1d25;color:#fecaca}
 
       </div>
 
+      <div class="summary-card">
+        <div class="summary-label">Horas extra esta semana</div>
+        <div class="summary-value" id="amp3MisExtra">0.00 h</div>
+        <small style="color:#64748b">Incluidas en el total semanal</small>
+      </div>
+
     </div>
 
   </section>
@@ -1628,6 +1737,7 @@ html[data-amp-theme="dark"] .amp-lote-errors{background:#4c1d25;color:#fecaca}
       Registrar horas
     </h2>
 
+    <p style="font-size:13px;color:#64748b;margin:-6px 0 14px">¿Prefieres llenar varios días juntos? <button type="button" class="btn-secondary btn-small" id="amp3OpenWeeklyBtn">Abrir captura semanal</button></p>
     <div id="formMessage"></div>
 
     <form id="hoursForm">
@@ -1756,8 +1866,13 @@ html[data-amp-theme="dark"] .amp-lote-errors{background:#4c1d25;color:#fecaca}
         </div>
 
 
+        <div class="amp3-extra-daily" style="display:flex;align-items:end;min-height:78px">
+          <label for="amp3ExtraDia" style="display:flex;gap:9px;align-items:center;font-size:14px;cursor:pointer">
+            <input type="checkbox" id="amp3ExtraDia" style="width:19px;height:19px;min-height:19px;margin:0;accent-color:#2563eb">
+            ¿Es hora extra?
+          </label>
+        </div>
         <div class="form-group">
-
           <label for="porcentaje">
             % completado
           </label>
@@ -2253,6 +2368,42 @@ html[data-amp-theme="dark"] .amp-lote-errors{background:#4c1d25;color:#fecaca}
     </div>
     <p id="mensajeGraficas" class="chart-note">Las gráficas mostrarán los registros que coincidan con los filtros.</p>
   </section>
+
+<!-- AMP v3: MODOS ADICIONALES; preserva las pantallas y funciones de origen. -->
+<section id="ampV3Semanal" class="card tab-view-hidden amp3-shell" aria-label="Captura semanal de horas">
+  <div class="amp3-head"><div><h2>Mis horas · Captura semanal</h2><p>Estás en Mis horas. Puedes regresar a la captura diaria sin perder el borrador semanal.</p></div><div class="amp3-actions"><button type="button" class="btn-secondary" id="amp31VolverDiaria">← Volver a captura diaria</button><button type="button" class="btn-secondary" id="amp3CopiarSemana">Copiar semana anterior</button><button type="button" class="btn-secondary" id="amp3AgregarFila">+ Actividad</button></div></div>
+  <div class="amp3-toolbar"><label>Semana (elige cualquier día)<input id="amp3FechaSemana" type="date"></label><div id="amp3SemanaRango" class="amp3-week-range"></div><button type="button" id="amp3RecargarSemana" class="btn-secondary">Actualizar registros</button><span class="amp3-chip" id="amp3SemanaMeta">Meta semanal: —</span></div>
+  <div class="amp3-note">Se guarda <strong>en Supabase solamente cuando pulsas “Guardar horas de la semana”</strong>. Antes, los borradores se conservan en este navegador. Si marcas <strong>Extra</strong>, toda esa fila será hora extra; para mezclar ordinarias y extras usa dos filas. Con varios entregables, las horas del día se <strong>distribuyen por igual sin duplicarse</strong>, igual que en tu captura actual.</div>
+  <div id="amp3SemanaMensaje" class="amp3-msg" role="status"></div>
+  <div class="amp3-week-tablewrap"><table class="amp3-week-table"><thead id="amp3SemanaHead"></thead><tbody id="amp3SemanaBody"></tbody><tfoot id="amp3SemanaFoot"></tfoot></table></div>
+  <div class="amp3-savebar"><div><strong id="amp3BorradorTotal">0 h por guardar</strong><div class="amp3-sub" id="amp3RegistradasTotal">0 h ya registradas en la semana</div></div><div class="amp3-actions"><button type="button" class="btn-secondary" id="amp3ExportarSemana">Exportar CSV</button><button type="button" class="btn-primary" id="amp3GuardarSemana">Guardar horas de la semana</button></div></div>
+  <details class="amp3-details"><summary>Ver mis horas ya guardadas esta semana</summary><div class="amp3-overflow"><table class="amp3-grid-table"><thead><tr><th>Fecha</th><th>Proyecto</th><th>Actividad</th><th>Entregable</th><th>Horas</th><th>Extra</th></tr></thead><tbody id="amp3SemanaGuardadas"></tbody></table></div></details>
+</section>
+
+<section id="ampV3Compromisos" class="card tab-view-hidden amp3-shell" aria-label="Actividades y compromisos">
+ <div class="amp3-head"><div><h2>Mis actividades y compromisos</h2><p>Las asignaciones permanecen visibles hasta que registras horas sobre su entregable con el 100% completado. Al concluir pasan al historial; no se eliminan.</p></div><button type="button" id="amp3RefrescarCompromisos" class="btn-secondary">Actualizar</button></div>
+ <div id="amp3CompMensaje" class="amp3-msg"></div>
+ <div class="amp3-kpis"><div><small>Actividades pendientes</small><strong id="amp3CompPendientes">—</strong></div><div><small>Horas estimadas pendientes</small><strong id="amp3CompHoras">—</strong></div><div><small>Vencidas</small><strong id="amp3CompVencidos">—</strong></div><div><small>Completadas históricas</small><strong id="amp3CompCompletados">—</strong></div></div>
+ <div id="amp3AsignarPanel" class="amp3-panel" style="display:none"><div class="amp3-head"><div><h3>Asignar nueva actividad</h3><p>Solo administradores generales. La asignación queda fechada y auditada en Supabase.</p></div></div>
+   <form id="amp3FormularioAsignar"><div class="amp3-formgrid">
+   <label>Responsable<select id="amp3AsignarPersona" required><option value="">Seleccionar persona</option></select></label>
+   <label>Proyecto<select id="amp3AsignarProyecto" required><option value="">Seleccionar proyecto</option></select></label>
+   <label>Actividad<select id="amp3AsignarActividad" required><option value="">Seleccionar actividad</option></select></label>
+   <label>Entregable<select id="amp3AsignarEntregable"><option value="">Sin entregable</option></select></label>
+   <label>Fecha compromiso<input id="amp3AsignarFecha" type="date" required></label>
+   <label>Horas estimadas<input id="amp3AsignarHoras" type="number" min="0" max="99999" step="0.01" value="8"></label>
+   <label class="amp3-span2">Título de la actividad<input id="amp3AsignarTitulo" required maxlength="140" placeholder="Ej. Emitir plano E-101 revisión 2"></label>
+   <label class="amp3-span2">Indicaciones / alcance<textarea id="amp3AsignarNotas" maxlength="700" rows="2" placeholder="Qué se espera entregar (opcional)"></textarea></label>
+   </div><button type="submit" id="amp3CrearComp" class="btn-primary">Asignar actividad</button></form></div>
+ <div class="amp3-toolbar"><label>Mostrar<select id="amp3CompFiltro"><option value="activos">Activos</option><option value="terminado">Completados</option><option value="todos">Todos / historial</option><option value="cancelado">Cancelados</option></select></label><label id="amp3FiltroPersonaWrap" style="display:none">Responsable<select id="amp3CompPersona"><option value="">Todos</option></select></label><label>Proyecto<select id="amp3CompProyecto"><option value="">Todos los proyectos</option></select></label><button type="button" class="btn-secondary" id="amp3ExportarComp">Exportar asignaciones</button></div>
+ <div class="amp3-overflow"><table class="amp3-grid-table"><thead><tr><th>Responsable</th><th>Proyecto / entregable</th><th>Actividad</th><th>Asignación</th><th>Compromiso</th><th>Horas estimadas</th><th>Avance</th><th>Estado</th><th>Cumplimiento</th><th>Acción</th></tr></thead><tbody id="amp3CompTabla"><tr><td colspan="10">Consulta las actividades.</td></tr></tbody></table></div>
+ <details class="amp3-details"><summary>Ver bitácora de asignaciones y cambios</summary><div class="amp3-overflow"><table class="amp3-grid-table"><thead><tr><th>Fecha y hora</th><th>Actividad</th><th>Responsable</th><th>Evento</th><th>Estado anterior → nuevo</th><th>Registrado por</th></tr></thead><tbody id="amp3CompHistorial"></tbody></table></div></details>
+ </section>
+
+<!-- AMP v3: modal de selección múltiple de entregables de captura semanal -->
+<div id="amp3MultiModal" class="amp3-modal hidden" role="dialog" aria-modal="true" aria-label="Seleccionar entregables"><div class="amp3-modal-card"><div class="amp3-head"><h3>Entregables de la actividad</h3><button type="button" id="amp3MultiCerrar" class="btn-secondary">Cerrar</button></div><p class="amp3-sub">Selecciona varios; el tiempo se distribuye entre ellos sin multiplicarse.</p><input id="amp3MultiBuscar" type="search" placeholder="Buscar código o nombre..." autocomplete="off"><div id="amp3MultiLista" class="amp3-multi-list"></div><button type="button" id="amp3MultiListo" class="btn-primary">Listo</button></div></div>
+<!-- AMP v3: modal de opciones avanzadas por fila -->
+<div id="amp3OpcionesModal" class="amp3-modal hidden" role="dialog" aria-modal="true" aria-label="Opciones del registro"><div class="amp3-modal-card"><div class="amp3-head"><h3>Detalles de actividad</h3><button type="button" id="amp3OpcionesCerrar" class="btn-secondary">Cerrar</button></div><div class="amp3-formgrid"><label>Fecha de inicio<input type="date" id="amp3RowInicio"></label><label>Fecha de vencimiento<input type="date" id="amp3RowVence"></label><label>Estado<select id="amp3RowEstado"><option value="EN CURSO">En curso</option><option value="NO INICIADO">No iniciado</option><option value="APLAZADO">Aplazado</option><option value="TERMINADO">Terminado</option></select></label><label class="amp3-span2">Notas (máximo 500 caracteres)<textarea maxlength="500" rows="3" id="amp3RowNotas"></textarea></label></div><button type="button" class="btn-primary" id="amp3OpcionesListo">Guardar detalles</button></div></div>
 
 </main>
   </div>
@@ -5080,7 +5231,16 @@ html[data-amp-theme="dark"] .amp-lote-errors{background:#4c1d25;color:#fecaca}
         });
 
 
+      const amp3ExtraMarcada = !!document.getElementById('amp3ExtraDia')?.checked;
+      const amp3SqlExtra = !!window.amp3EstaInstalado?.().extraInstalado;
+      if (amp3ExtraMarcada && !amp3SqlExtra) {
+        mostrarMensaje('formMessage', 'No se puede registrar hora extra hasta ejecutar AMP_Migracion_v3_Extras_Compromisos.sql en Supabase.', 'error');
+        return;
+      }
+
       const registro = {
+
+        ...(amp3SqlExtra ? { es_hora_extra: amp3ExtraMarcada } : {}),
 
         usuario_id:
           usuarioActual.id,
@@ -6445,7 +6605,7 @@ function raRender(){
  raId('raHoras').textContent=rows.reduce((a,r)=>a+Number(r.horas||0),0).toLocaleString('es-MX',{maximumFractionDigits:2})+' h';
  raId('raActivos').textContent=new Set(rows.map(r=>r.usuario_id)).size;
  raId('raRegistros').textContent=rows.length;
- const presentes=new Set(rows.map(r=>r.usuario_id));raId('raSin').textContent=people.filter(e=>!presentes.has(e.usuario_id)).length;
+ const presentes=new Set(raDatos.filter(r=>!periodo||raPeriodoRegistro(r,tipo)===periodo).map(r=>r.usuario_id));raId('raSin').textContent=people.filter(e=>!presentes.has(e.usuario_id)).length;
  raGrafico('raChartProyecto','bar',rows,'proyecto');
  raGrafico('raChartSemana','line',rows,'semana');
  raGrafico('raChartDona','doughnut',rows,'proyecto');
@@ -7397,6 +7557,458 @@ ipEl('ipCopiarInforme').addEventListener('click',async()=>{const t=ipEl('ipCopia
     });
   });
 })();
+</script>
+<script id="amp3Script">
+/* AMP Control de Horas v3 - ampliación integrada, sin reemplazar reglas actuales.
+   SQL requerido: AMP_Migracion_v3_Extras_Compromisos.sql
+   Todo registro confirmado se guarda en tablas reales; nunca simula un guardado exitoso. */
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const n=v=>Number(v)||0;
+const fmt=v=>n(v).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
+const today=()=>typeof obtenerFechaLocal==='function'?obtenerFechaLocal():new Date().toISOString().slice(0,10);
+const iso=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+const add=(s,days)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+days);return iso(d)};
+const week=s=>{const d=new Date((s||today())+'T12:00:00');d.setDate(d.getDate()-((d.getDay()+6)%7));return iso(d)};
+const days=w=>Array.from({length:7},(_,i)=>add(w,i));
+const dateLabel=s=>s.slice(8,10)+'/'+s.slice(5,7);
+const localDateTime=s=>{if(!s)return '—';const d=new Date(s);return Number.isNaN(d.getTime())?String(s):new Intl.DateTimeFormat('es-MX',{timeZone:'America/Monterrey',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(d)};
+const localDate=s=>{if(!s)return '';const d=new Date(s);if(Number.isNaN(d.getTime()))return String(s).slice(0,10);const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Monterrey',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d);const val=k=>parts.find(p=>p.type===k)?.value||'';return val('year')+'-'+val('month')+'-'+val('day')};
+const msg=(id,s,type='')=>{const e=$(id);if(e){e.textContent=s;e.className='amp3-msg '+type;}};
+const validNum=x=>Number.isFinite(Number(x))&&Number(x)>=0;
+const randId=()=>typeof crypto!=='undefined'&&crypto.randomUUID?crypto.randomUUID():'r'+Date.now()+'-'+Math.random().toString(36).slice(2);
+const soloFilas=(arr)=>Array.isArray(arr)?arr:[];
+let extraInstalado=false,compInstalado=false,proyeccionInstalada=false;
+let rows=[],inicio=week(today()),serverWeek=[],saving=false,multiId=null,optionsId=null;
+let extraRows=[],compRows=[],histRows=[],proyRows=[],personaLabels=new Map();
+let viewComp='activos',resumenLoading=false;
+const admin=()=>typeof esAdminApp==='function'&&esAdminApp();
+// Solo estas dos identidades maestras pueden abrir el Centro; otros administradores conservan su resumen tradicional.
+const director=()=>!!current()&&typeof esAdminMaestroId==='function'&&esAdminMaestroId(current().id);
+const current=()=>typeof usuarioActual!=='undefined'?usuarioActual:null;
+const proyectoNames=()=>soloFilas(proyectos).map(p=>p.nombre).filter(Boolean);
+const actividadNames=()=>soloFilas(actividades).map(a=>a.nombre).filter(Boolean);
+const entregableNames=proy=>soloFilas(entregables).filter(e=>e.proyectos?.nombre===proy).map(e=>e.nombre);
+const requires=act=>typeof actividadRequiereEntregable==='function'?actividadRequiereEntregable(act):false;
+const selectHTML=(list,value,placeholder)=>'<option value="">'+esc(placeholder)+'</option>'+list.map(x=>'<option value="'+esc(x)+'"'+(x===value?' selected':'')+'>'+esc(x)+'</option>').join('');
+const draftKey=()=> 'amp-v3-draft:'+current()?.id+':'+inicio;
+function saveDraft(){try{localStorage.setItem(draftKey(),JSON.stringify(rows));}catch(e){console.warn('Borrador no guardado localmente',e)}}
+function restoreDraft(){try{const a=JSON.parse(localStorage.getItem(draftKey())||'[]');rows=Array.isArray(a)?a.filter(r=>r&&Array.isArray(r.horas)).slice(0,100).map(r=>({...freshRow(),...r,entregables:Array.isArray(r.entregables)?r.entregables:[],horas:r.horas.slice(0,7)})):[];}catch(e){rows=[]}if(!rows.length)rows=[freshRow()];}
+function freshRow(){return {id:randId(),proyecto:'',actividad:'',entregables:[],extra:false,porcentaje:0,estado:'EN CURSO',horas:[0,0,0,0,0,0,0],fecha_inicio:'',fecha_vencimiento:'',notas:''}}
+async function probe(){if(!current())return;
+ const {error}=await supabaseClient.from('horas').select('es_hora_extra').limit(1);
+ extraInstalado=!error;
+ if(error)console.warn('Hora extra no instalada. Las capturas normales siguen funcionando:',error.message);
+}
+async function fetchPaged(table,columns,modify,max=100000){let out=[];for(let p=0;p<max;p+=1000){let q=supabaseClient.from(table).select(columns).range(p,p+999);if(modify)q=modify(q);const {data,error}=await q;if(error)throw error;out.push(...(data||[]));if(!data||data.length<1000)break;}return out;}
+function setupTabs(){
+ $('tabCompromisos')?.addEventListener('click',()=>cambiarPestanaPrincipal('compromisos'));
+ $('tabCentroIngenieria')?.addEventListener('click',()=>{if(director())cambiarPestanaPrincipal('centro');});
+ $('amp31VolverDiaria')?.addEventListener('click',()=>cambiarPestanaPrincipal('horas'));
+}
+function updateDirectorTab(){
+ const b=$('tabCentroIngenieria');if(!b)return;
+ const can=director();b.style.display=can?'inline-flex':'none';
+ if(!can){b.classList.remove('active');b.setAttribute('aria-selected','false');$('amp3CentroIngenieria')?.classList.add('tab-view-hidden');}
+}
+// Captura semanal es un MODO de Mis horas. El centro es una pestaña diferente solo para los dos maestros.
+function setupNavigation(){const old=cambiarPestanaPrincipal;
+ cambiarPestanaPrincipal=function(p){
+  if(p==='centro'&&!director())p='horas';
+  const semanal=p==='semanal',comp=p==='compromisos',centro=p==='centro',special=semanal||comp||centro;
+  old(special?'horas':p);
+  // La vista original no conoce estos tres módulos; ocultarlos siempre antes de seleccionar uno.
+  ['ampV3Semanal','ampV3Compromisos','amp3CentroIngenieria'].forEach(id=>$(id)?.classList.add('tab-view-hidden'));
+  if(special){
+   document.querySelectorAll('#appScreen main.container > section.card').forEach(e=>e.classList.add('tab-view-hidden'));
+   $(semanal?'ampV3Semanal':comp?'ampV3Compromisos':'amp3CentroIngenieria')?.classList.remove('tab-view-hidden');
+   ['tabMisHoras','tabAdministracion','tabIndicadores','tabResumenAdmin','tabCalculadoraElectrica'].forEach(id=>{$(id)?.classList.remove('active');$(id)?.setAttribute('aria-selected','false')});
+  }
+  // Mis horas permanece seleccionada durante su modo de captura semanal.
+  const misHoras=semanal||p==='horas';
+  $('tabMisHoras')?.classList.toggle('active',misHoras);
+  $('tabMisHoras')?.setAttribute('aria-selected',String(misHoras));
+  $('tabCompromisos')?.classList.toggle('active',comp);
+  $('tabCompromisos')?.setAttribute('aria-selected',String(comp));
+  $('tabCentroIngenieria')?.classList.toggle('active',centro);
+  $('tabCentroIngenieria')?.setAttribute('aria-selected',String(centro));
+  updateDirectorTab();
+  if(semanal)loadWeekly().catch(e=>msg('amp3SemanaMensaje',e.message,'error'));
+  if(comp)loadCompromisos().catch(e=>msg('amp3CompMensaje',e.message,'error'));
+  if(centro){
+    // Misma fuente del resumen existente; se aplica el permiso de lectura en el servidor.
+    if(puedeVerResumenHoras)cargarResumenAdmin().catch(e=>msg('amp3ResumenEstado',e.message,'error'));
+    else msg('amp3ResumenEstado','El usuario maestro aún no tiene autorización de lectura del resumen en Supabase. Comprueba amp_puede_ver_resumen.','error');
+  }
+ };
+}
+function setupHooks(){
+ const origLoad=cargarDatos;
+ cargarDatos=async function(...args){const val=await origLoad(...args);await probe();updateDirectorTab();if($('amp3FechaSemana'))$('amp3FechaSemana').value=today();return val;};
+ const origClear=limpiarFormulario;
+ limpiarFormulario=function(...args){const v=origClear(...args);if($('amp3ExtraDia'))$('amp3ExtraDia').checked=false;return v;};
+ const origSave=guardarHoras;
+ guardarHoras=async function(...args){const v=await origSave(...args);if(compInstalado)loadCompromisos(true).catch(console.warn);return v;};
+ const origPersonal=actualizarResumen;
+ actualizarResumen=function(...args){const v=origPersonal(...args);
+  const w=week(today()),total=registros.filter(r=>r.es_hora_extra===true&&r.fecha>=w&&r.fecha<=add(w,6)).reduce((a,r)=>a+n(r.horas),0);
+  if($('amp3MisExtra'))$('amp3MisExtra').textContent=fmt(total)+' h';return v;};
+ const origRa=cargarResumenAdmin;
+ cargarResumenAdmin=async function(...args){await origRa(...args);await loadExecutive();};
+ const origRaRender=raRender;
+ raRender=function(...args){const x=origRaRender(...args);renderExecutive();return x;};
+ // El registro diario puede editarse o copiarse desde el historial original.
+ const origEditar=editarRegistro;
+ editarRegistro=function(id){const v=origEditar(id);const r=registros.find(x=>String(x.id)===String(id));if($('amp3ExtraDia'))$('amp3ExtraDia').checked=!!r?.es_hora_extra;return v;};
+ const origCopiar=copiarRegistro;
+ copiarRegistro=function(id){const v=origCopiar(id);const r=registros.find(x=>String(x.id)===String(id));if($('amp3ExtraDia'))$('amp3ExtraDia').checked=!!r?.es_hora_extra;return v;};
+}
+function buildHead(){const ds=days(inicio);$('amp3SemanaHead').innerHTML='<tr>'+[
+  '<th style="width:145px">Proyecto</th>','<th style="width:157px">Actividad</th>',
+  '<th style="width:145px">Entregables</th>','<th style="width:48px">Extra</th>',
+  '<th style="width:61px">% fin</th>','<th style="width:60px">Notas</th>',
+  ...ds.map((d,i)=>'<th style="width:70px">'+['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'][i]+'<br><span style="font-size:10px">'+dateLabel(d)+'</span></th>'),
+  '<th style="width:62px">Total</th>','<th style="width:35px"></th>'].join('')+'</tr>';
+ $('amp3SemanaRango').textContent=dateLabel(ds[0])+' – '+dateLabel(ds[6])+' / '+ds[0].slice(0,4);
+ const meta=typeof raHorasSemanaAnio==='function'?raHorasSemanaAnio(Number(ds[0].slice(0,4))):48;
+ $('amp3SemanaMeta').textContent='Meta semanal: '+meta+' h';
+}
+function renderWeek(){buildHead();const body=$('amp3SemanaBody');body.innerHTML=rows.map((r,i)=>{
+ const needs=requires(r.actividad),avail=entregableNames(r.proyecto);r.entregables=r.entregables.filter(x=>avail.includes(x));
+ const selected=r.entregables.length?String(r.entregables.length)+' seleccionado(s)':'Seleccionar...';
+ return '<tr data-row="'+esc(r.id)+'">'
+ +'<td><select data-field="proyecto">'+selectHTML(proyectoNames(),r.proyecto,'Proyecto...')+'</select></td>'
+ +'<td><select data-field="actividad">'+selectHTML(actividadNames(),r.actividad,'Actividad...')+'</select></td>'
+ +'<td><button type="button" class="amp3-sel-del" data-action="multi" '+(!needs||!r.proyecto?'disabled':'')+' title="'+esc(r.entregables.join(', '))+'">'+(needs?esc(selected):'Sin entregable')+'</button></td>'
+ +'<td><input type="checkbox" data-field="extra" '+(r.extra?'checked':'')+' title="Toda esta fila es hora extra"></td>'
+ +'<td><input type="number" data-field="porcentaje" min="0" max="100" step="1" value="'+n(r.porcentaje)+'"></td>'
+ +'<td><button class="amp3-small-btn" type="button" data-action="options" title="Fechas y notas">···</button></td>'
+ +r.horas.map((v,d)=>'<td><input type="number" min="0" max="24" step="0.01" data-dia="'+d+'" value="'+(n(v)||0)+'" aria-label="Horas '+dateLabel(days(inicio)[d])+'"></td>').join('')
+ +'<td><b data-row-total="'+esc(r.id)+'">'+fmt(r.horas.reduce((s,x)=>s+n(x),0))+'</b></td>'
+ +'<td><button type="button" class="amp3-small-btn" data-action="del" aria-label="Quitar fila">×</button></td></tr>';
+ }).join('');refreshWeekTotals();}
+function refreshWeekTotals(){let daily=[0,0,0,0,0,0,0],total=0,extras=0;
+ rows.forEach(r=>{let sum=0;r.horas.forEach((h,i)=>{daily[i]+=n(h);sum+=n(h)});total+=sum;if(r.extra)extras+=sum;const t=document.querySelector('[data-row-total="'+r.id+'"]');if(t)t.textContent=fmt(sum);});
+ $('amp3SemanaFoot').innerHTML='<tr><th colspan="6">TOTAL POR GUARDAR</th>'+daily.map(h=>'<td>'+fmt(h)+'</td>').join('')+'<td>'+fmt(total)+'</td><td></td></tr>';
+ $('amp3BorradorTotal').textContent=fmt(total)+' h por guardar'+(extras?' · '+fmt(extras)+' h extra':'');
+ const guardadas=serverWeek.reduce((s,r)=>s+n(r.horas),0);
+ $('amp3RegistradasTotal').textContent=fmt(guardadas)+' h ya guardadas en Supabase · '+fmt(guardadas+total)+' h si guardas el borrador';
+}
+async function fetchWeek(w){return await fetchPaged('horas','id,fecha,proyecto,actividad,entregable,horas,semana,es_hora_extra',q=>q.eq('usuario_id',current().id).gte('fecha',w).lte('fecha',add(w,6)).order('fecha'),10000);}
+async function loadWeekly(){if(!current())return;inicio=week($('amp3FechaSemana').value||today());restoreDraft();
+ try{serverWeek=await fetchWeek(inicio);msg('amp3SemanaMensaje','Captura individual y semanal comparten la misma base de datos. Los registros se consultaron correctamente.','ok');}
+ catch(e){if(!extraInstalado){try{serverWeek=await fetchPaged('horas','id,fecha,proyecto,actividad,entregable,horas,semana',q=>q.eq('usuario_id',current().id).gte('fecha',inicio).lte('fecha',add(inicio,6)).order('fecha'),10000);msg('amp3SemanaMensaje','Puedes capturar horas ordinarias. Para habilitar extras y compromisos instala el SQL v3.');}catch(e2){msg('amp3SemanaMensaje','No se pudieron consultar horas reales: '+e2.message,'error');}}
+ else msg('amp3SemanaMensaje','No se pudieron consultar horas: '+e.message,'error');}
+ renderWeek();renderSavedWeek();}
+function renderSavedWeek(){$('amp3SemanaGuardadas').innerHTML=serverWeek.map(r=>'<tr><td>'+esc(r.fecha)+'</td><td>'+esc(r.proyecto)+'</td><td>'+esc(r.actividad)+'</td><td>'+esc(r.entregable||'—')+'</td><td>'+fmt(r.horas)+'</td><td>'+(r.es_hora_extra?'Sí':'No')+'</td></tr>').join('')||'<tr><td colspan="6">Sin capturas todavía</td></tr>'}
+function weeklyChange(ev){const tr=ev.target.closest('tr[data-row]');if(!tr)return;const r=rows.find(x=>x.id===tr.dataset.row);if(!r)return;const field=ev.target.dataset.field;
+ if(ev.target.dataset.dia!==undefined){r.horas[Number(ev.target.dataset.dia)]=ev.target.value===''?0:Number(ev.target.value);saveDraft();refreshWeekTotals();return;}
+ if(field==='proyecto'){r.proyecto=ev.target.value;r.entregables=[];}
+ if(field==='actividad'){r.actividad=ev.target.value;r.entregables=[];}
+ if(field==='extra')r.extra=ev.target.checked;
+ if(field==='porcentaje')r.porcentaje=ev.target.value===''?0:Number(ev.target.value);
+ saveDraft();
+ // No reemplazar nodos HTML mientras un control emite su evento change/blur.
+ if(field==='proyecto'||field==='actividad')requestAnimationFrame(()=>renderWeek());
+}
+function weeklyAction(ev){const btn=ev.target.closest('button[data-action]');if(!btn)return;const tr=btn.closest('tr[data-row]');if(!tr)return;const r=rows.find(x=>x.id===tr.dataset.row);if(!r)return;
+ switch(btn.dataset.action){case 'del':if(rows.length===1)rows=[freshRow()];else rows=rows.filter(x=>x.id!==r.id);saveDraft();renderWeek();break;
+ case 'multi':multiId=r.id;$('amp3MultiBuscar').value='';$('amp3MultiModal').classList.remove('hidden');renderMulti();break;
+ case 'options':optionsId=r.id;$('amp3RowInicio').value=r.fecha_inicio||'';$('amp3RowVence').value=r.fecha_vencimiento||'';$('amp3RowNotas').value=r.notas||'';$('amp3RowEstado').value=r.estado||'EN CURSO';$('amp3OpcionesModal').classList.remove('hidden');break;}}
+function renderMulti(){const r=rows.find(x=>x.id===multiId);if(!r)return;const q=$('amp3MultiBuscar').value.toLocaleLowerCase('es');const arr=entregableNames(r.proyecto).filter(x=>x.toLocaleLowerCase('es').includes(q));$('amp3MultiLista').innerHTML=arr.map(x=>'<label><input type="checkbox" data-name="'+esc(x)+'" '+(r.entregables.includes(x)?'checked':'')+'><span>'+esc(x)+'</span></label>').join('')||'<p class="amp3-sub">Sin entregables que coincidan.</p>';}
+function changeMulti(ev){if(!ev.target.matches('input[data-name]'))return;const r=rows.find(x=>x.id===multiId);if(!r)return;const val=ev.target.dataset.name;if(ev.target.checked){if(!r.entregables.includes(val))r.entregables.push(val);}else r.entregables=r.entregables.filter(x=>x!==val);saveDraft();}
+async function copyPreviousWeek(){const prev=add(inicio,-7);if(rows.some(r=>r.horas.some(h=>n(h)>0))&&!confirm('Tu borrador ya tiene horas. ¿Sustituirlo con la semana anterior?'))return;
+ try{let old;try{old=await fetchWeek(prev)}catch(e){if(!extraInstalado)old=await fetchPaged('horas','id,fecha,proyecto,actividad,entregable,horas,semana',q=>q.eq('usuario_id',current().id).gte('fecha',prev).lte('fecha',add(prev,6)).order('fecha'),10000);else throw e;}if(!old.length){msg('amp3SemanaMensaje','No hay horas de la semana anterior para copiar.');return;}
+ const map=new Map();for(const r of old){const key=JSON.stringify([r.proyecto,r.actividad,r.entregable||'',!!r.es_hora_extra]);if(!map.has(key))map.set(key,{...freshRow(),proyecto:r.proyecto,actividad:r.actividad,entregables:r.entregable?[r.entregable]:[],extra:!!r.es_hora_extra});const x=map.get(key),day=days(prev).indexOf(r.fecha);if(day>=0)x.horas[day]=Number((n(x.horas[day])+n(r.horas)).toFixed(2));}
+ // Agrupa filas que comparten actividad/extra/horas diarias en la estructura original; nunca multiplica.
+ rows=[...map.values()].slice(0,90);saveDraft();renderWeek();msg('amp3SemanaMensaje','Se copió el borrador de la semana anterior. Revísalo antes de guardarlo; todavía no se enviaron registros.','ok');
+ }catch(e){msg('amp3SemanaMensaje','No fue posible copiar la semana: '+e.message,'error');}}
+function matchComp(r,ent){return compRows.find(c=>c.usuario_id===current()?.id&&c.estado!=='terminado'&&c.estado!=='cancelado'&&c.proyecto.trim().toLowerCase()===r.proyecto.trim().toLowerCase()&&c.actividad.trim().toLowerCase()===r.actividad.trim().toLowerCase()&&(c.entregable||'').trim().toLowerCase()===(ent||'').trim().toLowerCase());}
+async function saveWeekly(){if(saving||!current())return;const filled=rows.filter(r=>r.horas.some(h=>n(h)>0));if(!filled.length){msg('amp3SemanaMensaje','No hay horas por guardar.');return;}
+ if(!extraInstalado&&filled.some(r=>r.extra)){msg('amp3SemanaMensaje','Para guardar horas extra primero instala AMP_Migracion_v3_Extras_Compromisos.sql en Supabase.','error');return;}
+ // Verificar reglas reales del catálogo inmediatamente antes de guardar.
+ let reglas;
+ try{const {data,error}=await supabaseClient.from('actividades').select('nombre,requiere_entregable').eq('activo',true);if(error)throw error;reglas=new Map((data||[]).map(a=>[a.nombre.trim(),a.requiere_entregable===true]));}
+ catch(e){msg('amp3SemanaMensaje','No se pudo confirmar la configuración vigente de las actividades: '+e.message,'error');return;}
+ const inserts=[],ds=days(inicio);let cents=0;
+ try{for(const [i,r] of filled.entries()){
+   if(!proyectoNames().includes(r.proyecto))throw new Error('Fila '+(i+1)+': selecciona un proyecto válido.');
+   if(!reglas.has(r.actividad))throw new Error('Fila '+(i+1)+': selecciona una actividad válida.');
+   const req=reglas.get(r.actividad),available=new Set(entregableNames(r.proyecto));
+   if(req&&(!r.entregables.length||r.entregables.some(x=>!available.has(x))))throw new Error('Fila '+(i+1)+': selecciona entregables vigentes de ese proyecto.');
+   if(!req&&r.entregables.length)throw new Error('Fila '+(i+1)+': esta actividad no permite entregables.');
+   if(!validNum(r.porcentaje)||n(r.porcentaje)>100||!Number.isInteger(n(r.porcentaje)))throw new Error('Fila '+(i+1)+': % completado debe ser un número entero de 0 a 100.');
+   if(String(r.notas||'').length>500)throw new Error('Fila '+(i+1)+': las notas superan 500 caracteres.');
+   if(r.fecha_inicio&&r.fecha_vencimiento&&r.fecha_inicio>r.fecha_vencimiento)throw new Error('Fila '+(i+1)+': revisa las fechas de inicio y vencimiento.');
+   const codes=req?r.entregables:[null];
+   for(let day=0;day<7;day++){
+     const h=Number(r.horas[day]);if(!Number.isFinite(h)||h<0||h>24)throw new Error('Fila '+(i+1)+': cada día debe tener entre 0 y 24 horas.');
+     if(!h)continue;const total=Math.round(h*100);if(total<1||Math.abs(h*100-total)>.0001)throw new Error('Fila '+(i+1)+': usa máximo dos decimales.');
+     if(total<codes.length)throw new Error('Fila '+(i+1)+': son demasiados entregables para repartir '+h+' h en centésimas.');
+     cents+=total;const fecha=ds[day],base=Math.floor(total/codes.length),remainder=total%codes.length;
+     for(const [j,code] of codes.entries()){
+       const c=base+(j<remainder?1:0);if(!c)continue;
+       const task=matchComp(r,code);
+       const due=r.fecha_vencimiento||task?.fecha_objetivo||null;
+       const obj={usuario_id:current().id,fecha,proyecto:r.proyecto,actividad:r.actividad,entregable:code,horas:c/100,
+         notas:(r.notas||'').trim()||null,fecha_inicio:r.fecha_inicio||null,fecha_vencimiento:due,
+         porcentaje_completado:n(r.porcentaje),estado:n(r.porcentaje)===100?'TERMINADO':r.estado||'EN CURSO',
+         cumple_objetivo:calcularCumplimiento({fecha,fecha_vencimiento:due,porcentaje_completado:n(r.porcentaje),estado:n(r.porcentaje)===100?'TERMINADO':r.estado||'EN CURSO'}),semana:obtenerSemanaISO(fecha)};
+       if(extraInstalado)obj.es_hora_extra=!!r.extra;
+       inserts.push(obj);
+     }
+   }
+ }}catch(e){msg('amp3SemanaMensaje',e.message,'error');return;}
+ const existing=new Set(serverWeek.map(r=>JSON.stringify([r.fecha,r.proyecto,r.actividad,r.entregable||'',!!r.es_hora_extra])));
+ const duplicate=inserts.filter(x=>existing.has(JSON.stringify([x.fecha,x.proyecto,x.actividad,x.entregable||'',!!x.es_hora_extra]))).length;
+ if(duplicate&&!confirm('Se detectaron '+duplicate+' coincidencias con fecha, proyecto, actividad, entregable y tipo de hora ya guardados. La nueva captura SUMARÁ horas, no reemplazará las anteriores. ¿Confirmas que son horas adicionales?'))return;
+ if(inserts.length>950){msg('amp3SemanaMensaje','La captura supera 950 filas por operación. Divide las actividades para evitar guardados parciales.','error');return;}
+ saving=true;$('amp3GuardarSemana').disabled=true;msg('amp3SemanaMensaje','Enviando '+inserts.length+' registros a Supabase...');
+ try{const {error}=await supabaseClient.from('horas').insert(inserts);if(error)throw error;
+   // Se limpia el borrador solo después del éxito confirmado en Supabase.
+   rows.forEach(r=>r.horas=[0,0,0,0,0,0,0]);saveDraft();
+   const {error:fetchError}=await supabaseClient.from('horas').select('id').eq('usuario_id',current().id).gte('fecha',inicio).lte('fecha',add(inicio,6)).limit(1);
+   if(fetchError)console.warn(fetchError.message);
+   await cargarHoras();actualizarResumen();mostrarHoras();
+   try{serverWeek=await fetchWeek(inicio);}catch(e){console.warn('No se pudo recargar semana',e)}
+   renderWeek();renderSavedWeek();
+   msg('amp3SemanaMensaje','Se guardaron '+inserts.length+' registros, equivalentes a '+fmt(cents/100)+' horas totales (sin duplicarlas entre entregables).','ok');
+   if(compInstalado)await loadCompromisos(true);
+ }catch(e){msg('amp3SemanaMensaje','No se guardaron las horas. El borrador sigue disponible: '+e.message,'error');}
+ finally{saving=false;$('amp3GuardarSemana').disabled=false;}
+}
+function downloadCSV(filename,arr){if(!arr.length){alert('No hay información que exportar');return;}
+ const headers=[...new Set(arr.flatMap(x=>Object.keys(x)))],q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+ const content='\ufeff'+headers.map(q).join(',')+'\r\n'+arr.map(r=>headers.map(k=>q(r[k])).join(',')).join('\r\n');
+ const link=document.createElement('a'),blob=new Blob([content],{type:'text/csv;charset=utf-8'});link.href=URL.createObjectURL(blob);link.download=filename;document.body.appendChild(link);link.click();setTimeout(()=>URL.revokeObjectURL(link.href),3000);link.remove();}
+function exportWeek(){const a=[];for(const r of rows)r.horas.forEach((h,i)=>{if(n(h)>0)a.push({Fecha:days(inicio)[i],Proyecto:r.proyecto,Actividad:r.actividad,Entregables:r.entregables.join(' | '),Extra:r.extra?'Sí':'No',Horas:h,Porcentaje:r.porcentaje,Notas:r.notas})});downloadCSV('AMP_Borrador_Semana_'+inicio+'.csv',a);}
+// ------- ACTIVIDADES Y COMPROMISOS: datos compartidos, RLS y bitácora -------
+const employeeName=id=>personaLabels.get(String(id))||String(id||'—');
+function upsertOptions(id,list,first){const sel=$(id);if(!sel)return;const prev=sel.value;sel.innerHTML=selectHTML(list,prev,first);if(list.includes(prev))sel.value=prev;}
+async function getEmployees(){if(!admin()){personaLabels=new Map([[current()?.id,current()?.email||'Mi usuario']]);return;}
+ try{await cargarEmpleadosParaPermisos();personaLabels=new Map(empleadosParaPermisos.map(x=>[String(x.usuario_id),x.NOMBRE||x.usuario_id]));
+ if(!personaLabels.has(current()?.id))personaLabels.set(current().id,current().email);
+ const old=$('amp3AsignarPersona').value;
+ $('amp3AsignarPersona').innerHTML='<option value="">Seleccionar persona</option>'+empleadosParaPermisos.map(e=>'<option value="'+esc(e.usuario_id)+'">'+esc(e.NOMBRE||e.usuario_id)+'</option>').join('');
+ if(old)$('amp3AsignarPersona').value=old;
+ const prev=$('amp3CompPersona').value;
+ $('amp3CompPersona').innerHTML='<option value="">Todas las personas</option>'+empleadosParaPermisos.map(e=>'<option value="'+esc(e.usuario_id)+'">'+esc(e.NOMBRE||e.usuario_id)+'</option>').join('');
+ if(prev)$('amp3CompPersona').value=prev;
+ }catch(e){console.warn('Catálogo empleados:',e)}}
+function projectOptions(){upsertOptions('amp3AsignarProyecto',proyectoNames(),'Seleccionar proyecto');upsertOptions('amp3CompProyecto',proyectoNames(),'Todos los proyectos');}
+function assignmentUpdate(){upsertOptions('amp3AsignarActividad',actividadNames(),'Seleccionar actividad');const p=$('amp3AsignarProyecto').value,act=$('amp3AsignarActividad').value;
+ const sel=$('amp3AsignarEntregable'),was=sel.value;
+ sel.innerHTML=selectHTML(entregableNames(p),was,'Sin entregable');sel.disabled=!requires(act);if(!requires(act))sel.value='';
+ if(!$('amp3AsignarTitulo').value.trim())$('amp3AsignarTitulo').value=[act,sel.value].filter(Boolean).join(' · ').slice(0,140);
+}
+async function loadCompromisos(silent=false){if(!current())return;
+ if(!silent)msg('amp3CompMensaje','Consultando actividades autorizadas...');
+ $('amp3AsignarPanel').style.display=admin()?'block':'none';$('amp3FiltroPersonaWrap').style.display=admin()?'flex':'none';
+ projectOptions();assignmentUpdate();
+ if(admin())await getEmployees();
+ try{compRows=await fetchPaged('amp_compromisos_v3','*',q=>q.order('fecha_asignacion',{ascending:false}),50000);
+   compInstalado=true;
+   try{const ids=compRows.map(x=>x.id); // RLS protege las bitácoras del usuario.
+      histRows=ids.length?await fetchPaged('amp_compromisos_historial_v3','*',q=>q.order('fecha_evento',{ascending:false}),50000):[];
+   }catch(e){histRows=[];console.warn('Bitácora:',e.message)}
+   if(!silent)msg('amp3CompMensaje','Actividades sincronizadas. El 100% se actualiza al guardar horas sobre el mismo proyecto, actividad y entregable.','ok');
+ }catch(e){compInstalado=false;compRows=[];histRows=[];if(!silent)msg('amp3CompMensaje','El módulo necesita el SQL v3. No hay seguimiento compartido sin esa instalación. Detalle: '+e.message,'error');}
+ renderComp();renderExecutive();}
+const dueDays=d=>Math.floor((new Date(d+'T12:00:00')-new Date(today()+'T12:00:00'))/86400000);
+function compStatus(c){if(c.estado==='terminado')return '<span class="amp3-pill green">Completado</span>';if(c.estado==='cancelado')return '<span class="amp3-pill">Cancelado</span>';return dueDays(c.fecha_objetivo)<0?'<span class="amp3-pill red">Vencido</span>':c.estado==='en_curso'?'<span class="amp3-pill orange">En curso</span>':'<span class="amp3-pill">Pendiente</span>';}
+function compFilter(){return compRows.filter(c=>{
+ const f=$('amp3CompFiltro').value;
+ if(f==='activos'&&!['pendiente','en_curso'].includes(c.estado))return false;
+ if((f==='terminado'||f==='cancelado')&&c.estado!==f)return false;
+ if($('amp3CompPersona').value&&c.usuario_id!==$('amp3CompPersona').value)return false;
+ if($('amp3CompProyecto').value&&c.proyecto!==$('amp3CompProyecto').value)return false;
+ return true;});}
+function renderComp(){if(!$('amp3CompTabla'))return;const active=compRows.filter(c=>['pendiente','en_curso'].includes(c.estado));
+ $('amp3CompPendientes').textContent=active.length;
+ $('amp3CompHoras').textContent=fmt(active.reduce((s,x)=>s+n(x.horas_estimadas)*(100-n(x.avance))/100,0))+' h';
+ $('amp3CompVencidos').textContent=active.filter(c=>dueDays(c.fecha_objetivo)<0).length;
+ $('amp3CompCompletados').textContent=compRows.filter(c=>c.estado==='terminado').length;
+ $('amp3CompTabla').innerHTML=compFilter().slice(0,600).map(c=>'<tr>'+
+ '<td>'+esc(employeeName(c.usuario_id))+'</td><td><b>'+esc(c.proyecto)+'</b><br>'+esc(c.entregable||'Sin entregable')+'</td>'+
+ '<td title="'+esc(c.descripcion)+'">'+esc(c.titulo)+'<div class="amp3-sub">'+esc(c.actividad)+'</div></td>'+
+ '<td>'+esc(localDateTime(c.fecha_asignacion))+'</td><td>'+esc(c.fecha_objetivo)+'</td>'+
+ '<td>'+fmt(c.horas_estimadas)+'</td><td><div class="amp3-bar"><span style="width:'+n(c.avance)+'%"></span></div>'+n(c.avance)+'%</td><td>'+compStatus(c)+'</td>'+
+ '<td>'+(c.fecha_cumplimiento?esc(localDateTime(c.fecha_cumplimiento)):'—')+'</td>'+
+ '<td><div class="amp3-actions">'+(['pendiente','en_curso'].includes(c.estado)&&String(c.usuario_id)===String(current()?.id)?'<button type="button" class="amp3-small-btn" data-task="'+esc(c.id)+'" data-act="fill">Registrar horas</button>':'')+
+ (admin()?'<button type="button" class="amp3-small-btn" data-task="'+esc(c.id)+'" data-act="due">Fecha</button>'+(['pendiente','en_curso'].includes(c.estado)?'<button type="button" class="amp3-small-btn" data-task="'+esc(c.id)+'" data-act="cancel">Cancelar</button>':'<button type="button" class="amp3-small-btn" data-task="'+esc(c.id)+'" data-act="reopen">Reabrir</button>'):'')+'</div></td></tr>').join('')||'<tr><td colspan="10">No hay actividades con este filtro.</td></tr>';
+ const map=new Map(compRows.map(c=>[c.id,c]));
+ $('amp3CompHistorial').innerHTML=histRows.slice(0,1200).map(h=>{const c=map.get(h.compromiso_id);return '<tr><td>'+esc(localDateTime(h.fecha_evento))+'</td><td>'+esc(c?.titulo||h.compromiso_id)+'</td><td>'+esc(employeeName(c?.usuario_id))+'</td><td>'+esc(h.tipo)+'</td><td>'+esc((h.estado_anterior||'—')+' → '+(h.estado_nuevo||'—'))+'</td><td>'+esc(employeeName(h.usuario_accion))+'</td></tr>'}).join('')||'<tr><td colspan="6">Sin eventos visibles</td></tr>';
+}
+async function createTask(ev){ev.preventDefault();if(!admin()||!current())return;
+ const p=$('amp3AsignarProyecto').value,act=$('amp3AsignarActividad').value,d=$('amp3AsignarEntregable').value;
+ if(requires(act)&&!d){msg('amp3CompMensaje','Esta actividad requiere seleccionar el entregable que se va a cumplir.','error');return;}
+ const row={usuario_id:$('amp3AsignarPersona').value,asignado_por:current().id,proyecto:p,actividad:act,entregable:d||null,
+ titulo:$('amp3AsignarTitulo').value.trim(),descripcion:$('amp3AsignarNotas').value.trim(),
+ fecha_objetivo:$('amp3AsignarFecha').value,horas_estimadas:Number($('amp3AsignarHoras').value||0)};
+ if(!row.usuario_id||!row.proyecto||!row.actividad||!row.titulo||!row.fecha_objetivo){msg('amp3CompMensaje','Completa responsable, proyecto, actividad, título y fecha objetivo.','error');return;}
+ const btn=$('amp3CrearComp');btn.disabled=true;
+ try{const {error}=await supabaseClient.from('amp_compromisos_v3').insert(row);if(error)throw error;
+ $('amp3AsignarTitulo').value='';$('amp3AsignarNotas').value='';msg('amp3CompMensaje','Actividad asignada; la fecha y responsable quedaron en el historial compartido.','ok');
+ await loadCompromisos(true);
+ }catch(e){msg('amp3CompMensaje','No se pudo asignar: '+e.message,'error');}finally{btn.disabled=false;}}
+async function taskAction(ev){const b=ev.target.closest('button[data-task]');if(!b)return;const c=compRows.find(x=>x.id===b.dataset.task);if(!c)return;
+ if(b.dataset.act==='fill'){
+   cambiarPestanaPrincipal('horas');$('fecha').value=today();$('proyecto').value=c.proyecto;actualizarEntregables(c.proyecto);
+   $('actividad').value=c.actividad;aplicarReglaEntregable();
+   if(c.entregable)establecerEntregablesHoras([c.entregable]);
+   $('fechaInicio').value=localDate(c.fecha_asignacion);$('fechaVencimiento').value=c.fecha_objetivo;
+   $('porcentaje').value=Math.max(n(c.avance),0);$('estado').value=c.avance===100?'TERMINADO':'EN CURSO';
+   $('notas').value=String(c.descripcion||'').slice(0,500);actualizarContadorNotas();
+   document.getElementById('hoursForm').scrollIntoView({behavior:'smooth',block:'start'});
+   return;
+ }
+ if(!admin())return;let patch;
+ if(b.dataset.act==='due'){
+   const date=prompt('Nueva fecha compromiso (AAAA-MM-DD)',c.fecha_objetivo);if(date===null)return;
+   if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){msg('amp3CompMensaje','La fecha debe estar en formato AAAA-MM-DD.','error');return;}
+   patch={fecha_objetivo:date};
+ }else if(b.dataset.act==='cancel'){
+   if(!confirm('¿Cancelar esta asignación sin borrar su historial?'))return;patch={estado:'cancelado'};
+ }else if(b.dataset.act==='reopen'){
+   if(!confirm('¿Reabrir la actividad? Se reiniciará su avance a 0%, conservando el historial de cierres.'))return;
+   patch={estado:'pendiente',avance:0,fecha_cumplimiento:null,fecha_trabajo_cumplimiento:null};
+ }else return;
+ const {error}=await supabaseClient.from('amp_compromisos_v3').update({...patch,actualizado_en:new Date().toISOString()}).eq('id',c.id);
+ if(error){msg('amp3CompMensaje','Error al actualizar: '+error.message,'error');return;}
+ msg('amp3CompMensaje','Se guardó el cambio y su historial.','ok');await loadCompromisos(true);
+}
+function exportComp(){downloadCSV('AMP_Compromisos_'+today()+'.csv',compFilter().map(c=>({Responsable:employeeName(c.usuario_id),Proyecto:c.proyecto,Actividad:c.actividad,Entregable:c.entregable,Titulo:c.titulo,Fecha_asignacion:c.fecha_asignacion,Fecha_compromiso:c.fecha_objetivo,Horas_estimadas:c.horas_estimadas,Avance:c.avance,Estado:c.estado,Fecha_cumplimiento:c.fecha_cumplimiento,Fecha_trabajo:c.fecha_trabajo_cumplimiento,Asignado_por:employeeName(c.asignado_por)})));}
+// ------- RESUMEN DE DIRECCIÓN: etiquetas claras, horas extras y ETC reales -------
+async function loadExecutive(){if(!director()||!puedeVerResumenHoras||resumenLoading)return;
+ resumenLoading=true;msg('amp3ResumenEstado','Actualizando el reporte con datos autorizados...');
+ try{
+   if(extraInstalado){extraRows=await fetchPaged('horas','id,usuario_id,fecha,proyecto,horas,semana,es_hora_extra',q=>q.eq('es_hora_extra',true).order('id',{ascending:true}),100000);}else extraRows=[];
+   try{proyRows=await fetchPaged('amp_proyecciones_v3','*',q=>q.order('proyecto'),10000);proyeccionInstalada=true;}
+   catch(e){proyRows=[];proyeccionInstalada=false;console.warn('Proyecciones v3:',e.message)}
+   if(admin())await getEmployees();else personaLabels=new Map(raEmpleados.map(x=>[x.usuario_id,x.NOMBRE]));
+   if(compInstalado||admin())await loadCompromisos(true);
+   msg('amp3ResumenEstado',(!extraInstalado||!proyeccionInstalada||!compInstalado)?'El resumen original funciona. Los módulos nuevos requieren ejecutar el SQL v3 para habilitar extras, proyecciones y compromisos.':'Indicadores sincronizados con Supabase. Las horas extras ya están incluidas en el total de horas.','');
+ }catch(e){msg('amp3ResumenEstado','Error de consulta: '+e.message,'error');}
+ finally{resumenLoading=false;renderExecutive();}
+}
+const filteredRows=()=>typeof raFiltrados==='function'?raFiltrados():[];
+const extraIdSet=()=>new Set(extraRows.map(x=>String(x.id)));
+function filteredExtras(){const ids=extraIdSet();return filteredRows().filter(r=>ids.has(String(r.id)));}
+function currentExtraWeek(){const val=$('amp3ExtraSemana')?.value;if(val)return val;const p=$('raSemana')?.value;if($('raFiltroTipo')?.value==='semana'&&p)return p;return '';}
+function extraWithWeek(){const w=currentExtraWeek();return filteredExtras().filter(r=>!w||raPeriodoSemana(r.fecha)===w);}
+function renderExtras(){if(!$('amp3ExtraSemana'))return;
+ const list=[...new Set(raDatos.map(r=>raPeriodoSemana(r.fecha)).filter(Boolean))].sort().reverse();const el=$('amp3ExtraSemana'),old=el.value;
+ el.innerHTML='<option value="">Todas las semanas del filtro</option>'+list.map(w=>'<option value="'+esc(w)+'">'+esc(w)+'</option>').join('');
+ if(list.includes(old))el.value=old;else if($('raFiltroTipo')?.value==='semana'&&list.includes($('raSemana')?.value))el.value=$('raSemana').value;else el.value='';
+ const x=extraWithWeek(),people=new Map();const all=filteredRows();
+ for(const r of x){const w=raPeriodoSemana(r.fecha),key=r.usuario_id+'|'+w;const a=people.get(key)||{uid:r.usuario_id,w,extra:0,total:0};a.extra+=n(r.horas);people.set(key,a)}
+ for(const [key,a] of people.entries()){a.total=all.filter(r=>r.usuario_id===a.uid&&raPeriodoSemana(r.fecha)===a.w).reduce((s,r)=>s+n(r.horas),0)}
+ $('amp3TablaExtras').innerHTML=[...people.values()].sort((a,b)=>b.w.localeCompare(a.w)||b.extra-a.extra).map(a=>'<tr><td>'+esc(raNombre(a.uid))+'</td><td><b>'+fmt(a.extra)+' h</b></td><td>'+fmt(a.total)+' h</td><td>'+esc(a.w)+'</td></tr>').join('')||'<tr><td colspan="4">'+(extraInstalado?'Sin horas extra en este período':'Instala el SQL v3 para activar este indicador')+'</td></tr>';
+}
+function allExtraExport(){const map=new Map();for(const r of extraWithWeek()){const w=raPeriodoSemana(r.fecha),key=JSON.stringify([r.usuario_id,w,r.proyecto]);const v=map.get(key)||{Empleado:raNombre(r.usuario_id),Semana:w,Proyecto:r.proyecto,Horas_extra:0};v.Horas_extra+=n(r.horas);map.set(key,v)}return [...map.values()].map(x=>({...x,Horas_extra:Number(x.Horas_extra.toFixed(2))}));}
+function budgetMap(){const m=new Map();for(const e of entregables){const p=e.proyectos?.nombre;if(p&&!m.has(p))m.set(p,new Set());if(p)m.get(p).add(e.nombre)}return m;}
+function projectionObjects(){const consumption=new Map(),cnt=budgetMap(),saved=new Map(proyRows.map(x=>[x.proyecto,x]));for(const r of raDatos)consumption.set(r.proyecto,n(consumption.get(r.proyecto))+n(r.horas));
+ const allNames=new Set([...consumption.keys(),...cnt.keys(),...saved.keys()]);
+ // Si un filtro de proyecto está activo, mostramos solo dicho proyecto en la tabla.
+ const filtered=$('raProyecto')?.value||'';
+ return [...allNames].filter(x=>x&&(!filtered||filtered===x)).sort((a,b)=>a.localeCompare(b,'es')).map(p=>{
+ const catalogo=cnt.get(p)?.size||0,base=catalogo?catalogo*21:null,cons=consumption.get(p)||0,row=saved.get(p)||null;
+ const etc=row?Number(row.horas_restantes):null,eac=etc===null?null:cons+etc,margin=base===null||eac===null?null:base-eac;
+ return {Proyecto:p,Entregables:catalogo,Presupuesto_base_21h:base,Consumido_h:cons,Avance_declarado:row?.avance_declarado??null,ETC_h:etc,Proyeccion_cierre:eac,Margen_h:margin,Actualizado:row?.actualizado_en||''};
+ });}
+function renderProjections(){if(!$('amp3TablaProyeccion'))return;const rows=projectionObjects();
+ $('amp3TablaProyeccion').innerHTML=rows.map((p,i)=>'<tr><td><b>'+esc(p.Proyecto)+'</b></td><td>'+p.Entregables+'</td><td>'+(p.Presupuesto_base_21h===null?'—':fmt(p.Presupuesto_base_21h)+' h')+'</td><td>'+fmt(p.Consumido_h)+' h</td>'+
+ '<td>'+(director()?'<input type="number" data-progress="'+i+'" min="0" max="100" step="1" value="'+(p.Avance_declarado??'')+'" placeholder="—" aria-label="Avance declarado de '+esc(p.Proyecto)+'">':p.Avance_declarado==null?'—':fmt(p.Avance_declarado)+'%')+'</td>'+
+ '<td>'+(director()?'<input type="number" data-etc="'+i+'" min="0" max="10000000" step="0.01" value="'+(p.ETC_h??'')+'" placeholder="Estimar" aria-label="Horas pendientes de '+esc(p.Proyecto)+'">':p.ETC_h===null?'Por estimar':fmt(p.ETC_h)+' h')+'</td>'+
+ '<td>'+(p.Proyeccion_cierre===null?'Por estimar':fmt(p.Proyeccion_cierre)+' h')+'</td>'+
+ '<td>'+(p.Margen_h===null?'—':'<span style="font-weight:700;color:'+(p.Margen_h<0?'#dc2626':'#15803d')+'">'+(p.Margen_h>0?'+':'')+fmt(p.Margen_h)+' h</span>')+'</td>'+
+ '<td>'+(director()?'<button type="button" class="amp3-small-btn" data-save-proy="'+i+'">Guardar</button>':'Solo lectura')+'</td></tr>').join('')||'<tr><td colspan="9">Sin proyectos visibles</td></tr>';
+}
+async function updateProjection(ev){const b=ev.target.closest('button[data-save-proy]');if(!b)return;if(!director()||!proyeccionInstalada){alert('No están disponibles las proyecciones en Supabase. Instala el SQL v3.');return;}
+ const index=Number(b.dataset.saveProy),p=projectionObjects()[index];if(!p)return;
+ const etc=document.querySelector('[data-etc="'+index+'"]')?.value||'',av=document.querySelector('[data-progress="'+index+'"]')?.value||'';
+ if(etc===''||!validNum(etc)||n(etc)>1e7){alert('Indica horas restantes (ETC) válidas. No se puede guardar sin estimación.');return;}
+ if(av!==''&&(!validNum(av)||n(av)>100)){alert('El avance debe estar entre 0 y 100 %.');return;}
+ b.disabled=true;const {error}=await supabaseClient.from('amp_proyecciones_v3').upsert({proyecto:p.Proyecto,horas_restantes:Number(etc),avance_declarado:av===''?null:Number(av),actualizado_por:current().id,actualizado_en:new Date().toISOString()},{onConflict:'proyecto'});
+ b.disabled=false;if(error){alert('No se pudo guardar el ETC: '+error.message);return;}
+ const {data,error:fetchErr}=await supabaseClient.from('amp_proyecciones_v3').select('*');if(!fetchErr)proyRows=data||[];renderProjections();msg('amp3ResumenEstado','Estimación restante de '+p.Proyecto+' guardada en Supabase.','ok');}
+function renderClassification(){const all=filteredRows();let counts={direct:0,rework:0,indirect:0};for(const r of all){const h=n(r.horas),rework=/retrabaj|correcci[oó]n/i.test(r.actividad||'');if(rework&&r.entregable)counts.rework+=h;else if(r.entregable)counts.direct+=h;else counts.indirect+=h;}
+ const tot=counts.direct+counts.rework+counts.indirect,parts=[{name:'Con entregable',n:counts.direct,color:'#3479e6'},{name:'Correcciones / retrabajo',n:counts.rework,color:'#f6ac4b'},{name:'Sin entregable',n:counts.indirect,color:'#16a79b'}];
+ let start=0;const seg=[];for(const p of parts){const end=start+(tot?p.n/tot*100:0);if(p.n)seg.push(p.color+' '+start+'% '+end+'%');start=end;}
+ $('amp3Clasificacion').querySelector('.amp3-donut').style.background=tot?'conic-gradient('+seg.join(',')+')':'#dbe3ee';
+ $('amp3ClasLeyenda').innerHTML=parts.map(p=>'<div class="amp3-legend-line"><span class="amp3-dot" style="background:'+p.color+'"></span><span>'+esc(p.name)+'</span><b>'+fmt(p.n)+' h</b></div>').join('')+'<p class="amp3-sub">Clasificación visual por presencia de entregable y actividad. No sustituye las reglas financieras de indirectos.</p>';
+}
+function workdays15(){let daysCount=0;for(let k=0;k<15;k++){const d=new Date(add(today(),k)+'T12:00:00');if(d.getDay()!==0)daysCount++}return daysCount}
+function renderWorkload(){const el=$('amp3CargaPersonas');if(!el)return;
+ if(!compInstalado){el.innerHTML='<p class="amp3-sub">La carga por persona se mostrará cuando esté instalado el módulo de actividades.</p>';return;}
+ const active=compRows.filter(c=>['pendiente','en_curso'].includes(c.estado)&&c.fecha_objetivo<=add(today(),14)),map=new Map(),cap=workdays15()*8;
+ for(const c of active){const person=map.get(c.usuario_id)||{uid:c.usuario_id,h:0,total:0};person.h+=n(c.horas_estimadas)*(100-n(c.avance))/100;person.total++;map.set(c.usuario_id,person)}
+ const arr=[...map.values()].sort((a,b)=>b.h-a.h);
+ el.innerHTML='<p class="amp3-sub">Carga comprometida vencida o con vencimiento dentro de 15 días. Capacidad teórica '+cap+' h por persona (lunes a sábado, 8 h/día); no descuenta vacaciones ni permisos.</p>'+arr.slice(0,25).map(x=>'<div style="display:grid;grid-template-columns:minmax(130px,230px) minmax(100px,1fr) 110px;gap:12px;align-items:center;margin:11px 0"><span style="font-size:12px;font-weight:700">'+esc(employeeName(x.uid))+'</span><div class="amp3-bar"><span style="width:'+Math.min(100,Math.round(x.h/cap*100))+'%;background:'+(x.h>cap?'#ef5d62':'#199d92')+'"></span></div><span style="font-size:12px;text-align:right">'+fmt(x.h)+' / '+cap+' h</span></div>').join('')+(arr.length>25?'<p class="amp3-sub">Se muestran las 25 cargas mayores.</p>':'');
+}
+function renderExecutive(){if(!$('amp3ResumenNuevo')||!director()||!puedeVerResumenHoras)return;
+ const all=filteredRows(),extras=filteredExtras(),ids=new Set(all.filter(r=>r.entregable).map(r=>JSON.stringify([r.proyecto,r.entregable])));
+ $('amp3RTotal').textContent=fmt(all.reduce((s,r)=>s+n(r.horas),0))+' h';
+ $('amp3RExtras').textContent=extraInstalado?fmt(extras.reduce((s,r)=>s+n(r.horas),0))+' h':'Sin instalar';
+ $('amp3RPersonas').textContent=new Set(all.map(r=>r.usuario_id)).size;
+ $('amp3REntregables').textContent=ids.size;
+ renderExtras();renderClassification();renderProjections();
+ if(compInstalado){const ac=compRows.filter(c=>['pendiente','en_curso'].includes(c.estado));$('amp3RAc').textContent=ac.length;$('amp3RVenc').textContent=ac.filter(c=>dueDays(c.fecha_objetivo)<0).length;$('amp3RCom').textContent=compRows.filter(c=>c.estado==='terminado').length;}
+ else for(const id of ['amp3RAc','amp3RVenc','amp3RCom'])$(id).textContent='—';
+ renderWorkload();}
+function workbookReport(){if(!director())return;if(typeof XLSX==='undefined'){alert('La librería de Excel no cargó. Revisa la conexión.');return;}
+ const extraIds=extraIdSet();const wb=XLSX.utils.book_new(),addSheet=(name,data)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data.length?data:[{Sin_datos:'Sin registros'}]),name);
+ const rows=filteredRows(),personMap=new Map();for(const r of rows){const uid=r.usuario_id,rec=personMap.get(uid)||{Persona:raNombre(uid),Horas:0,Horas_extra:0,Entregables:new Set(),Registros:0};rec.Horas+=n(r.horas);rec.Registros++;if(extraIds.has(String(r.id)))rec.Horas_extra+=n(r.horas);if(r.entregable)rec.Entregables.add(JSON.stringify([r.proyecto,r.entregable]));personMap.set(uid,rec)}
+ addSheet('Personas',[...personMap.values()].map(x=>({Persona:x.Persona,Horas:x.Horas.toFixed(2),Horas_extra:x.Horas_extra.toFixed(2),Entregables:x.Entregables.size,Registros:x.Registros})));
+ addSheet('Horas_extra',allExtraExport());addSheet('Proyeccion',projectionObjects());
+ addSheet('Compromisos',compRows.map(c=>({Responsable:employeeName(c.usuario_id),Proyecto:c.proyecto,Actividad:c.actividad,Entregable:c.entregable,Asignacion:c.fecha_asignacion,Objetivo:c.fecha_objetivo,Estado:c.estado,Avance:c.avance,Fecha_cumplimiento:c.fecha_cumplimiento,Estimacion_h:c.horas_estimadas})));
+ addSheet('Horas_detalle',rows.map(r=>({Fecha:r.fecha,Persona:raNombre(r.usuario_id),Proyecto:r.proyecto,Actividad:r.actividad,Entregable:r.entregable,Horas:r.horas,Extra:extraIds.has(String(r.id))?'Sí':'No',Semana:raPeriodoSemana(r.fecha)})));
+ XLSX.writeFile(wb,'AMP_Informe_Direccion_'+today()+'.xlsx');}
+// ------- Vinculación y configuración de la experiencia -----
+function init(){
+ if(!$('amp3FechaSemana'))return;
+ setupNavigation();setupTabs();setupHooks();
+ $('amp3FechaSemana').value=today();$('amp3FechaSemana').addEventListener('change',()=>loadWeekly());
+ $('amp3AgregarFila').addEventListener('click',()=>{rows.push(freshRow());saveDraft();renderWeek();});
+ $('amp3RecargarSemana').addEventListener('click',()=>loadWeekly());
+ $('amp3CopiarSemana').addEventListener('click',copyPreviousWeek);
+ $('amp3SemanaBody').addEventListener('change',weeklyChange);
+ $('amp3SemanaBody').addEventListener('input',ev=>{if(ev.target.dataset.dia!==undefined)weeklyChange(ev)});
+ $('amp3SemanaBody').addEventListener('click',weeklyAction);
+ $('amp3GuardarSemana').addEventListener('click',saveWeekly);
+ $('amp3ExportarSemana').addEventListener('click',exportWeek);
+ $('amp3MultiBuscar').addEventListener('input',renderMulti);$('amp3MultiLista').addEventListener('change',changeMulti);
+ const closeMulti=()=>{$('amp3MultiModal').classList.add('hidden');renderWeek()};
+ $('amp3MultiCerrar').addEventListener('click',closeMulti);$('amp3MultiListo').addEventListener('click',closeMulti);
+ const closeOpts=()=>{$('amp3OpcionesModal').classList.add('hidden')};
+ $('amp3OpcionesCerrar').addEventListener('click',closeOpts);
+ $('amp3OpcionesListo').addEventListener('click',()=>{const r=rows.find(x=>x.id===optionsId);if(r){r.fecha_inicio=$('amp3RowInicio').value;r.fecha_vencimiento=$('amp3RowVence').value;r.notas=$('amp3RowNotas').value;r.estado=$('amp3RowEstado').value;saveDraft()}closeOpts()});
+ $('amp3RefrescarCompromisos').addEventListener('click',()=>loadCompromisos());
+ $('amp3FormularioAsignar').addEventListener('submit',createTask);
+ $('amp3AsignarProyecto').addEventListener('change',assignmentUpdate);
+ $('amp3AsignarActividad').addEventListener('change',()=>{$('amp3AsignarTitulo').value='';assignmentUpdate()});
+ $('amp3AsignarEntregable').addEventListener('change',()=>{if(!$('amp3AsignarTitulo').value.trim())assignmentUpdate()});
+ $('amp3CompFiltro').addEventListener('change',renderComp);
+ $('amp3CompPersona').addEventListener('change',renderComp);
+ $('amp3CompProyecto').addEventListener('change',renderComp);
+ $('amp3CompTabla').addEventListener('click',taskAction);
+ $('amp3ExportarComp').addEventListener('click',exportComp);
+ $('amp3ExtraSemana').addEventListener('change',renderExtras);
+ $('amp3ExtraExcel').addEventListener('click',()=>downloadCSV('AMP_Horas_Extra_'+today()+'.csv',allExtraExport()));
+ $('amp3TablaProyeccion').addEventListener('click',updateProjection);
+ $('amp3ReporteDireccion').addEventListener('click',workbookReport);
+ $('amp3IrComp').addEventListener('click',()=>cambiarPestanaPrincipal('compromisos'));
+ const extra=$('amp3ExtraDia');if(extra)extra.addEventListener('change',()=>{if(extra.checked&&!extraInstalado)mostrarMensaje('formMessage','La hora extra requiere ejecutar el SQL v3 antes de guardar.','info')});
+ $('amp3OpenWeeklyBtn')?.addEventListener('click',()=>cambiarPestanaPrincipal('semanal'));
+ $('amp3AsignarFecha').value=today();
+ $('porcentaje')?.addEventListener('change',()=>{const percent=Number($('porcentaje').value);if(percent===100){$('estado').value='TERMINADO'}else if(percent<100&&$('estado').value==='TERMINADO'){$('estado').value='EN CURSO'}});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+window.amp3EstaInstalado=()=>({extraInstalado,compInstalado,proyeccionInstalada});
+})();
+
 </script>
 </body>
 </html>
