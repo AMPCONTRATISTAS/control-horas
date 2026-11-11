@@ -1300,6 +1300,27 @@ html[data-amp-theme="dark"] .amp3-week-table tbody tr:hover td,html[data-amp-the
 @media(max-width:700px){.summary-grid:has(#amp3MisExtra){grid-template-columns:1fr}}
 
 </style>
+<style id="amp35ExtrasCSS">
+/* v3.5: detalles trazables de horas extra, sin aumentar el ancho del resumen. */
+.amp35-extra-resumen{min-width:530px!important}
+.amp35-extra-resumen tbody tr[data-amp35-extra-key]{cursor:pointer}
+.amp35-extra-resumen tbody tr[data-amp35-extra-key] td:first-child{font-weight:650}
+.amp35-extra-resumen tbody tr[data-amp35-extra-key]:hover td{background:#eff6ff}
+.amp35-extra-resumen tbody tr.amp35-selected td{background:#dbeafe!important}
+.amp35-extra-resumen .amp35-ver{font-size:11px;font-weight:750;color:#2563eb;white-space:nowrap}
+.amp35-detail{border-top:1px solid var(--amp3-border);padding-top:14px;margin-top:15px}
+.amp35-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.amp35-detail-head h4{font-size:13px;line-height:1.4;margin:0;color:inherit}
+.amp35-detail-head p{font-size:12px;line-height:1.4;margin:5px 0 0;color:var(--amp3-muted)}
+.amp35-detail .amp3-overflow{max-height:290px}
+.amp35-detail-table{min-width:640px!important;font-size:12px}
+.amp35-detail-table th,.amp35-detail-table td{padding:9px 10px}
+.amp35-total{font-size:12px;font-weight:750;color:#2563eb;white-space:nowrap}
+html[data-amp-theme="dark"] .amp35-extra-resumen tbody tr[data-amp35-extra-key]:hover td{background:#29415f}
+html[data-amp-theme="dark"] .amp35-extra-resumen tbody tr.amp35-selected td{background:#27466b!important}
+html[data-amp-theme="dark"] .amp35-extra-resumen .amp35-ver,html[data-amp-theme="dark"] .amp35-total{color:#93c5fd}
+@media(max-width:650px){.amp35-detail{margin-top:12px}.amp35-detail-table{min-width:620px!important}}
+</style>
 <style id="amp34SeguridadVistas">
 /* v3.4: cerradura visual por defecto. Nunca mostrar vistas nuevas debido al
    cambio de clases provocado por la navegación heredada o una recarga. */
@@ -1681,7 +1702,12 @@ html[data-amp-theme="dark"] .amp32-checklist label:hover{background:#26405e}
  <div id="amp3ResumenEstado" class="amp3-msg">Cargando información del resumen autorizado...</div>
  <div class="amp3-kpis amp3-kpis-4"><div><small>Horas del filtro actual</small><strong id="amp3RTotal">—</strong><span>Directas e indirectas, ordinarias y extras</span></div><div><small>Horas extra registradas</small><strong id="amp3RExtras">—</strong><span>Incluidas en el total, sin sumarlas otra vez</span></div><div><small>Personas con captura</small><strong id="amp3RPersonas">—</strong><span>Según el período y filtros</span></div><div><small>Entregables con horas</small><strong id="amp3REntregables">—</strong><span>Proyecto + código sin duplicar</span></div></div>
  <div class="amp3-split"><div class="amp3-panel"><div class="amp3-head"><div><h3>Resumen por clasificación</h3><p>Las horas extras no son otra categoría productiva.</p></div></div><div id="amp3Clasificacion" class="amp3-donut-wrap"><div class="amp3-donut"></div><div id="amp3ClasLeyenda"></div></div></div>
- <div class="amp3-panel"><div class="amp3-head"><div><h3>Horas extra por persona y semana</h3><p>Horas capturadas, no necesariamente aprobadas para nómina.</p></div></div><div class="amp3-toolbar"><label>Semana<select id="amp3ExtraSemana"><option value="">Todas las semanas</option></select></label><button type="button" id="amp3ExtraExcel" class="btn-secondary">Exportar extras</button></div><div class="amp3-overflow amp3-limited"><table class="amp3-grid-table"><thead><tr><th>Colaborador</th><th>Horas extra</th><th>Jornada total</th><th>Semana</th></tr></thead><tbody id="amp3TablaExtras"><tr><td colspan="4">Sin información</td></tr></tbody></table></div></div></div>
+ <div class="amp3-panel"><div class="amp3-head"><div><h3>Horas extra por persona y semana</h3><p>Horas capturadas, no necesariamente aprobadas para nómina. Selecciona a una persona para ver en qué trabajó; la semana elegida aquí tiene prioridad sobre el período del resumen.</p></div></div>
+ <div class="amp3-toolbar"><label>Semana<select id="amp3ExtraSemana"><option value="">Todas las semanas</option></select></label><button type="button" id="amp3ExtraExcel" class="btn-secondary">Exportar extras con detalle (Excel)</button></div>
+ <div class="amp3-overflow amp3-limited"><table class="amp3-grid-table amp35-extra-resumen"><thead><tr><th>Colaborador</th><th>Horas extra</th><th>Jornada total</th><th>Semana</th></tr></thead><tbody id="amp3TablaExtras"><tr><td colspan="4">Sin información</td></tr></tbody></table></div>
+ <div class="amp35-detail" id="amp35DetalleExtras" aria-live="polite"><div class="amp35-detail-head"><div><h4 id="amp35DetalleTitulo">Detalle de horas extras</h4><p id="amp35DetalleInfo">Selecciona un colaborador de la tabla superior.</p></div><span id="amp35DetalleTotal" class="amp35-total"></span></div>
+ <div class="amp3-overflow"><table class="amp3-grid-table amp35-detail-table"><thead><tr><th>Fecha</th><th>Proyecto</th><th>Actividad</th><th>Entregable</th><th>Horas extra</th></tr></thead><tbody id="amp35TablaDetalle"><tr><td colspan="5">Sin registros para mostrar</td></tr></tbody></table></div>
+ </div></div></div>
  <div class="amp3-panel"><div class="amp3-head"><div><h3>Proyección de recursos por proyecto</h3><p>Presupuesto de referencia = 21 h × entregables del catálogo. El ETC y avance son valores declarados y guardados por dirección, no calculados con las horas consumidas.</p></div></div><div class="amp3-overflow"><table class="amp3-grid-table"><thead><tr><th>Proyecto</th><th>Entregables</th><th>Base 21 h</th><th>Consumido</th><th>Avance declarado</th><th>Horas pendientes (ETC)</th><th>Proyección cierre</th><th>Margen</th><th>Actualizar</th></tr></thead><tbody id="amp3TablaProyeccion"><tr><td colspan="9">Calculando...</td></tr></tbody></table></div><p class="amp3-sub">Cuando no haya ETC registrado se mostrará “Pendiente de estimar”, sin inventar una proyección. El presupuesto oficial por etapas continúa en tu pestaña Indicadores.</p></div>
  <div class="amp3-panel"><div class="amp3-head"><div><h3>Seguimiento de compromisos del equipo</h3><p>Se conservan fecha de asignación, avance declarado, fecha objetivo y cumplimiento real, incluso después del 100%.</p></div><button type="button" class="btn-secondary" id="amp3IrComp">Abrir actividades y compromisos</button></div><div class="amp3-kpis"><div><small>Activos</small><strong id="amp3RAc">—</strong></div><div><small>Vencidos</small><strong id="amp3RVenc">—</strong></div><div><small>Completados</small><strong id="amp3RCom">—</strong></div></div><div id="amp3CargaPersonas"></div></div>
 </div>
@@ -8092,17 +8118,64 @@ const filteredRows=()=>typeof raFiltrados==='function'?raFiltrados():[];
 const extraIdSet=()=>new Set(extraRows.map(x=>String(x.id)));
 function filteredExtras(){const ids=extraIdSet();return filteredRows().filter(r=>ids.has(String(r.id)));}
 function currentExtraWeek(){const val=$('amp3ExtraSemana')?.value;if(val)return val;const p=$('raSemana')?.value;if($('raFiltroTipo')?.value==='semana'&&p)return p;return '';}
-function extraWithWeek(){const w=currentExtraWeek();return filteredExtras().filter(r=>!w||raPeriodoSemana(r.fecha)===w);}
+// La semana elegida aquí tiene prioridad sobre el período del resumen general.
+function amp35BaseRows(){
+ if(!$('amp3ExtraSemana')?.value)return filteredRows();
+ const fields={raPersona:'usuario_id',raProyecto:'proyecto',raActividad:'actividad',raEntregable:'entregable',raCumple:'cumple_objetivo'};
+ return raDatos.filter(r=>Object.entries(fields).every(([id,k])=>!$(id)?.value||String(r[k]??'').trim()===$(id).value)&&Object.entries(raSeleccion).every(([k,v])=>!v||String(r[k]??'').trim()===v));
+}
+function extraWithWeek(){const w=currentExtraWeek(),ids=extraIdSet();return amp35BaseRows().filter(r=>ids.has(String(r.id))&&(!w||raPeriodoSemana(r.fecha)===w));}
+// La misma fila de horas se usa para el resumen y el desglose: nunca se suma dos veces.
+let amp35SeleccionExtra='';
+let amp35GruposExtra=[];
+function amp35FilasDetalleExtra(uid,w){
+ return extraWithWeek().filter(r=>String(r.usuario_id)===String(uid)&&raPeriodoSemana(r.fecha)===w)
+   .slice().sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha))||String(a.proyecto||'').localeCompare(String(b.proyecto||''),'es')||String(a.actividad||'').localeCompare(String(b.actividad||''),'es'));
+}
+function amp35DetalleExport(){return extraWithWeek().slice().sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha))||raNombre(a.usuario_id).localeCompare(raNombre(b.usuario_id),'es')).map(r=>({
+ Fecha:r.fecha,Semana:raPeriodoSemana(r.fecha),Colaborador:raNombre(r.usuario_id),Proyecto:r.proyecto||'',Actividad:r.actividad||'',Entregable:r.entregable||'Sin entregable',Horas_extra:Number(n(r.horas).toFixed(2))
+}));}
+function amp35PintarDetalle(){
+ const title=$('amp35DetalleTitulo'),info=$('amp35DetalleInfo'),body=$('amp35TablaDetalle'),total=$('amp35DetalleTotal');
+ if(!title||!info||!body||!total)return;
+ const chosen=amp35GruposExtra.find(a=>a.key===amp35SeleccionExtra);
+ if(!chosen){title.textContent='Detalle de horas extras';info.textContent='Selecciona un colaborador de la tabla superior.';total.textContent='';body.innerHTML='<tr><td colspan="5">Sin registros para mostrar</td></tr>';return;}
+ const details=amp35FilasDetalleExtra(chosen.uid,chosen.w),sum=details.reduce((s,r)=>s+n(r.horas),0);
+ title.textContent=raNombre(chosen.uid)+' · semana '+chosen.w;
+ info.textContent=details.length+' registro(s) con hora extra. Si se registraron varios entregables, verás las horas repartidas entre ellos.';
+ total.textContent=fmt(sum)+' h extra';
+ body.innerHTML=details.map(r=>'<tr><td>'+esc(r.fecha)+'</td><td>'+esc(r.proyecto||'—')+'</td><td>'+esc(r.actividad||'—')+'</td><td>'+esc(r.entregable||'Sin entregable')+'</td><td><b>'+fmt(r.horas)+' h</b></td></tr>').join('')||'<tr><td colspan="5">Sin registros con horas extra</td></tr>';
+ $('amp3TablaExtras')?.querySelectorAll('tr[data-amp35-extra-key]').forEach(tr=>{
+  const selected=tr.dataset.amp35ExtraKey===amp35SeleccionExtra;
+  tr.classList.toggle('amp35-selected',selected);tr.setAttribute('aria-selected',String(selected));
+ });
+}
 function renderExtras(){if(!$('amp3ExtraSemana'))return;
  const list=[...new Set(raDatos.map(r=>raPeriodoSemana(r.fecha)).filter(Boolean))].sort().reverse();const el=$('amp3ExtraSemana'),old=el.value;
  el.innerHTML='<option value="">Todas las semanas del filtro</option>'+list.map(w=>'<option value="'+esc(w)+'">'+esc(w)+'</option>').join('');
  if(list.includes(old))el.value=old;else if($('raFiltroTipo')?.value==='semana'&&list.includes($('raSemana')?.value))el.value=$('raSemana').value;else el.value='';
- const x=extraWithWeek(),people=new Map();const all=filteredRows();
- for(const r of x){const w=raPeriodoSemana(r.fecha),key=r.usuario_id+'|'+w;const a=people.get(key)||{uid:r.usuario_id,w,extra:0,total:0};a.extra+=n(r.horas);people.set(key,a)}
- for(const [key,a] of people.entries()){a.total=all.filter(r=>r.usuario_id===a.uid&&raPeriodoSemana(r.fecha)===a.w).reduce((s,r)=>s+n(r.horas),0)}
- $('amp3TablaExtras').innerHTML=[...people.values()].sort((a,b)=>b.w.localeCompare(a.w)||b.extra-a.extra).map(a=>'<tr><td>'+esc(raNombre(a.uid))+'</td><td><b>'+fmt(a.extra)+' h</b></td><td>'+fmt(a.total)+' h</td><td>'+esc(a.w)+'</td></tr>').join('')||'<tr><td colspan="4">'+(extraInstalado?'Sin horas extra en este período':'Instala el SQL v3 para activar este indicador')+'</td></tr>';
+ const x=extraWithWeek(),people=new Map();const all=amp35BaseRows();
+ for(const r of x){const w=raPeriodoSemana(r.fecha),key=JSON.stringify([r.usuario_id,w]);const a=people.get(key)||{uid:r.usuario_id,w,key,extra:0,total:0};a.extra+=n(r.horas);people.set(key,a)}
+ // Cada total de jornada se calcula UNA sola vez con todas las horas del filtro, ordinarias + extra.
+ const totals=new Map();for(const r of all){const key=JSON.stringify([r.usuario_id,raPeriodoSemana(r.fecha)]);totals.set(key,(totals.get(key)||0)+n(r.horas))}
+ amp35GruposExtra=[...people.values()].sort((a,b)=>b.w.localeCompare(a.w)||b.extra-a.extra||raNombre(a.uid).localeCompare(raNombre(b.uid),'es'));
+ amp35GruposExtra.forEach(a=>a.total=totals.get(a.key)||0);
+ if(!amp35GruposExtra.some(a=>a.key===amp35SeleccionExtra))amp35SeleccionExtra=amp35GruposExtra[0]?.key||'';
+ $('amp3TablaExtras').innerHTML=amp35GruposExtra.map((a,i)=>'<tr data-amp35-extra-key="'+esc(a.key)+'" data-amp35-index="'+i+'" tabindex="0" role="button" aria-label="Ver detalle de '+esc(raNombre(a.uid))+' semana '+esc(a.w)+'"><td>'+esc(raNombre(a.uid))+' <span class="amp35-ver">Ver detalle</span></td><td><b>'+fmt(a.extra)+' h</b></td><td>'+fmt(a.total)+' h</td><td>'+esc(a.w)+'</td></tr>').join('')||'<tr><td colspan="4">'+(extraInstalado?'Sin horas extra en este período':'Instala el SQL v3 para activar este indicador')+'</td></tr>';
+ amp35PintarDetalle();
 }
 function allExtraExport(){const map=new Map();for(const r of extraWithWeek()){const w=raPeriodoSemana(r.fecha),key=JSON.stringify([r.usuario_id,w,r.proyecto]);const v=map.get(key)||{Empleado:raNombre(r.usuario_id),Semana:w,Proyecto:r.proyecto,Horas_extra:0};v.Horas_extra+=n(r.horas);map.set(key,v)}return [...map.values()].map(x=>({...x,Horas_extra:Number(x.Horas_extra.toFixed(2))}));}
+function amp35ExportExtras(){
+ if(!director())return;
+ const resumen=allExtraExport(),detalle=amp35DetalleExport();
+ if(!resumen.length){alert('No hay horas extra para el período y los filtros seleccionados.');return;}
+ if(typeof XLSX!=='undefined'){
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(resumen),'Resumen por proyecto');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(detalle),'Detalle fecha y entregable');
+  XLSX.writeFile(wb,'AMP_Horas_Extra_Detalle_'+today()+'.xlsx');
+ }else{downloadCSV('AMP_Horas_Extra_Detalle_'+today()+'.csv',detalle);}
+}
 function budgetMap(){const m=new Map();for(const e of entregables){const p=e.proyectos?.nombre;if(p&&!m.has(p))m.set(p,new Set());if(p)m.get(p).add(e.nombre)}return m;}
 function projectionObjects(){const consumption=new Map(),cnt=budgetMap(),saved=new Map(proyRows.map(x=>[x.proyecto,x]));for(const r of raDatos)consumption.set(r.proyecto,n(consumption.get(r.proyecto))+n(r.horas));
  const allNames=new Set([...consumption.keys(),...cnt.keys(),...saved.keys()]);
@@ -8157,7 +8230,7 @@ function workbookReport(){if(!director())return;if(typeof XLSX==='undefined'){al
  const extraIds=extraIdSet();const wb=XLSX.utils.book_new(),addSheet=(name,data)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data.length?data:[{Sin_datos:'Sin registros'}]),name);
  const rows=filteredRows(),personMap=new Map();for(const r of rows){const uid=r.usuario_id,rec=personMap.get(uid)||{Persona:raNombre(uid),Horas:0,Horas_extra:0,Entregables:new Set(),Registros:0};rec.Horas+=n(r.horas);rec.Registros++;if(extraIds.has(String(r.id)))rec.Horas_extra+=n(r.horas);if(r.entregable)rec.Entregables.add(JSON.stringify([r.proyecto,r.entregable]));personMap.set(uid,rec)}
  addSheet('Personas',[...personMap.values()].map(x=>({Persona:x.Persona,Horas:x.Horas.toFixed(2),Horas_extra:x.Horas_extra.toFixed(2),Entregables:x.Entregables.size,Registros:x.Registros})));
- addSheet('Horas_extra',allExtraExport());addSheet('Proyeccion',projectionObjects());
+ addSheet('Horas_extra',allExtraExport());addSheet('Extras_detalle',amp35DetalleExport());addSheet('Proyeccion',projectionObjects());
  addSheet('Compromisos',compRows.map(c=>({Responsable:employeeName(c.usuario_id),Proyecto:c.proyecto,Actividad:c.actividad,Entregable:c.entregable,Asignacion:c.fecha_asignacion,Objetivo:c.fecha_objetivo,Estado:c.estado,Avance:c.avance,Fecha_cumplimiento:c.fecha_cumplimiento,Estimacion_h:c.horas_estimadas})));
  addSheet('Horas_detalle',rows.map(r=>({Fecha:r.fecha,Persona:raNombre(r.usuario_id),Proyecto:r.proyecto,Actividad:r.actividad,Entregable:r.entregable,Horas:r.horas,Extra:extraIds.has(String(r.id))?'Sí':'No',Semana:raPeriodoSemana(r.fecha)})));
  XLSX.writeFile(wb,'AMP_Informe_Direccion_'+today()+'.xlsx');}
@@ -8215,8 +8288,10 @@ function init(){
  $('amp3CompProyecto').addEventListener('change',renderComp);
  $('amp3CompTabla').addEventListener('click',taskAction);
  $('amp3ExportarComp').addEventListener('click',exportComp);
- $('amp3ExtraSemana').addEventListener('change',renderExtras);
- $('amp3ExtraExcel').addEventListener('click',()=>downloadCSV('AMP_Horas_Extra_'+today()+'.csv',allExtraExport()));
+ $('amp3ExtraSemana').addEventListener('change',()=>{amp35SeleccionExtra='';renderExtras();});
+ $('amp3ExtraExcel').addEventListener('click',amp35ExportExtras);
+ $('amp3TablaExtras').addEventListener('click',ev=>{const tr=ev.target.closest('tr[data-amp35-index]');if(!tr)return;const a=amp35GruposExtra[Number(tr.dataset.amp35Index)];if(!a)return;amp35SeleccionExtra=a.key;amp35PintarDetalle();});
+ $('amp3TablaExtras').addEventListener('keydown',ev=>{if(ev.key!=='Enter'&&ev.key!==' ')return;const tr=ev.target.closest('tr[data-amp35-index]');if(!tr)return;ev.preventDefault();tr.click();});
  $('amp3TablaProyeccion').addEventListener('click',updateProjection);
  $('amp33RecargarCentro').addEventListener('click',async()=>{
    const b=$('amp33RecargarCentro');b.disabled=true;b.textContent='Actualizando…';
