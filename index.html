@@ -1307,6 +1307,33 @@ html[data-amp-theme="dark"] .amp3-week-table tbody tr:hover td,html[data-amp-the
 html[data-amp-theme="dark"] .amp31-director-banner{background:#213451;color:#d4e2ff;border-color:#3c5473}
 @media(max-width:700px){#amp3CentroIngenieria{padding:13px}}
 </style>
+
+<style id="amp32Estilos">
+/* Captura de compromisos múltiples: mantiene las mismas tablas y políticas de AMP v3.1. */
+.amp32-delivery-group{min-width:0;display:flex;flex-direction:column;gap:6px}
+.amp32-delivery-group>label{font-size:12px;letter-spacing:.015em;color:#637796;font-weight:750}
+.amp32-controls{display:flex;align-items:center;flex-wrap:wrap;gap:11px}
+.amp32-choose{min-height:41px;background:#f1f6ff;border:1px solid #bbd5ff;color:#174c9d;padding:9px 13px;text-align:left}
+.amp32-choose:disabled{opacity:.6;cursor:not-allowed}
+.amp32-counter{font-weight:700;color:#315b93;font-size:12px}
+.amp32-chips{display:flex;flex-wrap:wrap;gap:5px;min-height:8px;max-height:96px;overflow:auto}
+.amp32-chip{padding:4px 8px;border-radius:7px;border:1px solid #d1e3fb;background:#f5f9ff;color:#244c85;font-size:11px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.amp32-check-panel{border:1px solid #d6e2f1;background:#f9fbff;border-radius:11px;padding:12px;margin-top:6px;width:100%}
+.amp32-check-panel.hidden{display:none!important}
+.amp32-check-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:7px}
+.amp32-check-toolbar input{flex:1 1 250px;min-height:39px}
+.amp32-checklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:4px 9px;max-height:275px;overflow:auto;margin-top:10px}
+.amp32-checklist label{display:flex;align-items:flex-start;gap:9px;padding:9px;border-radius:7px;border:1px solid #e7eef8;background:#fff;color:#254069;cursor:pointer;font-size:12px;line-height:1.4;font-weight:500;min-width:0}
+.amp32-checklist label:hover{background:#eef5ff}
+.amp32-checklist input[type=checkbox]{width:17px;height:17px;min-height:17px;margin:0;flex:none;accent-color:#2563eb}
+.amp32-checklist span{min-width:0;overflow-wrap:anywhere}
+.amp32-preview{margin:10px 0 14px;background:#eef6ff;color:#1d4c86;border:1px solid #c8ddfa;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.5}
+html[data-amp-theme="dark"] .amp32-delivery-group>label,html[data-amp-theme="dark"] .amp32-counter{color:#c5d8ef}
+html[data-amp-theme="dark"] .amp32-choose,html[data-amp-theme="dark"] .amp32-chip,html[data-amp-theme="dark"] .amp32-check-panel,html[data-amp-theme="dark"] .amp32-preview{background:#1b324f;color:#dcecff;border-color:#3a5678}
+html[data-amp-theme="dark"] .amp32-checklist label{background:#172234;color:#e5edfb;border-color:#344967}
+html[data-amp-theme="dark"] .amp32-checklist label:hover{background:#26405e}
+@media(max-width:650px){.amp32-checklist{grid-template-columns:1fr}.amp32-choose{flex:1}.amp32-check-toolbar button{flex:1 1 auto}}
+</style>
 </head>
 
 <body>
@@ -2384,17 +2411,27 @@ html[data-amp-theme="dark"] .amp31-director-banner{background:#213451;color:#d4e
  <div class="amp3-head"><div><h2>Mis actividades y compromisos</h2><p>Las asignaciones permanecen visibles hasta que registras horas sobre su entregable con el 100% completado. Al concluir pasan al historial; no se eliminan.</p></div><button type="button" id="amp3RefrescarCompromisos" class="btn-secondary">Actualizar</button></div>
  <div id="amp3CompMensaje" class="amp3-msg"></div>
  <div class="amp3-kpis"><div><small>Actividades pendientes</small><strong id="amp3CompPendientes">—</strong></div><div><small>Horas estimadas pendientes</small><strong id="amp3CompHoras">—</strong></div><div><small>Vencidas</small><strong id="amp3CompVencidos">—</strong></div><div><small>Completadas históricas</small><strong id="amp3CompCompletados">—</strong></div></div>
- <div id="amp3AsignarPanel" class="amp3-panel" style="display:none"><div class="amp3-head"><div><h3>Asignar nueva actividad</h3><p>Solo administradores generales. La asignación queda fechada y auditada en Supabase.</p></div></div>
+ <div id="amp3AsignarPanel" class="amp3-panel" style="display:none"><div class="amp3-head"><div><h3>Asignar actividades a varios entregables</h3><p>Selecciona los entregables una sola vez. Cada uno crea un compromiso individual, fechado y auditado en Supabase. Solo administradores pueden asignar.</p></div></div>
    <form id="amp3FormularioAsignar"><div class="amp3-formgrid">
    <label>Responsable<select id="amp3AsignarPersona" required><option value="">Seleccionar persona</option></select></label>
    <label>Proyecto<select id="amp3AsignarProyecto" required><option value="">Seleccionar proyecto</option></select></label>
    <label>Actividad<select id="amp3AsignarActividad" required><option value="">Seleccionar actividad</option></select></label>
-   <label>Entregable<select id="amp3AsignarEntregable"><option value="">Sin entregable</option></select></label>
-   <label>Fecha compromiso<input id="amp3AsignarFecha" type="date" required></label>
+   <div class="amp3-span2 amp32-delivery-group" id="amp32GrupoEntregables">
+     <label for="amp32ToggleLista">Entregables que deseas asignar</label>
+     <div class="amp32-controls"><button type="button" class="amp32-choose" id="amp32ToggleLista" aria-expanded="false" aria-controls="amp32ListaPanel">Seleccionar entregables ▾</button><span id="amp32SeleccionadosContador" class="amp32-counter" aria-live="polite">Ninguno seleccionado</span></div>
+     <div id="amp32SeleccionadosVista" class="amp32-chips" aria-live="polite"></div>
+     <div id="amp32ListaPanel" class="amp32-check-panel hidden">
+       <div class="amp32-check-toolbar"><input id="amp32BuscarAsignar" type="search" placeholder="Buscar clave o nombre de entregable..." aria-label="Buscar entregables" autocomplete="off"><button type="button" id="amp32SeleccionarVisibles" class="btn-secondary btn-small">Seleccionar visibles</button><button type="button" id="amp32LimpiarSeleccion" class="btn-secondary btn-small">Limpiar</button></div>
+       <div id="amp32ListaEntregables" class="amp32-checklist" role="group" aria-label="Selecciona uno o más entregables"></div>
+     </div>
+     <p id="amp32AyudaEntregables" class="amp3-sub">Selecciona uno o varios entregables del proyecto. Cada uno tendrá su propio compromiso y avance.</p>
+   </div>
+   <label>Fecha compromiso (para todos)<input id="amp3AsignarFecha" type="date" required></label>
    <label>Horas estimadas<input id="amp3AsignarHoras" type="number" min="0" max="99999" step="0.01" value="8"></label>
-   <label class="amp3-span2">Título de la actividad<input id="amp3AsignarTitulo" required maxlength="140" placeholder="Ej. Emitir plano E-101 revisión 2"></label>
+   <label>Cómo aplicar las horas<select id="amp32ModoHoras"><option value="cada">Por cada entregable</option><option value="repartir">Repartir el total entre los entregables</option></select></label>
+   <label class="amp3-span2">Título base de la actividad<input id="amp3AsignarTitulo" required maxlength="140" placeholder="Ej. Emitir planos de alumbrado R2"></label>
    <label class="amp3-span2">Indicaciones / alcance<textarea id="amp3AsignarNotas" maxlength="700" rows="2" placeholder="Qué se espera entregar (opcional)"></textarea></label>
-   </div><button type="submit" id="amp3CrearComp" class="btn-primary">Asignar actividad</button></form></div>
+   </div><div id="amp32VistaAsignacion" class="amp32-preview" role="status">Selecciona una actividad y sus entregables para preparar la asignación.</div><button type="submit" id="amp3CrearComp" class="btn-primary">Asignar actividad</button></form></div>
  <div class="amp3-toolbar"><label>Mostrar<select id="amp3CompFiltro"><option value="activos">Activos</option><option value="terminado">Completados</option><option value="todos">Todos / historial</option><option value="cancelado">Cancelados</option></select></label><label id="amp3FiltroPersonaWrap" style="display:none">Responsable<select id="amp3CompPersona"><option value="">Todos</option></select></label><label>Proyecto<select id="amp3CompProyecto"><option value="">Todos los proyectos</option></select></label><button type="button" class="btn-secondary" id="amp3ExportarComp">Exportar asignaciones</button></div>
  <div class="amp3-overflow"><table class="amp3-grid-table"><thead><tr><th>Responsable</th><th>Proyecto / entregable</th><th>Actividad</th><th>Asignación</th><th>Compromiso</th><th>Horas estimadas</th><th>Avance</th><th>Estado</th><th>Cumplimiento</th><th>Acción</th></tr></thead><tbody id="amp3CompTabla"><tr><td colspan="10">Consulta las actividades.</td></tr></tbody></table></div>
  <details class="amp3-details"><summary>Ver bitácora de asignaciones y cambios</summary><div class="amp3-overflow"><table class="amp3-grid-table"><thead><tr><th>Fecha y hora</th><th>Actividad</th><th>Responsable</th><th>Evento</th><th>Estado anterior → nuevo</th><th>Registrado por</th></tr></thead><tbody id="amp3CompHistorial"></tbody></table></div></details>
@@ -7798,10 +7835,45 @@ async function getEmployees(){if(!admin()){personaLabels=new Map([[current()?.id
  if(prev)$('amp3CompPersona').value=prev;
  }catch(e){console.warn('Catálogo empleados:',e)}}
 function projectOptions(){upsertOptions('amp3AsignarProyecto',proyectoNames(),'Seleccionar proyecto');upsertOptions('amp3CompProyecto',proyectoNames(),'Todos los proyectos');}
-function assignmentUpdate(){upsertOptions('amp3AsignarActividad',actividadNames(),'Seleccionar actividad');const p=$('amp3AsignarProyecto').value,act=$('amp3AsignarActividad').value;
- const sel=$('amp3AsignarEntregable'),was=sel.value;
- sel.innerHTML=selectHTML(entregableNames(p),was,'Sin entregable');sel.disabled=!requires(act);if(!requires(act))sel.value='';
- if(!$('amp3AsignarTitulo').value.trim())$('amp3AsignarTitulo').value=[act,sel.value].filter(Boolean).join(' · ').slice(0,140);
+// Las asignaciones masivas siguen creando un compromiso INDEPENDIENTE por entregable.
+let amp32Elegidos=new Set(),amp32ProyectoPrevio='',amp32ActividadPrevia='';
+const amp32Norm=v=>String(v??'').trim().toLocaleLowerCase('es');
+function amp32Elegibles(){const p=$('amp3AsignarProyecto').value,a=$('amp3AsignarActividad').value;return p&&requires(a)?[...new Set(entregableNames(p))]:[];}
+function amp32Seleccion(){const eligibles=new Set(amp32Elegibles());return [...amp32Elegidos].filter(v=>eligibles.has(v));}
+function amp32CerrarLista(){if($('amp32ListaPanel'))$('amp32ListaPanel').classList.add('hidden');$('amp32ToggleLista')?.setAttribute('aria-expanded','false');}
+function amp32RenderLista(){
+ const elegibles=amp32Elegibles(),q=amp32Norm($('amp32BuscarAsignar')?.value),filtrados=elegibles.filter(x=>amp32Norm(x).includes(q));
+ $('amp32ListaEntregables').innerHTML=filtrados.map(x=>'<label><input type="checkbox" data-amp32-entregable="'+esc(x)+'" '+(amp32Elegidos.has(x)?'checked':'')+'><span>'+esc(x)+'</span></label>').join('')||'<p class="amp3-sub">No hay entregables disponibles con ese filtro.</p>';
+}
+function amp32HorasPorCompromiso(contador){
+ const base=Math.round(n($('amp3AsignarHoras').value)*100);if(!Number.isSafeInteger(base)||base<0)throw Error('Las horas estimadas deben ser un número válido.');
+ if($('amp32ModoHoras').value==='cada')return Array(contador).fill(base);
+ const per=Math.floor(base/contador),rem=base%contador;
+ return Array.from({length:contador},(_,i)=>per+(i<rem?1:0));
+}
+function amp32RenderResumen(){
+ const a=$('amp3AsignarActividad').value,p=$('amp3AsignarProyecto').value,requerido=requires(a);
+ const chosen=amp32Seleccion(),count=requerido?chosen.length:1;
+ const btn=$('amp32ToggleLista');btn.disabled=!requerido||!p;
+ btn.textContent=requerido?'☑ Elegir entregables ('+chosen.length+') ▾':'No requiere entregable';
+ $('amp32SeleccionadosContador').textContent=requerido?(chosen.length?chosen.length+' seleccionados':'Ninguno seleccionado'):'Se creará una actividad sin entregable';
+ $('amp32SeleccionadosVista').innerHTML=requerido?chosen.slice(0,18).map(v=>'<span class="amp32-chip" title="'+esc(v)+'">'+esc(v)+'</span>').join('')+(chosen.length>18?'<span class="amp32-chip">+'+(chosen.length-18)+' más</span>':''):'';
+ $('amp32GrupoEntregables').classList.toggle('amp32-disabled',!requerido);
+ $('amp32AyudaEntregables').textContent=requerido?'Cada entregable seleccionado se crea como una actividad independiente, con su propio avance, fecha de cumplimiento e historial.':'Esta actividad no requiere entregable; se asignará un compromiso individual.';
+ try{
+  const cents=count>0?amp32HorasPorCompromiso(count):[];
+  const total=cents.reduce((s,x)=>s+x,0)/100;
+  $('amp32VistaAsignacion').textContent=!p||!a?'Elige primero proyecto y actividad.':requerido&&!chosen.length?'Selecciona al menos un entregable para preparar la asignación.':count+' compromiso'+(count===1?'':'s')+' individual'+(count===1?'':'es')+' · '+fmt(total)+' h estimadas en total · '+($('amp32ModoHoras').value==='cada'?fmt(n($('amp3AsignarHoras').value))+' h por entregable':'distribuidas entre los entregables')+'. Todos tendrán la misma fecha; después puedes modificarla por separado.';
+  $('amp3CrearComp').textContent='Asignar '+(count||1)+' actividad'+(count===1?'':'es');
+ }catch(e){$('amp32VistaAsignacion').textContent=e.message;}
+}
+function assignmentUpdate(){
+ upsertOptions('amp3AsignarActividad',actividadNames(),'Seleccionar actividad');
+ const p=$('amp3AsignarProyecto').value,a=$('amp3AsignarActividad').value;
+ if(amp32ProyectoPrevio!==p||amp32ActividadPrevia!==a){amp32Elegidos.clear();amp32ProyectoPrevio=p;amp32ActividadPrevia=a;$('amp32BuscarAsignar').value='';amp32CerrarLista();}
+ const valid=new Set(amp32Elegibles());for(const x of amp32Elegidos)if(!valid.has(x))amp32Elegidos.delete(x);
+ if(!$('amp3AsignarTitulo').value.trim()&&a)$('amp3AsignarTitulo').value=a.slice(0,140);
+ amp32RenderLista();amp32RenderResumen();
 }
 async function loadCompromisos(silent=false){if(!current())return;
  if(!silent)msg('amp3CompMensaje','Consultando actividades autorizadas...');
@@ -7842,17 +7914,44 @@ function renderComp(){if(!$('amp3CompTabla'))return;const active=compRows.filter
  $('amp3CompHistorial').innerHTML=histRows.slice(0,1200).map(h=>{const c=map.get(h.compromiso_id);return '<tr><td>'+esc(localDateTime(h.fecha_evento))+'</td><td>'+esc(c?.titulo||h.compromiso_id)+'</td><td>'+esc(employeeName(c?.usuario_id))+'</td><td>'+esc(h.tipo)+'</td><td>'+esc((h.estado_anterior||'—')+' → '+(h.estado_nuevo||'—'))+'</td><td>'+esc(employeeName(h.usuario_accion))+'</td></tr>'}).join('')||'<tr><td colspan="6">Sin eventos visibles</td></tr>';
 }
 async function createTask(ev){ev.preventDefault();if(!admin()||!current())return;
- const p=$('amp3AsignarProyecto').value,act=$('amp3AsignarActividad').value,d=$('amp3AsignarEntregable').value;
- if(requires(act)&&!d){msg('amp3CompMensaje','Esta actividad requiere seleccionar el entregable que se va a cumplir.','error');return;}
- const row={usuario_id:$('amp3AsignarPersona').value,asignado_por:current().id,proyecto:p,actividad:act,entregable:d||null,
- titulo:$('amp3AsignarTitulo').value.trim(),descripcion:$('amp3AsignarNotas').value.trim(),
- fecha_objetivo:$('amp3AsignarFecha').value,horas_estimadas:Number($('amp3AsignarHoras').value||0)};
- if(!row.usuario_id||!row.proyecto||!row.actividad||!row.titulo||!row.fecha_objetivo){msg('amp3CompMensaje','Completa responsable, proyecto, actividad, título y fecha objetivo.','error');return;}
+ const p=$('amp3AsignarProyecto').value,act=$('amp3AsignarActividad').value,necesita=requires(act);
+ const selected=necesita?amp32Seleccion():[''];
+ if(!selected.length){msg('amp3CompMensaje','Selecciona uno o varios entregables para asignar la actividad.','error');return;}
+ const responsable=$('amp3AsignarPersona').value,baseTitulo=$('amp3AsignarTitulo').value.trim(),fecha=$('amp3AsignarFecha').value,notas=$('amp3AsignarNotas').value.trim();
+ if(!responsable||!p||!act||!baseTitulo||!fecha){msg('amp3CompMensaje','Completa responsable, proyecto, actividad, título y fecha objetivo.','error');return;}
+ const horasInput=Number($('amp3AsignarHoras').value);
+ if(!Number.isFinite(horasInput)||horasInput<0||horasInput>99999||!/^\d{4}-\d{2}-\d{2}$/.test(fecha)){
+  msg('amp3CompMensaje','Revisa la fecha y las horas estimadas.','error');return;
+ }
+ if(selected.length>500){msg('amp3CompMensaje','Por seguridad puedes asignar hasta 500 entregables por operación.','error');return;}
+ const porEntregable=amp32HorasPorCompromiso(selected.length);
  const btn=$('amp3CrearComp');btn.disabled=true;
- try{const {error}=await supabaseClient.from('amp_compromisos_v3').insert(row);if(error)throw error;
- $('amp3AsignarTitulo').value='';$('amp3AsignarNotas').value='';msg('amp3CompMensaje','Actividad asignada; la fecha y responsable quedaron en el historial compartido.','ok');
- await loadCompromisos(true);
- }catch(e){msg('amp3CompMensaje','No se pudo asignar: '+e.message,'error');}finally{btn.disabled=false;}}
+ try{
+   // Consulta fresca para no repetir compromisos activos ya registrados por otro administrador.
+   const {data:existentes,error:errConsulta}=await supabaseClient.from('amp_compromisos_v3').select('entregable')
+     .eq('usuario_id',responsable).eq('proyecto',p).eq('actividad',act).in('estado',['pendiente','en_curso']).limit(1000);
+   if(errConsulta)throw errConsulta;
+   const enCurso=new Set((existentes||[]).map(x=>amp32Norm(x.entregable)));
+   const repetidos=selected.filter(x=>enCurso.has(amp32Norm(x)));
+   if(repetidos.length){
+     if(repetidos.length===selected.length){msg('amp3CompMensaje','Estos '+repetidos.length+' entregables ya están asignados como pendientes o en curso a esa persona. No se duplicaron.','error');return;}
+     const aviso='Ya existen '+repetidos.length+' compromisos activos para esta persona, proyecto y actividad ('+repetidos.slice(0,5).join(', ')+(repetidos.length>5?', ...':'')+').\n\nSe omitirán los repetidos y solo se crearán '+(selected.length-repetidos.length)+' nuevos. ¿Continuar?';
+     if(!confirm(aviso))return;
+   }
+   // Horas se calculan sobre todos los entregables seleccionados antes de excluir duplicados;
+   // evita redistribuir presupuestos previstos para actividades ya asignadas.
+   const payload=selected.map((d,i)=>({usuario_id:responsable,asignado_por:current().id,proyecto:p,actividad:act,
+     entregable:d||null,titulo:(selected.length>1?baseTitulo+' · '+d:baseTitulo).slice(0,140),descripcion:notas,
+     fecha_objetivo:fecha,horas_estimadas:porEntregable[i]/100})).filter(row=>!enCurso.has(amp32Norm(row.entregable)));
+   if(!payload.length)return;
+   // Una única petición INSERT con varias filas; PostgreSQL guarda todo o nada.
+   const {error}=await supabaseClient.from('amp_compromisos_v3').insert(payload);if(error)throw error;
+   amp32Elegidos.clear();$('amp3AsignarTitulo').value='';$('amp3AsignarNotas').value='';$('amp32BuscarAsignar').value='';amp32CerrarLista();
+   await loadCompromisos(true);
+   msg('amp3CompMensaje','Se asignaron '+payload.length+' actividades independientes a '+employeeName(responsable)+'. Cada una conserva su propio seguimiento y fecha de cierre.'+(repetidos.length?' Se omitieron '+repetidos.length+' ya asignadas.':''),'ok');
+ }catch(e){msg('amp3CompMensaje','No se crearon las asignaciones nuevas: '+e.message+'. Revisa si ya existen compromisos activos o si tienes permisos.','error');}
+ finally{btn.disabled=false;amp32RenderResumen();}
+}
 async function taskAction(ev){const b=ev.target.closest('button[data-task]');if(!b)return;const c=compRows.find(x=>x.id===b.dataset.task);if(!c)return;
  if(b.dataset.act==='fill'){
    cambiarPestanaPrincipal('horas');$('fecha').value=today();$('proyecto').value=c.proyecto;actualizarEntregables(c.proyecto);
@@ -7987,9 +8086,29 @@ function init(){
  $('amp3OpcionesListo').addEventListener('click',()=>{const r=rows.find(x=>x.id===optionsId);if(r){r.fecha_inicio=$('amp3RowInicio').value;r.fecha_vencimiento=$('amp3RowVence').value;r.notas=$('amp3RowNotas').value;r.estado=$('amp3RowEstado').value;saveDraft()}closeOpts()});
  $('amp3RefrescarCompromisos').addEventListener('click',()=>loadCompromisos());
  $('amp3FormularioAsignar').addEventListener('submit',createTask);
- $('amp3AsignarProyecto').addEventListener('change',assignmentUpdate);
+ $('amp3AsignarProyecto').addEventListener('change',()=>{$('amp3AsignarTitulo').value='';assignmentUpdate()});
  $('amp3AsignarActividad').addEventListener('change',()=>{$('amp3AsignarTitulo').value='';assignmentUpdate()});
- $('amp3AsignarEntregable').addEventListener('change',()=>{if(!$('amp3AsignarTitulo').value.trim())assignmentUpdate()});
+ $('amp32ToggleLista').addEventListener('click',()=>{
+   if($('amp32ToggleLista').disabled)return;
+   const opened=$('amp32ListaPanel').classList.toggle('hidden')===false;
+   $('amp32ToggleLista').setAttribute('aria-expanded',String(opened));
+   if(opened){amp32RenderLista();$('amp32BuscarAsignar').focus();}
+ });
+ $('amp32BuscarAsignar').addEventListener('input',amp32RenderLista);
+ $('amp32ListaEntregables').addEventListener('change',ev=>{
+   const el=ev.target.closest('input[data-amp32-entregable]');if(!el)return;
+   const code=el.dataset.amp32Entregable;
+   if(el.checked)amp32Elegidos.add(code);else amp32Elegidos.delete(code);
+   amp32RenderResumen();
+ });
+ $('amp32SeleccionarVisibles').addEventListener('click',()=>{
+   const query=amp32Norm($('amp32BuscarAsignar').value);
+   for(const d of amp32Elegibles().filter(x=>amp32Norm(x).includes(query)))amp32Elegidos.add(d);
+   amp32RenderLista();amp32RenderResumen();
+ });
+ $('amp32LimpiarSeleccion').addEventListener('click',()=>{amp32Elegidos.clear();amp32RenderLista();amp32RenderResumen();});
+ $('amp32ModoHoras').addEventListener('change',amp32RenderResumen);
+ $('amp3AsignarHoras').addEventListener('input',amp32RenderResumen);
  $('amp3CompFiltro').addEventListener('change',renderComp);
  $('amp3CompPersona').addEventListener('change',renderComp);
  $('amp3CompProyecto').addEventListener('change',renderComp);
