@@ -2452,7 +2452,7 @@ html[data-amp-theme="dark"] .amp32-checklist label:hover{background:#26405e}
  <div class="amp3-head"><div><h2>Mis actividades y compromisos</h2><p>Las asignaciones permanecen visibles hasta que registras horas sobre su entregable con el 100% completado. Al concluir pasan al historial; no se eliminan.</p></div><button type="button" id="amp3RefrescarCompromisos" class="btn-secondary">Actualizar</button></div>
  <div id="amp3CompMensaje" class="amp3-msg"></div>
  <div class="amp3-kpis"><div><small>Actividades pendientes</small><strong id="amp3CompPendientes">—</strong></div><div><small>Horas estimadas pendientes</small><strong id="amp3CompHoras">—</strong></div><div><small>Vencidas</small><strong id="amp3CompVencidos">—</strong></div><div><small>Completadas históricas</small><strong id="amp3CompCompletados">—</strong></div></div>
- <div id="amp3AsignarPanel" class="amp3-panel" style="display:none"><div class="amp3-head"><div><h3>Asignar actividades a varios entregables</h3><p>Selecciona los entregables una sola vez. Cada uno crea un compromiso individual, fechado y auditado en Supabase. Solo administradores pueden asignar.</p></div></div>
+ <div id="amp3AsignarPanel" class="amp3-panel" style="display:none"><div class="amp3-head"><div><h3>Asignar actividades a varios entregables</h3><p>Los planos con clave se asignan una sola vez mientras estén activos. SKETCH (sin número de plano) y las actividades sin entregable se pueden repetir en fechas diferentes. Cada compromiso se registra de manera individual y auditada en Supabase. Solo administradores pueden asignar.</p></div></div>
    <form id="amp3FormularioAsignar"><div class="amp3-formgrid">
    <label>Responsable<select id="amp3AsignarPersona" required><option value="">Seleccionar persona</option></select></label>
    <label>Proyecto<select id="amp3AsignarProyecto" required><option value="">Seleccionar proyecto</option></select></label>
@@ -2465,9 +2465,9 @@ html[data-amp-theme="dark"] .amp32-checklist label:hover{background:#26405e}
        <div class="amp32-check-toolbar"><input id="amp32BuscarAsignar" type="search" placeholder="Buscar clave o nombre de entregable..." aria-label="Buscar entregables" autocomplete="off"><button type="button" id="amp32SeleccionarVisibles" class="btn-secondary btn-small">Seleccionar visibles</button><button type="button" id="amp32LimpiarSeleccion" class="btn-secondary btn-small">Limpiar</button></div>
        <div id="amp32ListaEntregables" class="amp32-checklist" role="group" aria-label="Selecciona uno o más entregables"></div>
      </div>
-     <p id="amp32AyudaEntregables" class="amp3-sub">Selecciona uno o varios entregables del proyecto. Cada uno tendrá su propio compromiso y avance.</p>
+     <p id="amp32AyudaEntregables" class="amp3-sub">Selecciona uno o varios entregables del proyecto. Cada uno tendrá su propio compromiso y avance.</p><p id="amp32AyudaRecurrente" class="amp3-sub" aria-live="polite" style="display:none"></p>
    </div>
-   <label>Fecha compromiso (para todos)<input id="amp3AsignarFecha" type="date" required></label>
+   <label><span id="amp32EtiquetaFecha">Fecha compromiso (para todos)</span><input id="amp3AsignarFecha" type="date" required></label>
    <label>Horas estimadas<input id="amp3AsignarHoras" type="number" min="0" max="99999" step="0.01" value="8"></label>
    <label>Cómo aplicar las horas<select id="amp32ModoHoras"><option value="cada">Por cada entregable</option><option value="repartir">Repartir el total entre los entregables</option></select></label>
    <label class="amp3-span2">Título base de la actividad<input id="amp3AsignarTitulo" required maxlength="140" placeholder="Ej. Emitir planos de alumbrado R2"></label>
@@ -7880,7 +7880,7 @@ async function copyPreviousWeek(){const prev=add(inicio,-7);if(rows.some(r=>r.ho
  // Agrupa filas que comparten actividad/extra/horas diarias en la estructura original; nunca multiplica.
  rows=[...map.values()].slice(0,90);saveDraft();renderWeek();msg('amp3SemanaMensaje','Se copió el borrador de la semana anterior. Revísalo antes de guardarlo; todavía no se enviaron registros.','ok');
  }catch(e){msg('amp3SemanaMensaje','No fue posible copiar la semana: '+e.message,'error');}}
-function matchComp(r,ent){return compRows.find(c=>c.usuario_id===current()?.id&&c.estado!=='terminado'&&c.estado!=='cancelado'&&c.proyecto.trim().toLowerCase()===r.proyecto.trim().toLowerCase()&&c.actividad.trim().toLowerCase()===r.actividad.trim().toLowerCase()&&(c.entregable||'').trim().toLowerCase()===(ent||'').trim().toLowerCase());}
+function matchComp(r,ent,fecha){return compRows.find(c=>c.usuario_id===current()?.id&&c.estado!=='terminado'&&c.estado!=='cancelado'&&c.proyecto.trim().toLowerCase()===r.proyecto.trim().toLowerCase()&&c.actividad.trim().toLowerCase()===r.actividad.trim().toLowerCase()&&amp32Norm(c.entregable)===amp32Norm(ent)&&(!amp32EsRecurrente(ent)||c.fecha_objetivo===fecha));}
 async function saveWeekly(){if(saving||!current())return;const filled=rows.filter(r=>r.horas.some(h=>n(h)>0));if(!filled.length){msg('amp3SemanaMensaje','No hay horas por guardar.');return;}
  if(!extraInstalado&&filled.some(r=>r.extra)){msg('amp3SemanaMensaje','Para guardar horas extra primero instala AMP_Migracion_v3_Extras_Compromisos.sql en Supabase.','error');return;}
  // Verificar reglas reales del catálogo inmediatamente antes de guardar.
@@ -7905,7 +7905,7 @@ async function saveWeekly(){if(saving||!current())return;const filled=rows.filte
      cents+=total;const fecha=ds[day],base=Math.floor(total/codes.length),remainder=total%codes.length;
      for(const [j,code] of codes.entries()){
        const c=base+(j<remainder?1:0);if(!c)continue;
-       const task=matchComp(r,code);
+       const task=matchComp(r,code,fecha);
        const due=r.fecha_vencimiento||task?.fecha_objetivo||null;
        const obj={usuario_id:current().id,fecha,proyecto:r.proyecto,actividad:r.actividad,entregable:code,horas:c/100,
          notas:(r.notas||'').trim()||null,fecha_inicio:r.fecha_inicio||null,fecha_vencimiento:due,
@@ -7956,6 +7956,14 @@ function projectOptions(){upsertOptions('amp3AsignarProyecto',proyectoNames(),'S
 // Las asignaciones masivas siguen creando un compromiso INDEPENDIENTE por entregable.
 let amp32Elegidos=new Set(),amp32ProyectoPrevio='',amp32ActividadPrevia='';
 const amp32Norm=v=>String(v??'').trim().toLocaleLowerCase('es');
+// SKETCH no identifica un plano único. Se puede programar diariamente, pero nunca
+// dos veces para la misma persona/proyecto/actividad/código y fecha si sigue activo.
+// Una actividad configurada 'sin entregable' también se identifica por el día.
+const amp32EsRecurrente=d=>['', 'sketch', 'scketch'].includes(amp32Norm(d));
+function amp32YaExiste(registros,entregable,fecha){
+ return registros.some(x=>amp32Norm(x.entregable)===amp32Norm(entregable)&&
+   (!amp32EsRecurrente(entregable)||String(x.fecha_objetivo||'')===String(fecha)));
+}
 function amp32Elegibles(){const p=$('amp3AsignarProyecto').value,a=$('amp3AsignarActividad').value;return p&&requires(a)?[...new Set(entregableNames(p))]:[];}
 function amp32Seleccion(){const eligibles=new Set(amp32Elegibles());return [...amp32Elegidos].filter(v=>eligibles.has(v));}
 function amp32CerrarLista(){if($('amp32ListaPanel'))$('amp32ListaPanel').classList.add('hidden');$('amp32ToggleLista')?.setAttribute('aria-expanded','false');}
@@ -7978,6 +7986,11 @@ function amp32RenderResumen(){
  $('amp32SeleccionadosVista').innerHTML=requerido?chosen.slice(0,18).map(v=>'<span class="amp32-chip" title="'+esc(v)+'">'+esc(v)+'</span>').join('')+(chosen.length>18?'<span class="amp32-chip">+'+(chosen.length-18)+' más</span>':''):'';
  $('amp32GrupoEntregables').classList.toggle('amp32-disabled',!requerido);
  $('amp32AyudaEntregables').textContent=requerido?'Cada entregable seleccionado se crea como una actividad independiente, con su propio avance, fecha de cumplimiento e historial.':'Esta actividad no requiere entregable; se asignará un compromiso individual.';
+ const porDia=!requerido||(chosen.length>0&&chosen.every(amp32EsRecurrente));
+ $('amp32EtiquetaFecha').textContent=porDia?'Día de trabajo / fecha del compromiso':'Fecha compromiso (para todos)';
+ const aviso=$('amp32AyudaRecurrente');
+ aviso.style.display=porDia?'block':'none';
+ aviso.textContent=porDia?'Puedes volver a asignar esta misma actividad al mismo responsable en otro día. Cada fecha conserva sus horas estimadas, descripción, avance e historial; no se permite repetirla dos veces en el mismo día.':' ';
  try{
   const cents=count>0?amp32HorasPorCompromiso(count):[];
   const total=cents.reduce((s,x)=>s+x,0)/100;
@@ -8046,13 +8059,13 @@ async function createTask(ev){ev.preventDefault();if(!admin()||!current())return
  const btn=$('amp3CrearComp');btn.disabled=true;
  try{
    // Consulta fresca para no repetir compromisos activos ya registrados por otro administrador.
-   const {data:existentes,error:errConsulta}=await supabaseClient.from('amp_compromisos_v3').select('entregable')
+   const {data:existentes,error:errConsulta}=await supabaseClient.from('amp_compromisos_v3').select('entregable,fecha_objetivo')
      .eq('usuario_id',responsable).eq('proyecto',p).eq('actividad',act).in('estado',['pendiente','en_curso']).limit(1000);
    if(errConsulta)throw errConsulta;
-   const enCurso=new Set((existentes||[]).map(x=>amp32Norm(x.entregable)));
-   const repetidos=selected.filter(x=>enCurso.has(amp32Norm(x)));
+   const enCurso=existentes||[];
+   const repetidos=selected.filter(x=>amp32YaExiste(enCurso,x,fecha));
    if(repetidos.length){
-     if(repetidos.length===selected.length){msg('amp3CompMensaje','Estos '+repetidos.length+' entregables ya están asignados como pendientes o en curso a esa persona. No se duplicaron.','error');return;}
+     if(repetidos.length===selected.length){msg('amp3CompMensaje',selected.every(amp32EsRecurrente)?'Ya existe un compromiso activo con este código para esa persona en la misma fecha. Para SKETCH selecciona otro día.':'Ese entregable con clave ya tiene un compromiso activo para esta persona, proyecto y actividad. No se duplican planos numerados.','error');return;}
      const aviso='Ya existen '+repetidos.length+' compromisos activos para esta persona, proyecto y actividad ('+repetidos.slice(0,5).join(', ')+(repetidos.length>5?', ...':'')+').\n\nSe omitirán los repetidos y solo se crearán '+(selected.length-repetidos.length)+' nuevos. ¿Continuar?';
      if(!confirm(aviso))return;
    }
@@ -8060,7 +8073,7 @@ async function createTask(ev){ev.preventDefault();if(!admin()||!current())return
    // evita redistribuir presupuestos previstos para actividades ya asignadas.
    const payload=selected.map((d,i)=>({usuario_id:responsable,asignado_por:current().id,proyecto:p,actividad:act,
      entregable:d||null,titulo:(selected.length>1?baseTitulo+' · '+d:baseTitulo).slice(0,140),descripcion:notas,
-     fecha_objetivo:fecha,horas_estimadas:porEntregable[i]/100})).filter(row=>!enCurso.has(amp32Norm(row.entregable)));
+     fecha_objetivo:fecha,horas_estimadas:porEntregable[i]/100})).filter(row=>!amp32YaExiste(enCurso,row.entregable,fecha));
    if(!payload.length)return;
    // Una única petición INSERT con varias filas; PostgreSQL guarda todo o nada.
    const {error}=await supabaseClient.from('amp_compromisos_v3').insert(payload);if(error)throw error;
@@ -8072,7 +8085,7 @@ async function createTask(ev){ev.preventDefault();if(!admin()||!current())return
 }
 async function taskAction(ev){const b=ev.target.closest('button[data-task]');if(!b)return;const c=compRows.find(x=>x.id===b.dataset.task);if(!c)return;
  if(b.dataset.act==='fill'){
-   cambiarPestanaPrincipal('horas');$('fecha').value=today();$('proyecto').value=c.proyecto;actualizarEntregables(c.proyecto);
+   cambiarPestanaPrincipal('horas');$('fecha').value=amp32EsRecurrente(c.entregable)?c.fecha_objetivo:today();$('proyecto').value=c.proyecto;actualizarEntregables(c.proyecto);
    $('actividad').value=c.actividad;aplicarReglaEntregable();
    if(c.entregable)establecerEntregablesHoras([c.entregable]);
    $('fechaInicio').value=localDate(c.fecha_asignacion);$('fechaVencimiento').value=c.fecha_objetivo;
