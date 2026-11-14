@@ -1221,6 +1221,30 @@ html[data-amp-theme="dark"] .amp-lote-errors{background:#4c1d25;color:#fecaca}
 </style>
 <style id="amp3Styles">
 /* AMP v3: nueva experiencia aislada en clases amp3; no sustituye el sistema original. */
+/* Mis actividades: varias filas de Supabase, una asignación de varios planos. */
+.amp36-grupo td{background:rgba(37,99,235,.025)}
+.amp36-lista{display:flex;flex-direction:column;gap:5px;margin-top:6px;min-width:185px}
+.amp36-entregable{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:6px 9px;background:#eff6ff;border:1px solid #d6e6fb;border-radius:7px;overflow-wrap:anywhere;font-weight:600}
+.amp36-horas{white-space:nowrap;color:#49678d;font-weight:700;font-variant-numeric:tabular-nums}
+.amp36-actions{align-items:flex-start;flex-direction:column}
+.amp36-btn-group{background:#2563eb!important;border-color:#2563eb!important;color:white!important;font-weight:800}
+.amp36-admin{margin:3px 0 0;max-width:235px}
+.amp36-admin summary{cursor:pointer;font-weight:700;font-size:11px;color:#2563eb;white-space:normal}
+.amp36-admin-line{display:flex;flex-direction:column;gap:4px;border-bottom:1px solid #dbe5f2;padding:7px 0;overflow-wrap:anywhere}
+.amp36-admin-line .amp3-actions{gap:4px}
+.amp36-admin-line button{font-size:10px;min-height:28px}
+.amp36-contexto{padding:13px 15px;margin:8px 0 14px;border:1px solid #93c5fd;border-radius:10px;background:#eff6ff;color:#1e3a8a;font-size:13px;line-height:1.55}
+.amp36-context-codes{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.amp36-context-codes span{padding:5px 8px;border-radius:6px;background:white;border:1px solid #bfdbfe;font-weight:700}
+.amp36-warning{margin-top:8px;color:#b91c1c;font-weight:800}
+html[data-amp-theme="dark"] .amp36-grupo td{background:rgba(37,99,235,.065)}
+html[data-amp-theme="dark"] .amp36-entregable{background:#213b59;border-color:#345477;color:#e2e8f0}
+html[data-amp-theme="dark"] .amp36-horas{color:#bfdbfe}
+html[data-amp-theme="dark"] .amp36-admin summary{color:#93c5fd}
+html[data-amp-theme="dark"] .amp36-contexto{background:#1e3a5f;border-color:#3b82f6;color:#dbeafe}
+html[data-amp-theme="dark"] .amp36-context-codes span{background:#142338;border-color:#475569}
+html[data-amp-theme="dark"] .amp36-warning{color:#fca5a5}
+
 .amp3-shell{--amp3-border:#dce5f2;--amp3-muted:#687b9b;color:#182b4d}
 .amp3-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:17px;flex-wrap:wrap}
 .amp3-head h2{font-size:26px;margin:0 0 7px;letter-spacing:-.03em;color:inherit}
@@ -1366,6 +1390,42 @@ html[data-amp-theme="dark"] .amp32-choose,html[data-amp-theme="dark"] .amp32-chi
 html[data-amp-theme="dark"] .amp32-checklist label{background:#172234;color:#e5edfb;border-color:#344967}
 html[data-amp-theme="dark"] .amp32-checklist label:hover{background:#26405e}
 @media(max-width:650px){.amp32-checklist{grid-template-columns:1fr}.amp32-choose{flex:1}.amp32-check-toolbar button{flex:1 1 auto}}
+</style>
+
+<style id="amp37FiltrosCompactos">
+/* v3.7: tablero compacto, revisión por semanas/persona y desplazamiento interno. */
+#ampV3Compromisos .amp37-asignar{border:1px solid var(--amp3-border);border-radius:12px;margin:13px 0 17px;overflow:visible}
+#ampV3Compromisos .amp37-asignar>summary{cursor:pointer;padding:13px 16px;font-weight:800;color:#1d4ed8;background:#f1f6fd;border-radius:11px;list-style-position:inside}
+#ampV3Compromisos .amp37-asignar[open]>summary{border-bottom:1px solid var(--amp3-border);border-radius:11px 11px 0 0}
+#ampV3Compromisos .amp37-asignar #amp3AsignarPanel{margin:10px;border:0;box-shadow:none;padding:12px}
+#ampV3Compromisos .amp37-revision{border:1px solid var(--amp3-border);border-radius:13px;padding:15px 16px;margin:16px 0 10px;background:#f8fbff}
+#ampV3Compromisos .amp37-titulo{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+#ampV3Compromisos .amp37-titulo strong{font-size:15px}
+#ampV3Compromisos .amp37-titulo small{font-size:12px;color:#64748b}
+#ampV3Compromisos .amp37-filtros-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:11px;align-items:end}
+#ampV3Compromisos .amp37-filtros-grid label{display:flex;flex-direction:column;gap:6px;margin:0;font-size:12px;font-weight:750;color:#516782;min-width:0}
+#ampV3Compromisos .amp37-filtros-grid label[hidden]{display:none!important}
+#ampV3Compromisos .amp37-filtros-grid input,#ampV3Compromisos .amp37-filtros-grid select{width:100%;min-height:40px;height:42px;font-size:13px;padding:8px 10px}
+#ampV3Compromisos .amp37-buscador{grid-column:span 2}
+#ampV3Compromisos .amp37-resumen{display:flex;align-items:center;flex-wrap:wrap;gap:7px 13px;margin:13px 0 4px;font-size:12px;color:#466083;line-height:1.55}
+#ampV3Compromisos .amp37-resumen strong{color:#174b99}
+#ampV3Compromisos .amp37-paginador{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:9px;margin:12px 0 8px}
+#ampV3Compromisos .amp37-paginador span{font-size:12px;font-weight:650;color:#64748b}
+#ampV3Compromisos .amp37-paginador-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+#ampV3Compromisos .amp37-paginador select{width:auto;height:33px;min-height:33px;font-size:12px;padding:5px 7px}
+#ampV3Compromisos .amp37-paginador button{min-height:33px;padding:6px 10px}
+#ampV3Compromisos #amp37TablaScroll{height:min(60vh,550px);min-height:270px;max-height:550px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;border:1px solid var(--amp3-border)}
+#ampV3Compromisos #amp37TablaScroll .amp3-grid-table{min-width:1170px}
+#ampV3Compromisos #amp37TablaScroll .amp3-grid-table thead th{position:sticky;top:0;z-index:5;background:#e8f0fb;box-shadow:0 1px 0 #cbd5e1}
+#ampV3Compromisos #amp37HistorialScroll{max-height:320px;overflow:auto;scrollbar-gutter:stable;overscroll-behavior:contain}
+#ampV3Compromisos #amp37HistorialScroll .amp3-grid-table thead th{position:sticky;top:0;z-index:4}
+html[data-amp-theme="dark"] #ampV3Compromisos .amp37-asignar,html[data-amp-theme="dark"] #ampV3Compromisos .amp37-revision{background:#1b293c;border-color:#40536b;color:#e5e7eb}
+html[data-amp-theme="dark"] #ampV3Compromisos .amp37-asignar>summary{background:#223753;color:#bfdbfe}
+html[data-amp-theme="dark"] #ampV3Compromisos .amp37-titulo small,html[data-amp-theme="dark"] #ampV3Compromisos .amp37-resumen,html[data-amp-theme="dark"] #ampV3Compromisos .amp37-filtros-grid label,html[data-amp-theme="dark"] #ampV3Compromisos .amp37-paginador span{color:#bfd0e8}
+html[data-amp-theme="dark"] #ampV3Compromisos .amp37-resumen strong{color:#93c5fd}
+html[data-amp-theme="dark"] #ampV3Compromisos #amp37TablaScroll .amp3-grid-table thead th{background:#263c58;box-shadow:0 1px 0 #43576f}
+@media(max-width:800px){#ampV3Compromisos .amp37-revision{padding:12px}#ampV3Compromisos .amp37-filtros-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#ampV3Compromisos .amp37-buscador{grid-column:1/-1}}
+@media(max-width:520px){#ampV3Compromisos .amp37-filtros-grid{grid-template-columns:1fr}#ampV3Compromisos .amp37-buscador{grid-column:1}#ampV3Compromisos .amp37-paginador{align-items:flex-start}}
 </style>
 </head>
 
@@ -1804,6 +1864,7 @@ html[data-amp-theme="dark"] .amp32-checklist label:hover{background:#26405e}
 
     <p style="font-size:13px;color:#64748b;margin:-6px 0 14px">¿Prefieres llenar varios días juntos? <button type="button" class="btn-secondary btn-small" id="amp3OpenWeeklyBtn">Abrir captura semanal</button></p>
     <div id="formMessage"></div>
+    <div id="amp36ContextoAsignacion" class="amp36-contexto hidden" role="status" aria-live="polite"></div>
 
     <form id="hoursForm">
 
@@ -2449,9 +2510,10 @@ html[data-amp-theme="dark"] .amp32-checklist label:hover{background:#26405e}
 </section>
 
 <section id="ampV3Compromisos" class="card tab-view-hidden amp3-shell" aria-label="Actividades y compromisos">
- <div class="amp3-head"><div><h2>Mis actividades y compromisos</h2><p>Las asignaciones permanecen visibles hasta que registras horas sobre su entregable con el 100% completado. Al concluir pasan al historial; no se eliminan.</p></div><button type="button" id="amp3RefrescarCompromisos" class="btn-secondary">Actualizar</button></div>
+ <div class="amp3-head"><div><h2>Mis actividades y compromisos</h2><p>Los entregables asignados juntos se muestran juntos, con sus horas individuales y el total. Al registrar horas se seleccionan todos los planos de esa asignación y las horas se reparten sin duplicarse. Los compromisos siguen siendo individuales y auditables.</p></div><button type="button" id="amp3RefrescarCompromisos" class="btn-secondary">Actualizar</button></div>
  <div id="amp3CompMensaje" class="amp3-msg"></div>
  <div class="amp3-kpis"><div><small>Actividades pendientes</small><strong id="amp3CompPendientes">—</strong></div><div><small>Horas estimadas pendientes</small><strong id="amp3CompHoras">—</strong></div><div><small>Vencidas</small><strong id="amp3CompVencidos">—</strong></div><div><small>Completadas históricas</small><strong id="amp3CompCompletados">—</strong></div></div>
+ <details id="amp37AsignarColapsable" class="amp37-asignar" style="display:none"><summary>＋ Nueva asignación de actividades (abrir formulario)</summary>
  <div id="amp3AsignarPanel" class="amp3-panel" style="display:none"><div class="amp3-head"><div><h3>Asignar actividades a varios entregables</h3><p>Los planos con clave se asignan una sola vez mientras estén activos. SKETCH (sin número de plano) y las actividades sin entregable se pueden repetir en fechas diferentes. Cada compromiso se registra de manera individual y auditada en Supabase. Solo administradores pueden asignar.</p></div></div>
    <form id="amp3FormularioAsignar"><div class="amp3-formgrid">
    <label>Responsable<select id="amp3AsignarPersona" required><option value="">Seleccionar persona</option></select></label>
@@ -2473,9 +2535,27 @@ html[data-amp-theme="dark"] .amp32-checklist label:hover{background:#26405e}
    <label class="amp3-span2">Título base de la actividad<input id="amp3AsignarTitulo" required maxlength="140" placeholder="Ej. Emitir planos de alumbrado R2"></label>
    <label class="amp3-span2">Indicaciones / alcance<textarea id="amp3AsignarNotas" maxlength="700" rows="2" placeholder="Qué se espera entregar (opcional)"></textarea></label>
    </div><div id="amp32VistaAsignacion" class="amp32-preview" role="status">Selecciona una actividad y sus entregables para preparar la asignación.</div><button type="submit" id="amp3CrearComp" class="btn-primary">Asignar actividad</button></form></div>
- <div class="amp3-toolbar"><label>Mostrar<select id="amp3CompFiltro"><option value="activos">Activos</option><option value="terminado">Completados</option><option value="todos">Todos / historial</option><option value="cancelado">Cancelados</option></select></label><label id="amp3FiltroPersonaWrap" style="display:none">Responsable<select id="amp3CompPersona"><option value="">Todos</option></select></label><label>Proyecto<select id="amp3CompProyecto"><option value="">Todos los proyectos</option></select></label><button type="button" class="btn-secondary" id="amp3ExportarComp">Exportar asignaciones</button></div>
- <div class="amp3-overflow"><table class="amp3-grid-table"><thead><tr><th>Responsable</th><th>Proyecto / entregable</th><th>Actividad</th><th>Asignación</th><th>Compromiso</th><th>Horas estimadas</th><th>Avance</th><th>Estado</th><th>Cumplimiento</th><th>Acción</th></tr></thead><tbody id="amp3CompTabla"><tr><td colspan="10">Consulta las actividades.</td></tr></tbody></table></div>
- <details class="amp3-details"><summary>Ver bitácora de asignaciones y cambios</summary><div class="amp3-overflow"><table class="amp3-grid-table"><thead><tr><th>Fecha y hora</th><th>Actividad</th><th>Responsable</th><th>Evento</th><th>Estado anterior → nuevo</th><th>Registrado por</th></tr></thead><tbody id="amp3CompHistorial"></tbody></table></div></details>
+ </details>
+ <div class="amp37-revision" role="region" aria-label="Filtros de revisión de compromisos">
+  <div class="amp37-titulo"><div><strong>Consultar compromisos</strong><small> · Filtra por semana, persona y fecha objetivo; la tabla se desplaza sin alargar la página.</small></div><div class="amp3-actions"><button type="button" class="btn-secondary btn-small" id="amp37Restablecer">Limpiar filtros</button><button type="button" class="btn-secondary btn-small" id="amp3ExportarComp">Exportar filtrados (CSV)</button></div></div>
+  <div class="amp37-filtros-grid">
+   <label>Periodo<select id="amp37Periodo"><option value="15dias">Próximos 15 días</option><option value="esta">Esta semana</option><option value="anterior">Semana anterior</option><option value="siguiente">Próxima semana</option><option value="semana">Elegir semana...</option><option value="rango">Rango de fechas...</option><option value="todos" selected>Todas las fechas</option></select></label>
+   <label id="amp37SemanaWrap" hidden>Semana a consultar<input type="week" id="amp37Semana" aria-label="Semana a consultar"></label>
+   <label id="amp37DesdeWrap" hidden>Desde<input type="date" id="amp37Desde"></label>
+   <label id="amp37HastaWrap" hidden>Hasta<input type="date" id="amp37Hasta"></label>
+   <label>Fecha correspondiente a<select id="amp37FechaCampo"><option value="fecha_objetivo">Fecha compromiso</option><option value="fecha_asignacion">Fecha de asignación</option><option value="fecha_cumplimiento">Fecha de cumplimiento</option></select></label>
+   <label>Estado<select id="amp3CompFiltro"><option value="activos">Activos</option><option value="terminado">Completados</option><option value="todos">Todos / historial</option><option value="cancelado">Cancelados</option></select></label>
+   <label id="amp3FiltroPersonaWrap" style="display:none">Persona responsable<select id="amp3CompPersona"><option value="">Todas las personas</option></select></label>
+   <label>Proyecto<select id="amp3CompProyecto"><option value="">Todos los proyectos</option></select></label>
+   <label>Actividad<select id="amp37Actividad"><option value="">Todas las actividades</option></select></label>
+   <label>Ordenar por<select id="amp37Orden"><option value="fecha-asc">Compromiso próximo</option><option value="fecha-desc">Compromiso lejano</option><option value="persona">Responsable</option><option value="proyecto">Proyecto</option><option value="asignacion">Asignación reciente</option></select></label>
+   <label class="amp37-buscador">Buscar plano, título o notas<input type="search" id="amp37Buscar" placeholder="Ej. DW-210, SKETCH, VOLVO..." autocomplete="off"></label>
+  </div>
+  <div id="amp37Resumen" class="amp37-resumen" role="status" aria-live="polite">Aplica los filtros para consultar.</div>
+ </div>
+ <div class="amp37-paginador"><span id="amp37PaginaInfo" aria-live="polite">Cargando compromisos...</span><div class="amp37-paginador-actions"><label for="amp37Tamano" style="font-size:12px;font-weight:600">Filas por página</label><select id="amp37Tamano" aria-label="Filas por página"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select><button type="button" id="amp37Anterior" class="amp3-small-btn" disabled>← Anterior</button><button type="button" id="amp37Siguiente" class="amp3-small-btn" disabled>Siguiente →</button></div></div>
+ <div class="amp3-overflow" id="amp37TablaScroll" tabindex="0" aria-label="Tabla de compromisos con desplazamiento horizontal y vertical"><table class="amp3-grid-table"><thead><tr><th>Responsable</th><th>Proyecto / entregable</th><th>Actividad</th><th>Asignación</th><th>Compromiso</th><th>Horas estimadas</th><th>Avance</th><th>Estado</th><th>Cumplimiento</th><th>Acción</th></tr></thead><tbody id="amp3CompTabla"><tr><td colspan="10">Consulta las actividades.</td></tr></tbody></table></div>
+ <details class="amp3-details"><summary>Ver bitácora de asignaciones y cambios</summary><div class="amp3-overflow" id="amp37HistorialScroll" tabindex="0"><table class="amp3-grid-table"><thead><tr><th>Fecha y hora</th><th>Actividad</th><th>Responsable</th><th>Evento</th><th>Estado anterior → nuevo</th><th>Registrado por</th></tr></thead><tbody id="amp3CompHistorial"></tbody></table></div></details>
  </section>
 
 <!-- AMP v3: modal de selección múltiple de entregables de captura semanal -->
@@ -7803,7 +7883,8 @@ function setupHooks(){
  const origLoad=cargarDatos;
  cargarDatos=async function(...args){const val=await origLoad(...args);await probe();updateDirectorTab();if($('amp3FechaSemana'))$('amp3FechaSemana').value=today();return val;};
  const origClear=limpiarFormulario;
- limpiarFormulario=function(...args){const v=origClear(...args);if($('amp3ExtraDia'))$('amp3ExtraDia').checked=false;return v;};
+ limpiarFormulario=function(...args){const v=origClear(...args);if($('amp3ExtraDia'))$('amp3ExtraDia').checked=false;
+  $('amp36ContextoAsignacion')?.classList.add('hidden');return v;};
  const origSave=guardarHoras;
  guardarHoras=async function(...args){const v=await origSave(...args);if(compInstalado)loadCompromisos(true).catch(console.warn);return v;};
  const origPersonal=actualizarResumen;
@@ -7942,7 +8023,17 @@ function exportWeek(){const a=[];for(const r of rows)r.horas.forEach((h,i)=>{if(
 // ------- ACTIVIDADES Y COMPROMISOS: datos compartidos, RLS y bitácora -------
 const employeeName=id=>personaLabels.get(String(id))||String(id||'—');
 function upsertOptions(id,list,first){const sel=$(id);if(!sel)return;const prev=sel.value;sel.innerHTML=selectHTML(list,prev,first);if(list.includes(prev))sel.value=prev;}
-async function getEmployees(){if(!admin()){personaLabels=new Map([[current()?.id,current()?.email||'Mi usuario']]);return;}
+async function getEmployees(){if(!admin()){
+  // La vista del empleado también debe mostrar su nombre, no su UUID.
+  const u=current(),uid=String(u?.id||'');
+  let nombre=String(u?.email||'Mi usuario');
+  if(uid){try{
+    const {data,error}=await supabaseClient.from('EMPLEADOS').select('id,NOMBRE').eq('id',uid).maybeSingle();
+    if(!error&&data?.NOMBRE)nombre=String(data.NOMBRE);
+  }catch(e){console.warn('Nombre del empleado:',e)}}
+  personaLabels=new Map([[uid,nombre]]);
+  return;
+}
  try{await cargarEmpleadosParaPermisos();personaLabels=new Map(empleadosParaPermisos.map(x=>[String(x.usuario_id),x.NOMBRE||x.usuario_id]));
  if(!personaLabels.has(current()?.id))personaLabels.set(current().id,current().email);
  const old=$('amp3AsignarPersona').value;
@@ -7952,7 +8043,7 @@ async function getEmployees(){if(!admin()){personaLabels=new Map([[current()?.id
  $('amp3CompPersona').innerHTML='<option value="">Todas las personas</option>'+empleadosParaPermisos.map(e=>'<option value="'+esc(e.usuario_id)+'">'+esc(e.NOMBRE||e.usuario_id)+'</option>').join('');
  if(prev)$('amp3CompPersona').value=prev;
  }catch(e){console.warn('Catálogo empleados:',e)}}
-function projectOptions(){upsertOptions('amp3AsignarProyecto',proyectoNames(),'Seleccionar proyecto');upsertOptions('amp3CompProyecto',proyectoNames(),'Todos los proyectos');}
+function projectOptions(){upsertOptions('amp3AsignarProyecto',proyectoNames(),'Seleccionar proyecto');upsertOptions('amp3CompProyecto',[...new Set([...proyectoNames(),...compRows.map(c=>c.proyecto)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es')),'Todos los proyectos');}
 // Las asignaciones masivas siguen creando un compromiso INDEPENDIENTE por entregable.
 let amp32Elegidos=new Set(),amp32ProyectoPrevio='',amp32ActividadPrevia='';
 const amp32Norm=v=>String(v??'').trim().toLocaleLowerCase('es');
@@ -8008,41 +8099,200 @@ function assignmentUpdate(){
 }
 async function loadCompromisos(silent=false){if(!current())return;
  if(!silent)msg('amp3CompMensaje','Consultando actividades autorizadas...');
- $('amp3AsignarPanel').style.display=admin()?'block':'none';$('amp3FiltroPersonaWrap').style.display=admin()?'flex':'none';
+ $('amp3AsignarPanel').style.display=admin()?'block':'none';$('amp37AsignarColapsable').style.display=admin()?'block':'none';$('amp3FiltroPersonaWrap').style.display=admin()?'flex':'none';
  projectOptions();assignmentUpdate();
- if(admin())await getEmployees();
+ await getEmployees();
  try{compRows=await fetchPaged('amp_compromisos_v3','*',q=>q.order('fecha_asignacion',{ascending:false}),50000);
    compInstalado=true;
    try{const ids=compRows.map(x=>x.id); // RLS protege las bitácoras del usuario.
       histRows=ids.length?await fetchPaged('amp_compromisos_historial_v3','*',q=>q.order('fecha_evento',{ascending:false}),50000):[];
    }catch(e){histRows=[];console.warn('Bitácora:',e.message)}
+   amp37ActualizarOpciones();
    if(!silent)msg('amp3CompMensaje','Actividades sincronizadas. El 100% se actualiza al guardar horas sobre el mismo proyecto, actividad y entregable.','ok');
  }catch(e){compInstalado=false;compRows=[];histRows=[];if(!silent)msg('amp3CompMensaje','El módulo necesita el SQL v3. No hay seguimiento compartido sin esa instalación. Detalle: '+e.message,'error');}
  renderComp();renderExecutive();}
 const dueDays=d=>Math.floor((new Date(d+'T12:00:00')-new Date(today()+'T12:00:00'))/86400000);
 function compStatus(c){if(c.estado==='terminado')return '<span class="amp3-pill green">Completado</span>';if(c.estado==='cancelado')return '<span class="amp3-pill">Cancelado</span>';return dueDays(c.fecha_objetivo)<0?'<span class="amp3-pill red">Vencido</span>':c.estado==='en_curso'?'<span class="amp3-pill orange">En curso</span>':'<span class="amp3-pill">Pendiente</span>';}
-function compFilter(){return compRows.filter(c=>{
- const f=$('amp3CompFiltro').value;
- if(f==='activos'&&!['pendiente','en_curso'].includes(c.estado))return false;
- if((f==='terminado'||f==='cancelado')&&c.estado!==f)return false;
- if($('amp3CompPersona').value&&c.usuario_id!==$('amp3CompPersona').value)return false;
- if($('amp3CompProyecto').value&&c.proyecto!==$('amp3CompProyecto').value)return false;
- return true;});}
-function renderComp(){if(!$('amp3CompTabla'))return;const active=compRows.filter(c=>['pendiente','en_curso'].includes(c.estado));
+// v3.7: los filtros funcionan SOLO en el navegador sobre los registros autorizados
+// por Supabase; no cambian permisos, asignaciones ni horas registradas.
+let amp37Pagina=1;
+function amp37ActualizarOpciones(){
+ const proyectos=[...new Set([...proyectoNames(),...compRows.map(c=>c.proyecto)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+ upsertOptions('amp3CompProyecto',proyectos,'Todos los proyectos');
+ const actividades=[...new Set(compRows.map(c=>c.actividad).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+ upsertOptions('amp37Actividad',actividades,'Todas las actividades');
+}
+function amp37FechaDe(c){
+ const campo=$('amp37FechaCampo').value;
+ if(campo==='fecha_asignacion')return localDate(c.fecha_asignacion);
+ if(campo==='fecha_cumplimiento')return localDate(c.fecha_cumplimiento);
+ return String(c.fecha_objetivo||'').slice(0,10);
+}
+function amp37LunesDeSemana(semana){
+ const m=/^(\d{4})-W(\d{2})$/.exec(String(semana||''));if(!m)return '';
+ const y=Number(m[1]),w=Number(m[2]);if(w<1||w>53)return '';
+ const d=new Date(Date.UTC(y,0,4));d.setUTCDate(d.getUTCDate()-((d.getUTCDay()+6)%7)+(w-1)*7);
+ return d.toISOString().slice(0,10);
+}
+function amp37SemanaISO(s){
+ const d=new Date((s||today())+'T12:00:00');d.setDate(d.getDate()+3-((d.getDay()+6)%7));
+ const y=d.getFullYear(),enero=new Date(y,0,1);
+ const w=Math.ceil((((d-enero)/86400000)+1)/7);
+ return y+'-W'+String(w).padStart(2,'0');
+}
+function amp37MostrarCampos(){
+ const modo=$('amp37Periodo').value;
+ $('amp37SemanaWrap').hidden=modo!=='semana';
+ $('amp37DesdeWrap').hidden=modo!=='rango';
+ $('amp37HastaWrap').hidden=modo!=='rango';
+ if(modo==='semana'&&!$('amp37Semana').value)$('amp37Semana').value=amp37SemanaISO(today());
+ if(modo==='rango'){
+  if(!$('amp37Desde').value)$('amp37Desde').value=week(today());
+  if(!$('amp37Hasta').value)$('amp37Hasta').value=add(week(today()),6);
+ }
+}
+function amp37Limites(){
+ const modo=$('amp37Periodo').value;
+ if(modo==='todos')return ['',''];
+ if(modo==='15dias')return [today(),add(today(),14)];
+ if(modo==='esta')return [week(today()),add(week(today()),6)];
+ if(modo==='anterior')return [add(week(today()),-7),add(week(today()),-1)];
+ if(modo==='siguiente')return [add(week(today()),7),add(week(today()),13)];
+ if(modo==='semana'){const d=amp37LunesDeSemana($('amp37Semana').value);return d?[d,add(d,6)]:['~','~'];}
+ if(modo==='rango')return [$('amp37Desde').value||'',$('amp37Hasta').value||''];
+ return ['',''];
+}
+function amp37CompFilter(sinEstado=false){
+ const [desde,hasta]=amp37Limites(),persona=$('amp3CompPersona').value,
+  proyecto=$('amp3CompProyecto').value,actividad=$('amp37Actividad').value,
+  buscar=amp32Norm($('amp37Buscar').value),estado=$('amp3CompFiltro').value;
+ return compRows.filter(c=>{
+  if(!sinEstado){
+   if(estado==='activos'&&!['pendiente','en_curso'].includes(c.estado))return false;
+   if((estado==='terminado'||estado==='cancelado')&&c.estado!==estado)return false;
+  }
+  if(persona&&String(c.usuario_id)!==persona)return false;
+  if(proyecto&&c.proyecto!==proyecto)return false;
+  if(actividad&&c.actividad!==actividad)return false;
+  if(desde||hasta){const fecha=amp37FechaDe(c);if(!fecha||desde&&fecha<desde||hasta&&fecha>hasta)return false;}
+  if(buscar){const texto=amp32Norm([c.proyecto,c.actividad,c.entregable,c.titulo,c.descripcion,employeeName(c.usuario_id)].join(' '));if(!texto.includes(buscar))return false;}
+  return true;
+ });
+}
+function compFilter(){return amp37CompFilter(false);}
+function amp37OrdenarGrupos(a,b){
+ const x=a[0],y=b[0],o=$('amp37Orden').value;
+ if(o==='persona')return employeeName(x.usuario_id).localeCompare(employeeName(y.usuario_id),'es')||String(x.fecha_objetivo).localeCompare(String(y.fecha_objetivo));
+ if(o==='proyecto')return String(x.proyecto).localeCompare(String(y.proyecto),'es')||String(x.fecha_objetivo).localeCompare(String(y.fecha_objetivo));
+ if(o==='asignacion')return String(y.fecha_asignacion).localeCompare(String(x.fecha_asignacion));
+ return (o==='fecha-desc'?-1:1)*(String(x.fecha_objetivo).localeCompare(String(y.fecha_objetivo)))||employeeName(x.usuario_id).localeCompare(employeeName(y.usuario_id),'es');
+}
+function amp37CambioFiltro(){amp37Pagina=1;amp37MostrarCampos();renderComp();}
+function amp37Limpiar(){
+ for(const [id,value] of Object.entries({amp37Periodo:'todos',amp37FechaCampo:'fecha_objetivo',amp3CompFiltro:'activos',amp3CompPersona:'',amp3CompProyecto:'',amp37Actividad:'',amp37Buscar:'',amp37Orden:'fecha-asc',amp37Tamano:'25'}))$(id).value=value;
+ $('amp37Semana').value=amp37SemanaISO(today());$('amp37Desde').value='';$('amp37Hasta').value='';
+ amp37Pagina=1;amp37MostrarCampos();renderComp();
+}
+// Agrupa visualmente las filas creadas por una sola asignación múltiple.
+// PostgreSQL usa el mismo now() para todas las filas de un único INSERT; esto
+// permite reconstruir los grupos ya existentes SIN cambiar los datos ni agregar columnas.
+// El estado, horas y avance siguen viviendo en cada compromiso individual.
+function amp36TituloBase(c){
+ const titulo=String(c.titulo||''),sufijo=c.entregable?' · '+String(c.entregable):'';
+ return sufijo&&titulo.endsWith(sufijo)?titulo.slice(0,-sufijo.length):titulo;
+}
+function amp36AgruparCompromisos(items){
+ const out=[],groupMap=new Map();
+ for(const c of items){
+  const titulo=String(c.titulo||''),sufijo=c.entregable?' · '+String(c.entregable):'';
+  const agrupable=!!(c.entregable&&c.fecha_asignacion&&sufijo&&titulo.endsWith(sufijo));
+  const key=agrupable?JSON.stringify([String(c.usuario_id),amp32Norm(c.proyecto),amp32Norm(c.actividad),
+   String(c.fecha_asignacion),String(c.fecha_objetivo),amp36TituloBase(c),String(c.descripcion||'')]):'solo:'+String(c.id);
+  if(!groupMap.has(key)){const group=[];groupMap.set(key,group);out.push(group)}
+  groupMap.get(key).push(c);
+ }
+ for(const group of out)group.sort((a,b)=>String(a.entregable||'').localeCompare(String(b.entregable||''),'es',{numeric:true}));
+ return out;
+}
+function amp36EstadoGrupo(grupo){
+ if(grupo.length===1)return compStatus(grupo[0]);
+ if(grupo.every(c=>c.estado==='terminado'))return '<span class="amp3-pill green">Completado</span>';
+ if(grupo.every(c=>c.estado==='cancelado'))return '<span class="amp3-pill">Cancelado</span>';
+ if(grupo.some(c=>['pendiente','en_curso'].includes(c.estado)&&dueDays(c.fecha_objetivo)<0))return '<span class="amp3-pill red">Vencido</span>';
+ if(grupo.some(c=>c.estado==='en_curso'||c.estado==='terminado'))return '<span class="amp3-pill orange">En curso</span>';
+ return '<span class="amp3-pill">Pendiente</span>';
+}
+function amp36AvanceGrupo(grupo){
+ const total=grupo.reduce((n,c)=>n+Math.max(0,Number(c.horas_estimadas)||0),0);
+ const weighted=grupo.reduce((n,c)=>n+Math.max(0,Number(c.horas_estimadas)||0)*Math.max(0,Math.min(100,Number(c.avance)||0)),0);
+ return Math.round(total>0?weighted/total:grupo.reduce((n,c)=>n+(Number(c.avance)||0),0)/grupo.length);
+}
+function amp36AccionesIndividuales(c){
+ return '<button type="button" class="amp3-small-btn" data-task="'+esc(c.id)+'" data-act="due">Fecha</button>'+
+  (['pendiente','en_curso'].includes(c.estado)?
+    '<button type="button" class="amp3-small-btn" data-task="'+esc(c.id)+'" data-act="cancel">Cancelar</button>':
+    '<button type="button" class="amp3-small-btn" data-task="'+esc(c.id)+'" data-act="reopen">Reabrir</button>');
+}
+function amp36FilaGrupo(grupo){
+ const c=grupo[0],multi=grupo.length>1,total=grupo.reduce((n,x)=>n+(Number(x.horas_estimadas)||0),0);
+ const avance=amp36AvanceGrupo(grupo),terminados=grupo.filter(x=>x.estado==='terminado').length;
+ const tipoEntrega=amp32Norm(c.actividad)==='planos'?'planos':'entregables';
+ const activos=grupo.filter(x=>['pendiente','en_curso'].includes(x.estado));
+ const esMia=String(c.usuario_id)===String(current()?.id);
+ const nombre=esc(employeeName(c.usuario_id));
+ const codigos=multi?'<div class="amp36-lista">'+grupo.map(x=>
+  '<div class="amp36-entregable"><span>'+esc(x.entregable||'Sin entregable')+'</span><span class="amp36-horas">'+fmt(x.horas_estimadas)+' h'+(x.estado==='terminado'?' ✓':'')+'</span></div>').join('')+'</div>':
+  esc(c.entregable||'Sin entregable');
+ const titulo=multi?amp36TituloBase(c):c.titulo;
+ const horas=multi?'<strong>'+fmt(total)+' h</strong><div class="amp3-sub">'+grupo.length+' '+tipoEntrega+' · reparto individual</div>':fmt(c.horas_estimadas);
+ const avanceHtml='<div class="amp3-bar"><span style="width:'+avance+'%"></span></div>'+avance+'%'+
+  (multi?'<div class="amp3-sub">'+terminados+' de '+grupo.length+' terminados</div>':'');
+ let botones='';
+ if(activos.length&&esMia){
+  if(multi){const ids=activos.map(x=>x.id).join(',');
+   botones+='<button type="button" class="amp3-small-btn amp36-btn-group" data-task-group="'+esc(ids)+'" data-act="fillgroup">Registrar horas · '+activos.length+' planos</button>';
+  }else botones+='<button type="button" class="amp3-small-btn" data-task="'+esc(c.id)+'" data-act="fill">Registrar horas</button>';
+ }
+ if(admin()){
+  if(multi){
+   botones+='<details class="amp36-admin"><summary>Editar cada plano</summary>'+
+    grupo.map(x=>'<div class="amp36-admin-line"><strong>'+esc(x.entregable||'Sin entregable')+'</strong><span class="amp3-actions">'+amp36AccionesIndividuales(x)+'</span></div>').join('')+'</details>';
+  }else botones+=amp36AccionesIndividuales(c);
+ }
+ return '<tr class="'+(multi?'amp36-grupo':'')+'">'+
+  '<td>'+nombre+'</td><td><b>'+esc(c.proyecto)+'</b><div class="amp36-codigos">'+codigos+'</div></td>'+
+  '<td title="'+esc(c.descripcion)+'">'+esc(titulo)+'<div class="amp3-sub">'+esc(c.actividad)+
+   (multi?' · '+grupo.length+' entregables':'')+'</div></td>'+
+  '<td>'+esc(localDateTime(c.fecha_asignacion))+'</td><td>'+esc(c.fecha_objetivo)+'</td>'+
+  '<td>'+horas+'</td><td>'+avanceHtml+'</td><td>'+amp36EstadoGrupo(grupo)+'</td>'+
+  '<td>'+(grupo.every(x=>!!x.fecha_cumplimiento)?esc(localDateTime(c.fecha_cumplimiento)):'—')+'</td>'+
+  '<td><div class="amp3-actions amp36-actions">'+botones+'</div></td></tr>';
+}
+function renderComp(){if(!$('amp3CompTabla'))return;
+ amp37MostrarCampos();
+ const filtrados=compFilter(),base=amp37CompFilter(true),active=base.filter(c=>['pendiente','en_curso'].includes(c.estado));
+ // Indicadores: misma persona/proyecto/periodo, independientes del selector de estado.
  $('amp3CompPendientes').textContent=active.length;
  $('amp3CompHoras').textContent=fmt(active.reduce((s,x)=>s+n(x.horas_estimadas)*(100-n(x.avance))/100,0))+' h';
  $('amp3CompVencidos').textContent=active.filter(c=>dueDays(c.fecha_objetivo)<0).length;
- $('amp3CompCompletados').textContent=compRows.filter(c=>c.estado==='terminado').length;
- $('amp3CompTabla').innerHTML=compFilter().slice(0,600).map(c=>'<tr>'+
- '<td>'+esc(employeeName(c.usuario_id))+'</td><td><b>'+esc(c.proyecto)+'</b><br>'+esc(c.entregable||'Sin entregable')+'</td>'+
- '<td title="'+esc(c.descripcion)+'">'+esc(c.titulo)+'<div class="amp3-sub">'+esc(c.actividad)+'</div></td>'+
- '<td>'+esc(localDateTime(c.fecha_asignacion))+'</td><td>'+esc(c.fecha_objetivo)+'</td>'+
- '<td>'+fmt(c.horas_estimadas)+'</td><td><div class="amp3-bar"><span style="width:'+n(c.avance)+'%"></span></div>'+n(c.avance)+'%</td><td>'+compStatus(c)+'</td>'+
- '<td>'+(c.fecha_cumplimiento?esc(localDateTime(c.fecha_cumplimiento)):'—')+'</td>'+
- '<td><div class="amp3-actions">'+(['pendiente','en_curso'].includes(c.estado)&&String(c.usuario_id)===String(current()?.id)?'<button type="button" class="amp3-small-btn" data-task="'+esc(c.id)+'" data-act="fill">Registrar horas</button>':'')+
- (admin()?'<button type="button" class="amp3-small-btn" data-task="'+esc(c.id)+'" data-act="due">Fecha</button>'+(['pendiente','en_curso'].includes(c.estado)?'<button type="button" class="amp3-small-btn" data-task="'+esc(c.id)+'" data-act="cancel">Cancelar</button>':'<button type="button" class="amp3-small-btn" data-task="'+esc(c.id)+'" data-act="reopen">Reabrir</button>'):'')+'</div></td></tr>').join('')||'<tr><td colspan="10">No hay actividades con este filtro.</td></tr>';
- const map=new Map(compRows.map(c=>[c.id,c]));
- $('amp3CompHistorial').innerHTML=histRows.slice(0,1200).map(h=>{const c=map.get(h.compromiso_id);return '<tr><td>'+esc(localDateTime(h.fecha_evento))+'</td><td>'+esc(c?.titulo||h.compromiso_id)+'</td><td>'+esc(employeeName(c?.usuario_id))+'</td><td>'+esc(h.tipo)+'</td><td>'+esc((h.estado_anterior||'—')+' → '+(h.estado_nuevo||'—'))+'</td><td>'+esc(employeeName(h.usuario_accion))+'</td></tr>'}).join('')||'<tr><td colspan="6">Sin eventos visibles</td></tr>';
+ $('amp3CompCompletados').textContent=base.filter(c=>c.estado==='terminado').length;
+ const groups=amp36AgruparCompromisos(filtrados).sort(amp37OrdenarGrupos);
+ const tam=Number($('amp37Tamano').value)||25,paginas=Math.max(1,Math.ceil(groups.length/tam));
+ amp37Pagina=Math.max(1,Math.min(amp37Pagina,paginas));
+ const desde=(amp37Pagina-1)*tam,mostrados=groups.slice(desde,desde+tam);
+ $('amp3CompTabla').innerHTML=mostrados.map(amp36FilaGrupo).join('')||'<tr><td colspan="10">No hay compromisos con estos filtros. Selecciona otro periodo o pulsa Limpiar filtros.</td></tr>';
+ const horasFiltradas=filtrados.reduce((s,c)=>s+n(c.horas_estimadas),0);
+ const numPlanos=filtrados.length;
+ const [fechaIni,fechaFin]=amp37Limites();
+ const fechas=(fechaIni&&fechaFin)?fechaIni+' a '+fechaFin:fechaIni?'Desde '+fechaIni:fechaFin?'Hasta '+fechaFin:'Todas las fechas';
+ $('amp37Resumen').innerHTML='<strong>'+groups.length+' asignaciones visibles</strong> · '+numPlanos+' compromisos individuales · <strong>'+fmt(horasFiltradas)+' h estimadas</strong> · '+esc(fechas)+'<span> · Los indicadores superiores respetan persona, fecha y proyecto, pero incluyen todos los estados.</span>';
+ $('amp37PaginaInfo').textContent=groups.length?'Mostrando '+(desde+1)+'–'+Math.min(desde+tam,groups.length)+' de '+groups.length+' asignaciones (página '+amp37Pagina+' de '+paginas+')':'Sin resultados';
+ $('amp37Anterior').disabled=amp37Pagina<=1;
+ $('amp37Siguiente').disabled=amp37Pagina>=paginas;
+ // Bitácora: utiliza los compromisos filtrados, preservando los cambios históricos.
+ const ids=new Set(filtrados.map(c=>String(c.id))),map=new Map(compRows.map(c=>[String(c.id),c]));
+ const historialFiltrado=histRows.filter(h=>ids.has(String(h.compromiso_id)));
+ $('amp3CompHistorial').innerHTML=historialFiltrado.slice(0,1200).map(h=>{const c=map.get(String(h.compromiso_id));return '<tr><td>'+esc(localDateTime(h.fecha_evento))+'</td><td>'+esc(c?.titulo||h.compromiso_id)+'</td><td>'+esc(employeeName(c?.usuario_id))+'</td><td>'+esc(h.tipo)+'</td><td>'+esc((h.estado_anterior||'—')+' → '+(h.estado_nuevo||'—'))+'</td><td>'+esc(employeeName(h.usuario_accion))+'</td></tr>'}).join('')||'<tr><td colspan="6">Sin eventos en los compromisos filtrados.</td></tr>';
 }
 async function createTask(ev){ev.preventDefault();if(!admin()||!current())return;
  const p=$('amp3AsignarProyecto').value,act=$('amp3AsignarActividad').value,necesita=requires(act);
@@ -8083,17 +8333,56 @@ async function createTask(ev){ev.preventDefault();if(!admin()||!current())return
  }catch(e){msg('amp3CompMensaje','No se crearon las asignaciones nuevas: '+e.message+'. Revisa si ya existen compromisos activos o si tienes permisos.','error');}
  finally{btn.disabled=false;amp32RenderResumen();}
 }
-async function taskAction(ev){const b=ev.target.closest('button[data-task]');if(!b)return;const c=compRows.find(x=>x.id===b.dataset.task);if(!c)return;
- if(b.dataset.act==='fill'){
-   cambiarPestanaPrincipal('horas');$('fecha').value=amp32EsRecurrente(c.entregable)?c.fecha_objetivo:today();$('proyecto').value=c.proyecto;actualizarEntregables(c.proyecto);
-   $('actividad').value=c.actividad;aplicarReglaEntregable();
-   if(c.entregable)establecerEntregablesHoras([c.entregable]);
-   $('fechaInicio').value=localDate(c.fecha_asignacion);$('fechaVencimiento').value=c.fecha_objetivo;
-   $('porcentaje').value=Math.max(n(c.avance),0);$('estado').value=c.avance===100?'TERMINADO':'EN CURSO';
-   $('notas').value=String(c.descripcion||'').slice(0,500);actualizarContadorNotas();
-   document.getElementById('hoursForm').scrollIntoView({behavior:'smooth',block:'start'});
-   return;
+function amp36RegistrarCompromisos(grupo){
+ const activos=grupo.filter(x=>['pendiente','en_curso'].includes(x.estado));
+ if(!activos.length)return;
+ const c=activos[0];
+ if(activos.some(x=>String(x.usuario_id)!==String(current()?.id))){
+  msg('amp3CompMensaje','Solo el responsable puede registrar sus propias horas.','error');return;
  }
+ if(activos.some(x=>x.proyecto!==c.proyecto||x.actividad!==c.actividad||x.fecha_objetivo!==c.fecha_objetivo)){
+  msg('amp3CompMensaje','Los compromisos tienen proyectos, actividades o fechas diferentes; registra cada uno por separado.','error');return;
+ }
+ // Restablecer edición previa: de lo contrario el formulario actualizaría un registro existente
+ // en vez de insertar una fila de horas por cada entregable.
+ limpiarFormulario();
+ cambiarPestanaPrincipal('horas');
+ $('fecha').value=amp32EsRecurrente(c.entregable)?c.fecha_objetivo:today();
+ $('proyecto').value=c.proyecto;
+ actualizarEntregables(c.proyecto);
+ $('actividad').value=c.actividad;
+ aplicarReglaEntregable();
+ const codes=activos.map(x=>x.entregable).filter(Boolean);
+ if(codes.length)establecerEntregablesHoras(codes);
+ $('fechaInicio').value=localDate(c.fecha_asignacion);
+ $('fechaVencimiento').value=c.fecha_objetivo;
+ $('porcentaje').value=Math.max(0,Math.min(100,amp36AvanceGrupo(activos)));
+ $('estado').value='EN CURSO';
+ $('notas').value=String(c.descripcion||'').slice(0,500);
+ actualizarContadorNotas();
+ const permitidos=new Set(nombresEntregablesHoras());
+ const faltantes=codes.filter(x=>!permitidos.has(x));
+ const contexto=$('amp36ContextoAsignacion');
+ if(contexto){
+  contexto.classList.remove('hidden');
+  contexto.innerHTML='<strong>Asignación cargada: '+activos.length+' entregable'+(activos.length===1?'':'s')+'</strong> · '+
+    esc(c.proyecto)+' · '+esc(c.actividad)+
+    (codes.length?'<div class="amp36-context-codes">'+codes.map(x=>'<span>'+esc(x)+'</span>').join('')+'</div>':'')+
+    '<div>'+fmt(activos.reduce((s,x)=>s+(Number(x.horas_estimadas)||0),0))+
+    ' h estimadas en total. Captura las horas REALES trabajadas; se repartirán entre los entregables seleccionados.</div>'+
+    (faltantes.length?'<div class="amp36-warning">No están disponibles en el catálogo: '+faltantes.map(esc).join(', ')+'. No guardes hasta corregirlo.</div>':'');
+ }
+ document.getElementById('hoursForm').scrollIntoView({behavior:'smooth',block:'start'});
+}
+async function taskAction(ev){const b=ev.target.closest('button[data-task],button[data-task-group]');if(!b)return;
+ if(b.dataset.act==='fillgroup'){
+  const ids=new Set((b.dataset.taskGroup||'').split(',').filter(Boolean));
+  const tasks=compRows.filter(c=>ids.has(String(c.id)));
+  if(tasks.length!==ids.size){msg('amp3CompMensaje','La selección cambió. Actualiza las actividades antes de registrar horas.','error');return;}
+  amp36RegistrarCompromisos(tasks);return;
+ }
+ const c=compRows.find(x=>x.id===b.dataset.task);if(!c)return;
+ if(b.dataset.act==='fill'){amp36RegistrarCompromisos([c]);return;}
  if(!admin())return;let patch;
  if(b.dataset.act==='due'){
    const date=prompt('Nueva fecha compromiso (AAAA-MM-DD)',c.fecha_objetivo);if(date===null)return;
@@ -8296,9 +8585,12 @@ function init(){
  $('amp32LimpiarSeleccion').addEventListener('click',()=>{amp32Elegidos.clear();amp32RenderLista();amp32RenderResumen();});
  $('amp32ModoHoras').addEventListener('change',amp32RenderResumen);
  $('amp3AsignarHoras').addEventListener('input',amp32RenderResumen);
- $('amp3CompFiltro').addEventListener('change',renderComp);
- $('amp3CompPersona').addEventListener('change',renderComp);
- $('amp3CompProyecto').addEventListener('change',renderComp);
+ for(const id of ['amp3CompFiltro','amp3CompPersona','amp3CompProyecto','amp37Actividad','amp37Periodo','amp37FechaCampo','amp37Orden','amp37Semana','amp37Desde','amp37Hasta','amp37Tamano'])$(id).addEventListener('change',amp37CambioFiltro);
+ $('amp37Buscar').addEventListener('input',amp37CambioFiltro);
+ $('amp37Restablecer').addEventListener('click',amp37Limpiar);
+ $('amp37Anterior').addEventListener('click',()=>{amp37Pagina=Math.max(1,amp37Pagina-1);renderComp();$('amp37TablaScroll').scrollTop=0;});
+ $('amp37Siguiente').addEventListener('click',()=>{amp37Pagina+=1;renderComp();$('amp37TablaScroll').scrollTop=0;});
+ $('amp37Semana').value=amp37SemanaISO(today());amp37MostrarCampos();
  $('amp3CompTabla').addEventListener('click',taskAction);
  $('amp3ExportarComp').addEventListener('click',exportComp);
  $('amp3ExtraSemana').addEventListener('change',()=>{amp35SeleccionExtra='';renderExtras();});
